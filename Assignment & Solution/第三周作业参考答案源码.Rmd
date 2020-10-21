@@ -1,0 +1,142 @@
+---
+title: "Non-Parametric Statistics Assignment3"
+author: "*****"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+    css: hpstrcsw.css
+    df_print: paged
+---
+
+# 课后题
+## 1.10
+考虑一个从参数$\lambda = 1$的指数分布中抽取的容量为100的样本
+
+* (1)给出样本的`对数经验生存函数`$lnS_n(t)$的`标准差`。($lnS_n(t)$作为t的函数)
+
+* (2)从计算机中产生几个类似的`容量为100`的样本，画出他们的`对数经验生存函数图`，联系图补充对(1)的回答
+
+
+```{r}
+size = 100
+# 根据计算公式，直接算出对数经验生存函数的方差
+var = pexp(seq(0, 6, 0.1), 1) / (1-pexp(seq(0, 6, 0.1), 1)) / size
+# 计算标准差
+sd = sqrt(var)
+# 画图
+plot(seq(0, 6, 0.1), sd, type = 'l', col = 'blue', main = '指数分布随机样本对数经验生存函数的标准差')
+
+```
+
+下面是对经验分布、经验生存、对数经验生存的基本可视化。
+```{r}
+size = 100#样本容量
+data = rexp(size, 1)#生成随机样本
+data.sort = sort(data)#数据排序
+data.rank = rank(data.sort)#求排序后数据的秩
+data.cdf = data.rank / length(data)#计算经验分布
+
+
+# 经验分布
+plot(data.sort, data.cdf, type = 's', main = '指数分布随机样本的经验分布函数图', xlab = 't', ylab = 'F_n(t)')#绘图，type控制绘图属性，默认'p'绘制散点图，'l'是折线图，'s'和'S'是两种形式的阶梯函数图，其连接左下、右上两点的方式分别为先右后上和先上后右（大家可以用这个例子感受一下）
+#x=1:5;y=1:5;plot(x,y,type='p')#请自行修改type类型为l、s、S观察变化
+#xlab和ylab是给定绘图的两坐标轴名称，main给定图名
+
+#经验分布的另一种画法
+plot.ecdf(data, do.points = FALSE, verticals = FALSE, main = '指数分布随机样本的经验分布函数图')#用plot.ecdf绘制经验函数,do.points控制是否显示样本点，verticals控制是否有竖线连接（默认是没有，如果赋值为TRUE效果就和plot函数用type='s'一样，画出来是阶梯函数，不过plot.ecdf会在纵轴的0， 1概率处用虚线标出，而plot函数没有（若有需要，则要用abline或者其他方式自行绘制）
+
+# 经验生存
+plot(data.sort, 1 - data.cdf, type = 's', main = '指数分布随机样本的经验生存函数图', xlab = 't', ylab = 'S_n(t)')
+
+# 对数经验生存
+plot(data.sort, log(1 - data.cdf), type = 's', main = '指数分布随机样本的对数经验生存函数图', xlab = 't', ylab = 'ln(S_n(t))')
+
+# 负对数经验生存
+plot(data.sort, -log(1 - data.cdf), type = 's', main = '指数分布随机样本的负对数经验生存函数图', xlab = 't', ylab = '-ln(S_n(t))')
+
+# 编写函数simulate画groups条，样本量为size的对数经验生存函数
+simulate = function(groups, size){
+  data = rexp(size, 1)
+  data.sort = sort(data)
+  data.rank = rank(data.sort)
+  data.cdf = data.rank / length(data)
+  plot(data.sort, log(1 - data.cdf), type = 'l', lty = 1, main = 'log empirical survival function', xlab = 't', ylab = 'ln(S_n(t))')
+  
+  for(i in 2:groups){
+    data = rexp(size, 1)
+    data.sort = sort(data)
+    data.rank = rank(data.sort)
+    data.cdf = data.rank / length(data) 
+    lines(data.sort, log(1 - data.cdf), type = 'l', lty = 1)
+    #注意这里用lines，因为plot会覆盖原图，而lines默认在原图像上叠加曲线
+  }
+}
+# 样本量100，画100组实验
+simulate(100, 100)
+
+```
+很明显，经验生存函数的标准差，方差随着时间增加单调增大。这和(1)中直接计算得到的答案是吻合的。
+
+## 1.12
+考虑一个实验：对减轻皮肤瘙痒的药物进行疗效研究(Beecher,1959)。在10名20-30岁的男性志愿者身上做实验比较`五种药物`和`安慰剂`、`无药`的效果。
+```{r}
+# 数据加载
+skin_data = read.csv('E:\\大三上\\Non-Parametric Statistics 王星\\Week3\\skin.csv', header = TRUE)
+
+# 绘制各组的经验生存函数
+plot(sort(skin_data$无药), log(1 - rank(sort(skin_data$无药)) / nrow(skin_data)), type = 'l', lty = 1, lwd = 2, col = 'green', xlab = "days", ylab = "ln(S_n(t))")
+lines(sort(skin_data$安慰剂), log(1 - rank(sort(skin_data$安慰剂)) / nrow(skin_data)), type = 'l', lty = 2, lwd = 2, col = 'gold')
+#这里在plot的y变量上用表达式实现了对数经验生存函数分布的计算，log取对数，nrow是行数即样本容量n，rank（sort（data））的思想和前面画经验分布函数一致
+
+lines(sort(skin_data$Papaverine), log(1 - rank(sort(skin_data$Papaverine)) / nrow(skin_data)), type = 'l', lty = 3, lwd = 2, col = 'grey')
+#type控制线条类型，lty控制线条虚实类型，1为实线，2及以上是不同形式的虚线，lwd是line_width线宽，col是color线条颜色
+lines(sort(skin_data$Aminophylline), log(1 - rank(sort(skin_data$Aminophylline)) / nrow(skin_data)), type = 'l', lty = 4, lwd = 2, col = 'pink')
+lines(sort(skin_data$Morphine), log(1 - rank(sort(skin_data$Morphine)) / nrow(skin_data)), type = 'l', lty = 5, lwd = 2, col = 'yellow')
+lines(sort(skin_data$Pentobarbital), log(1 - rank(sort(skin_data$Pentobarbital)) / nrow(skin_data)), type = 'l', lty = 6, lwd = 2, col = 'lightblue')
+lines(sort(skin_data$Tripelennamine), log(1 - rank(sort(skin_data$Tripelennamine)) / nrow(skin_data)), type = 'l', lty = 7, lwd = 2, col = 'black')
+legend("topright", lty = 1:7, lwd = rep(2, 7), legend = c("None", "安眠药", "Papaverine", "Aminophylline", "Morphine", "Pentobarbital", "Tripelennamine"), col = c('green', 'gold', 'grey', 'pink', 'yellow', 'lightblue', 'black'))
+#legend是加图例的方法，topright指定位置为右上，legend是各个图例的名称，注意这里legend参数、lty、lwd、col之间按照顺序形成一一对应，他们的第一个分量共同组成一个小图例，比如这的代码里面第一个图例为 None（文字），宽度为2的绿色实线。
+```
+
+# 思考题
+## 一、分布函数
+
+思考什么变量的分布函数满足经验分布
+$$
+\hat F_n(x) = \frac{1}{n}\sum_{i=1}^n I(x_i \leqslant x)
+$$
+设离散型随机变量y, $y \in\{x_1,x_2,...x_n\}$ 且 $P\{y=x_i\}=\frac{1}{n},i=1,2,...,n$
+其有分布函数
+$$
+F(x)=\left\{ 
+\begin{array}{1}
+\begin{aligned}
+1 &,& x\geqslant x_{(n)} \\ 
+\frac{i}{n} &,& x_{(i)} \leqslant x < x_{(i+1)}\\
+0 &,& x < x_{(1)}
+\end{aligned}
+\end{array}
+\right.
+$$
+与$\hat F_n(x)$的一致。
+
+
+## 二、Neyman-Pearson
+
+讨论引理中$f=f_0$的情况
+
+根据定义，两个拒绝域$W_\alpha, W'\in X$一个尺度为$\alpha$，另一个水平为$\alpha$，即满足$P\{x\in W_\alpha\}=\alpha, P\{x\in W'\}\leqslant\alpha,$
+
+事实上，$\int_{W_\alpha} f_0(x)dx=P\{x\in W_\alpha | \theta \in \theta_0\}=\alpha$
+
+并且，$\int_{W'} f_0(x)dx=P\{x\in W' | \theta \in \theta_0\}\leqslant \alpha$ 
+
+自然得到了 $\int_{W_\alpha} f_0(x)dx \geqslant \int_{W'} f_0(x)dx$
+
+
+
+
+
+
+
