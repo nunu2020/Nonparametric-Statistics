@@ -1,0 +1,919 @@
+---
+title: "***-第一周作业"
+author: "***"
+date: "2020年9月11日"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 2
+    toc_float: true
+    number_sections: false
+    theme: lumen
+editor_options: 
+  chunk_output_type: console
+---
+<style type="text/css">
+body{
+    margin: 0 auto;
+    font-family: "Microsoft YaHei", arial,sans-serif;
+    color: #444444;
+    line-height: 1;
+    padding: 30px;
+}
+@media screen and (min-width: 768px) {
+    body {
+        width: 748px;
+        margin: 10px auto;
+    }
+}
+h1, h2, h3, h4 {
+    color: #111111;
+    font-weight: 400;
+    margin-top: 1em;
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: Georgia, Palatino, serif;
+}
+h1, h2, h3, h4, h5, p , dl{
+    margin-bottom: 16px;
+    padding: 0;
+}
+h1 {
+    font-size: 48px;
+    line-height: 54px;
+}
+h2 {
+    font-size: 36px;
+    line-height: 42px;
+}
+h1, h2 {
+    border-bottom: 1px solid #EFEAEA;
+    padding-bottom: 10px;
+}
+h3 {
+    font-size: 24px;
+    line-height: 30px;
+}
+h4 {
+    font-size: 21px;
+    line-height: 26px;
+}
+h5 {
+    font-size: 18px;
+    list-style: 23px;
+}
+a {
+    color: #0099ff;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+}
+a:hover {
+    text-decoration: none;
+    color: #ff6600;
+}
+a:visited {
+    /*color: purple;*/
+}
+ul, ol {
+    padding: 0;
+    padding-left: 24px;
+    margin: 0;
+}
+li {
+    line-height: 24px;
+}
+p, ul, ol {
+    font-size: 16px;
+    line-height: 24px;
+}
+
+ol ol, ul ol {
+    list-style-type: lower-roman;
+}
+
+/*pre {
+    padding: 0px 24px;
+    max-width: 800px;
+    white-space: pre-wrap;
+}
+code {
+    font-family: Consolas, Monaco, Andale Mono, monospace;
+    line-height: 1.5;
+    font-size: 13px;
+}*/
+
+code, pre {
+    border-radius: 3px;
+    background-color:#f7f7f7;
+    color: inherit;
+}
+
+code {
+    font-family: Consolas, Monaco, Andale Mono, monospace;
+    margin: 0 2px;
+}
+
+pre {
+    line-height: 1.7em;
+    overflow: auto;
+    padding: 6px 10px;
+    border-left: 4px solid #6CE26C;
+}
+
+pre > code {
+    border: 0;
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    font-size: .85em;
+    white-space: pre;
+    background: 0 0;
+
+}
+
+code {
+    color: #666555;
+}
+
+
+/** markdown preview plus 对于代码块的处理有些问题, 所以使用统一的颜色 */
+/*code .keyword {
+  color: #8959a8;
+}
+
+code .number {
+  color: #f5871f;
+}
+
+code .comment {
+  color: #998
+}*/
+
+aside {
+    display: block;
+    float: right;
+    width: 390px;
+}
+blockquote {
+    border-left:.5em solid #eee;
+    padding: 0 0 0 2em;
+    margin-left:0;
+}
+blockquote  cite {
+    font-size:14px;
+    line-height:20px;
+    color:#bfbfbf;
+}
+blockquote cite:before {
+    content: '\2014 \00A0';
+}
+
+blockquote p {
+    color: #666;
+}
+
+pre, code, tt {
+
+  font-size: 16px;
+
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+
+}
+
+ 
+
+code, tt {
+
+  margin: 0 0px;
+
+  padding: 0px 0px;
+
+  white-space: nowrap;
+
+  border: 1px solid #eaeaea;
+
+  background-color: #f8f8f8;
+
+  border-radius: 3px;
+
+}
+
+ 
+
+pre>code {
+
+  margin: 0;
+
+  padding: 0;
+
+  white-space: pre;
+
+  color: #338000;
+
+  border: none;
+
+  background: transparent;
+
+ 
+
+}
+
+ 
+
+pre {
+
+  background-color: #f8f8f8;
+
+  border: 1px solid #ccc;
+
+  font-size: 16px;
+
+  line-height: 19px;
+
+  overflow: auto;
+
+  padding: 6px 10px;
+
+  border-radius: 3px;
+
+}
+
+ 
+
+pre code, pre tt {
+
+  background-color: transparent;
+
+  border: none;
+
+}
+
+/* QUOTES
+
+=============================================================================*/
+
+ 
+
+blockquote {
+
+  border-left: 4px solid #DDD;
+
+  padding: 0 15px;
+
+  color: #777;
+
+}
+
+ 
+
+blockquote>:first-child {
+
+  margin-top: 0px;
+
+}
+
+ 
+
+blockquote>:last-child {
+
+  margin-bottom: 0px;
+
+}
+
+ 
+
+/* HORIZONTAL RULES
+
+=============================================================================*/
+
+ 
+
+hr {
+
+  clear: both;
+
+  margin: 15px 0;
+
+  height: 0px;
+
+  overflow: hidden;
+
+  border: none;
+
+  background: transparent;
+
+  border-bottom: 4px solid #ddd;
+
+  padding: 0;
+
+}
+
+ 
+
+
+hr {
+    text-align: left;
+    color: #999;
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+}
+
+dl {
+    padding: 0;
+}
+
+dl dt {
+    padding: 10px 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold;
+}
+
+dl dd {
+    padding: 0 16px;
+    margin-bottom: 16px;
+}
+
+dd {
+    margin-left: 0;
+}
+
+/* Code below this line is copyright Twitter Inc. */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%;
+    margin: 0;
+    vertical-align: baseline;
+    *vertical-align: middle;
+}
+button, input {
+    line-height: normal;
+    *overflow: visible;
+}
+button::-moz-focus-inner, input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+    cursor: pointer;
+    -webkit-appearance: button;
+}
+input[type=checkbox], input[type=radio] {
+    cursor: pointer;
+}
+/* override default chrome & firefox settings */
+input:not([type="image"]), textarea {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+input[type="search"] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+label,
+input,
+select,
+textarea {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: normal;
+    margin-bottom: 18px;
+}
+input[type=checkbox], input[type=radio] {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+input[type=text],
+input[type=password],
+textarea,
+select {
+    display: inline-block;
+    width: 210px;
+    padding: 4px;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 18px;
+    height: 18px;
+    color: #808080;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+select, input[type=file] {
+    height: 27px;
+    line-height: 27px;
+}
+textarea {
+    height: auto;
+}
+/* grey out placeholders */
+:-moz-placeholder {
+    color: #bfbfbf;
+}
+::-webkit-input-placeholder {
+    color: #bfbfbf;
+}
+input[type=text],
+input[type=password],
+select,
+textarea {
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+input[type=text]:focus, input[type=password]:focus, textarea:focus {
+    outline: none;
+    border-color: rgba(82, 168, 236, 0.8);
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+    -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+/* buttons */
+button {
+    display: inline-block;
+    padding: 4px 14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    background-color: #0064cd;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));
+    background-image: -moz-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -ms-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));
+    background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+    background-image: linear-gradient(top, #049cdb, #0064cd);
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    border: 1px solid #004b9a;
+    border-bottom-color: #003f81;
+    -webkit-transition: 0.1s linear all;
+    -moz-transition: 0.1s linear all;
+    transition: 0.1s linear all;
+    border-color: #0064cd #0064cd #003f81;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+button:hover {
+    color: #fff;
+    background-position: 0 -15px;
+    text-decoration: none;
+}
+button:active {
+    -webkit-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+table {
+    *border-collapse: collapse; /* IE7 and lower */
+    border-spacing: 0;
+    width: 100%;
+}
+table {
+    border: solid #ccc 1px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    /*-webkit-box-shadow: 0 1px 1px #ccc;
+    -moz-box-shadow: 0 1px 1px #ccc;
+    box-shadow: 0 1px 1px #ccc;   */
+}
+table tr:hover {
+    background: #fbf8e9;
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
+}
+table td, .table th {
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+table th {
+    background-color: #dce9f9;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:    -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:     -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:      -o-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:         linear-gradient(top, #ebf3fc, #dce9f9);
+    /*-webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+    -moz-box-shadow:0 1px 0 rgba(255,255,255,.8) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;*/
+    border-top: none;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+    padding: 3px;
+}
+
+table td:first-child, table th:first-child {
+    border-left: none;
+}
+
+table th:first-child {
+    -moz-border-radius: 2px 0 0 0;
+    -webkit-border-radius: 2px 0 0 0;
+    border-radius: 2px 0 0 0;
+}
+table th:last-child {
+    -moz-border-radius: 0 2px 0 0;
+    -webkit-border-radius: 0 2px 0 0;
+    border-radius: 0 2px 0 0;
+}
+table th:only-child{
+    -moz-border-radius: 2px 2px 0 0;
+    -webkit-border-radius: 2px 2px 0 0;
+    border-radius: 2px 2px 0 0;
+}
+table tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 2px;
+    -webkit-border-radius: 0 0 0 2px;
+    border-radius: 0 0 0 2px;
+}
+table tr:last-child td:last-child {
+    -moz-border-radius: 0 0 2px 0;
+    -webkit-border-radius: 0 0 2px 0;
+    border-radius: 0 0 2px 0;
+}
+
+#TOC {
+  left: 60px;
+  margin: 20px 0px 10px 0px;
+}
+
+.main-container {
+  max-width: 1800px;
+  margin-left: -220px;
+  margin-right: -205px;
+}
+
+options(width = 600px)
+
+</style>
+
+
+##A.3
+```{r message=FALSE, warning = FALSE}
+library(MASS)
+attach(geyser)
+Tless <- geyser[waiting<70, ]#输出waiting<70的行，列上不做筛选
+#data[condition,]逗号前是行索引，逗号后是列索引，索引方式除了用数字下标和1:n这种还可以用条件选择
+print('(1)等待时间70min以下的数据:')
+#以表格形式输出
+knitr::kable(Tless, format = "html")
+
+TlessWnequal <- geyser[waiting<70 & waiting != 57, ]#用条件选择行
+print("(2)等待时间70min以下且不等于57min的数据")
+#以表格形式输出
+knitr::kable(TlessWnequal, format = "html")
+
+Tldur <- Tless$duration#除了用[]的下标索引还可以使用$符号进行列索引，锁定一整列
+print ('(3)等待时间70min以下的喷泉的喷涌时间:')
+Tldur
+
+Tmore <- geyser[duration>70, ]
+Tmwai <- Tmore$waiting
+print('(4)喷涌时间大于70min喷泉的等待时间:')
+Tmwai
+
+```
+
+##A.4
+所有可能结果的分布是正态分布,均值的极大似然估计是0 (标准误差为0.37), 标准差的极大似然估计是4.08 (标准误差为0.26).
+```{r message=FALSE, warning = FALSE}
+#首先用函数表示题目给出公式的p，q；然后利用gtools自带的permutations函数排列出所有情况，逐一求解各种排列的p-q结果，计算结果的分布情况（用频数）并与正态分布进行比较——这里用了fitdistplus包中的descdist()函数来判断分布（关于这个东东我也是刚刚学习到怕自己说不清楚大家可以在这个网站查看https://www.cnblogs.com/ywliao/p/6297162.html），然后也画了直方图和密度曲线的对比来直观反映分布是否近似正态。
+#对c(1:5)的一种可能排列v,求出p(下标n)
+pfun <- function(v, n){
+  res <- 0
+  for(k in n:4){
+    h <- k + 1
+    if(v[k] < v[h]){
+      res <- res + 1
+    }
+  }
+  return(res)
+}
+
+#对c(1:5)的一种可能排列v,求出q(下标n)
+qfun <- function(v, n){
+  res <- 0
+  for(k in n:4){
+    h <- k + 1
+    if(v[k] > v[h]){
+      res <- res + 1
+    }
+  }
+  return(res)
+}
+
+x <- c(1:5)
+library(gtools)
+#allpermn为120*5矩阵，每一行是一种c(1:5)的一种可能排列，一共有120种可能排列
+allpermn <- permutations(5, 5, 1:5)
+
+#初始化p矩阵和q矩阵
+#p,q均为120*4矩阵
+#p[i,j]是第i中排列的p(下标j)值,q[i,j]是第i种排列的q(下标j)值
+p <- matrix(0, nrow = 120, ncol = 4)
+q <- matrix(0, nrow = 120, ncol = 4)
+i <- 1
+j <- 1
+for(i in 1:120){
+  for(j in 1:4){
+#调用函数pfun和qfun求出p和q矩阵
+    p[i,j] <- pfun(allpermn[i, ], j)
+    q[i,j] <- qfun(allpermn[i, ], j)
+  }
+  j <- 1
+}
+
+#result1为120*4矩阵,result1[i,j]是第i种排列的p(下标j)-q(下标j)的值
+result1 <- p-q
+#result2为120*1矩阵,result2[i]是第i种排列的sum(pj-qj)的值
+#result2即为由x构成的所有可能排列的计算结果
+result2 <- apply(result1, 1, sum)
+
+#下面判断其分布
+#使用fitdistplus包中的descdist()函数,初步判断result2的分布
+library(fitdistrplus)
+#结果显示,数据更接近正态分布(在图中由星号表示)
+descdist(result2)
+#画出结果的直方图和密度曲线
+hist(result2, freq = FALSE)
+lines(density(result2))
+#使用fitdist()函数,判断结果对正态分布的服从程度
+normal_dist <- fitdist(result2, "norm")
+plot(normal_dist)
+#得到结论
+print('所有可能结果接近正态分布, 均值和标准差的极大似然估计为:')
+normal_dist
+```
+
+##A.5
+
+该方程在(-10,10)之间的根是x=2
+
+```{r  message=FALSE, warning = FALSE}
+#二分法 经典算法 数学依据就是零点存在性定理 区间a,b满足f(a)*f(b)<0，然后看f((a+b)/2)*f(a)与f((a+b)/2)*f(b)的符号 如果某个是负号的时候我们就把这个区间当作原始的[a,b]然后重复这个过程，直到寻找到某个点满足函数值与0的差的绝对值在一个我们事先给定的精度范围内时，认为这个点是零点
+#使用二分法求f在(a,b)之间的零点,eps为精度
+bisection <- function(f, a, b, eps=1e-10){
+  if(f(a)*f(b) > 0)
+    list(fail = "cannot find root")
+  else{
+    repeat{
+#区间长度足够小时,认为a=b=函数f的零点
+      if(abs(b - a) < eps) 
+        break;
+#否则取(a,b)的中点x,将新区间取为(a,x)或(x,b),重复上述判断过程直至区间长度足够小
+      x <- (a + b) / 2
+      if(f(a)*f(x) < 0) 
+        b <- x 
+      else 
+        a <- x
+    }
+    list(root = (a + b) / 2)
+  }
+}
+#f为待求方程的等号左边的函数
+f <- function(x) 2 * x ^ 3 - 4 * x ^ 2 + 3 * x - 6
+#求得方程的根
+print("2*x^3-4*x^2+3*x-6 = 0在(-10,10)之间的根为:")
+bisection(f, -10, 10)
+```
+
+##A.9
+
+最后留在圈子中的人原来的位置是2。
+
+```{r  message=FALSE, warning = FALSE}
+#1先考虑边界条件最后剩两个人的时候，第一个报数的人会变成第三个，所以留下第二个人即可，然后我们来寻找如何留下两个人。
+#2在循环里面反复删去前3个人中的第三个人（1的边界条件允许我们在循环中的向量里始终存储着三个及以上的人的序号）
+#3我们用一个序列向量来存储序号，用tail(people,-3)来留下people向量的除了前三人的尾部分量，然后把people向量的前两人补到向量的末尾——我们把报数过程想象成13人队伍排成圈，反复删去报第三人的，那么这时候队伍最开始报1、2的人实际上在报完之后就按照原顺序排在了队尾。
+#将13个人编号
+people <- 1:13
+#只要圈里的人超过2个,就进行循环
+while(length(people) > 2){
+#去掉退出圈子的人,即报到3的人
+  people <- c(tail(people, -3), people[1:2])
+}
+#循环结束时圈子里有2人,此时报号为2的人留下
+print(people[2])
+```
+
+##A.10
+```{r  message=FALSE, warning = FALSE}
+#读入数据,并将每一列都作为numeric类别
+score <- read.table(file = "D:/student.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE, encoding = "UTF-8", colClasses = c("character", "numeric", "numeric", "numeric", "numeric", "numeric"))
+#colClasses指定读取进来时候的列类型，encoding指定编码类型防止读进来中文显示是乱码，stringsAsFactors=FALSE保证了读取进来是字符串型而非因子型
+subjects <- c("math", "physics", "chem", "literat", "english")
+score1 <- score[, 2:6]#用[]索引列，行不加条件即为全选
+#对每一行求均值，得到每个学生的平均成绩
+meanscore <- apply(score1, 1, mean)
+#将平均成绩作为最后一列加入数据集中
+avescore <- cbind(score, meanscore)#两个向量按列绑定为一个整体
+print ('(2)加入平均成绩以后的学生成绩:')
+#以表格形式输出
+knitr::kable(avescore, format = "html")
+
+#通过which.max()函数得到平均分最高的学生的index
+bestscore <- avescore[which.max(meanscore), ]
+print ('(3)平均分的最高分对应的学生和他所修课程的成绩:')
+knitr::kable(bestscore, format = "html")
+
+#求出所有学生的不及格科目的数量
+failnum <- rep(0,30)
+for(i in 1:30){
+  for(j in 1:5){
+    if(score1[i, j] < 60){
+      failnum[i] <- failnum[i] + 1
+    }
+  }
+}
+#初始化有至少两门课程不及格的学生的向量
+failstu <- c()
+#如果有学生有至少两门不及格,则加入向量failstu中
+for(i in 1:30){
+  if(failnum[i] >= 2){
+    failstu <- append(failstu, i)
+  }
+}
+failscore <- avescore[failstu, ]
+print ('(4)至少两门课程不及格的学生的全部成绩和平均成绩:')
+knitr::kable(failscore, format = "html")
+
+#求出有至少两门课程不及格的学生的平均分
+failscore1 <- failscore[, 7]
+
+#去除有至少两门课程不及格的学生以后,求剩余学生的平均分
+succscore <- avescore[-failstu, ]
+succscore1 <- succscore[, 7]
+
+#使用t检验,来检验至少两门不及格的学生与其他学生的平均分是否有差异
+t.test(failscore1 ,succscore1)
+
+print("p<0.05,由此得到")
+print ('(5)至少两门不及格的学生与其他学生的平均分有差异')
+
+```
+
+##1.9.4
+通过估计量的方差来衡量估计量的有效性,方差更小者更有效。
+
+结论显示,对于t3分布来说,样本中位数更有效。
+```{r message=FALSE, warning = FALSE}
+#我们用估计量的方差来衡量有效性
+ave <- c()
+med <- c()
+#样本量为500,抽样500次
+for(i in 1:500){
+#自由度为3
+  sample <- rt(500, 3)
+  ave <- c(ave, mean(sample))
+  med <- c(med, median(sample))
+}
+print("样本均值的方差")
+var(ave)
+print("样本中位数的方差")
+var(med)
+if(var(ave)<var(med)){
+  print("样本均值更有效")
+}else{
+  print("样本中位数更有效")
+}
+```
+
+##1.9.8
+太阳花图 (sunflower plot) 将数据点绘制成向日葵将, 相同的数据点用向日葵中的花瓣(叶子)表示, 花瓣的多少表示数据的密集程度。
+```{r  message=FALSE, warning = FALSE}
+library(Rfit)
+attach(baseball)
+#画出太阳花图,展示高度和重量之间的关系
+sunflowerplot(height, weight)
+detach(baseball)
+```
+图中没有花瓣的点表示只有一个数据,有n个花瓣(n>=2)则表示这里有n个相同的数据。
+
+由图中可以看出,高度和重量呈现大致的正相关关系,且高度和重量的分布都较为对称。
+
+##1.9.11
+
+```{r  message=FALSE, warning = FALSE}
+#原假设
+a <- 0
+#标准差
+s <- 1
+n <- 25
+#置信区间的长度(单侧假设检验),alpha=0.05
+error <- qnorm(0.95)*s/sqrt(n)
+#置信上限
+right <- a + error
+#均值mean的真实值
+assumed <- a + 0.5
+#根据公式求出检验的power
+Zright <-(right - assumed)/(s/sqrt(n))
+p <- pnorm(Zright)
+print ('the power')
+print(1-p)
+
+```
+
+## 例1.1
+
+###1.分析泊松分布的犯第一类错误的概率随着λ的增大而减小
+$$
+$$
+$X_{1}, X_{2}, \ldots X_{n}$ 服从独立同分布的参数为 $\lambda$ 的泊松分布，
+
+则 $\sum_{i=1}^{n} X_{i}$ 服从参数为 $n \lambda$ 的泊松分布。
+
+记 $Y=\sum_{i=1}^{n} X_{i} \quad$ , 则有
+
+$P\left(\sum_{i=1}^{n} X_{i} \leq C\right)=P(Y \leq C)=\sum_{k=0}^{C} \frac{(n \lambda)^{k} e^{-n \lambda}}{k !}=\int_{n}^{+\infty} \frac{\lambda^{C+1} x^{C} e^{-\lambda x}}{\Gamma(C+1)} d x$
+
+当 $\lambda$ 增大时, $\int_{a}^{+\infty} \frac{(n \lambda)^{a} e^{-(n \lambda) z} z^{a}}{\Gamma(a+1)} d z$ 减小 , 即
+
+$P\left(\sum_{i=1}^{n} x_{i} \leq a\right)$ 减小
+
+从而泊松分布犯第 I 类错误的概率
+
+$\alpha(\lambda)=P($ 拒绝零假设|零假设为真 $)=P\left(\sum_{i=1}^{n} X_{i}<C \mid \lambda \in H_{0}\right)$
+
+随着 $\lambda$ 的增大而减小。
+
+$$
+$$
+
+###2.画出势函数变化的曲线图
+
+```{r message=FALSE, warning = FALSE}
+#样本量
+n <- 10
+
+#lambda>1时的alpha(lambda)
+func1 <- function(lambda1, c1){
+  alpha <- ppois(c1, lambda = n*lambda1)
+  return(alpha)
+}
+
+#lambda<1时的beta(lambda)
+func2 <- function(lambda2, c2){
+  beta <- ppois(c2, lambda = n*lambda2)
+  return(1-beta)
+}
+
+#以lambda=1为分界,求出C=5时的势函数
+y1 <- function(x){
+  return(ifelse(x>1,func1(x, 5),func2(x, 5)))
+}
+#以lambda=1为分界,求出C=7时的势函数
+y2 <- function(x){
+  return(ifelse(x>1,func1(x, 7),func2(x, 7)))
+}
+
+#画出C=5时的势函数曲线
+curve(expr = y1, xlim = c(0, 2), n = 10000, xlab="检验势函数随分布参数变化曲线", ylab="检验错误的概率")
+#画出C=7时的势函数曲线
+par(new=T)
+curve(expr = y2, xlim = c(0, 2), n = 10000, lty=2, yaxt="n", xaxt="n", xlab="", ylab="")
+lines(c(1,1),c(0,1))
+```
