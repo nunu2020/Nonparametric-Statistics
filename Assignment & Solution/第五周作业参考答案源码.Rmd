@@ -1,0 +1,227 @@
+---
+title: "***第五周作业"
+author: "***"
+date: "10/15/2020"
+output: 
+  rmdformats::readthedown:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    toc_depth: 4
+    gallery: false
+    highlight: tango
+    df_print: kable
+    
+---
+
+<style>
+#main .nav-pills > li.active > a,
+#main .nav-pills > li.active > a:hover,
+#main .nav-pills > li.active > a:focus {
+    background-color: #4a47a3;
+}
+#main .nav-pills > li > a:hover {
+color: #FFFFFF !important;
+background-color: #4a47a3;
+}
+#main .nav-pills > li.active > a,
+#main .nav-pills > li.active > a:hover,
+#main .nav-pills > li.active > a:focus {
+color: #FFFFFF !important;
+background-color: #4a47a3;
+}
+
+#main .nav-pills > li > a:hover {
+    background-color: #4a47a3;
+}
+
+h1, h2, h3, h4, h5, h6, legend {
+    color: #4a47a3;
+}
+
+#nav-top span.glyphicon {
+    color: #4a47a3;
+}
+
+#table-of-contents header {
+    color: #4a47a3;
+}
+
+#table-of-contents h2 {
+    background-color: #4a47a3;
+}
+
+#main a {
+    background-image: linear-gradient(180deg,#d64a70,#d64a70);
+    color: #c7254e;
+}
+
+a:hover {
+    color: #3d1308;
+}
+
+a:visited {
+    color: #3d1308;
+}
+#postamble .date {
+font-size: 100%;
+margin-bottom: 0px;
+color: #dcd6f7;
+}
+#sidebar h2{
+z-index:200;
+background-color:#4a47a3;
+text-align:center;
+padding:0.809em;
+display:block;
+color:#fcfcfc;
+font-size: 100%;
+margin-top: 0px;
+margin-bottom:0.809em;
+}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  "HTML-CSS": { linebreaks: { automatic: true } },
+         SVG: { linebreaks: { automatic: true } }
+});
+</script>
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1、对数据AQI设置分位数假设检验，给出空气质量指数的级别认定。
+
+观察数据，数据大部分分布在51~100内，即空气质量为“良“的区间，但也有一些数值分布在101～150内，即空气质量为“轻度污染“的区间。因此我们更关心的是空气质量指数接近“轻度污染“的程度，因此对AQI的75%分位数进行检验，取置信系数$1-\alpha=0.95$构造如下检验问题：
+$$H_0: M_{0.75}\geq 100\quad v.s.\quad H_1:  M_{0.75}< 100$$
+其中$S^-=30$，$S^+=4$，$p$值$p=P_{binom}(k\leq S^+, p_0=0.25)=0.409<\alpha$，因此拒绝原假设，认为空气质量指数更符合“轻度污染“。
+
+```{r}
+AQI=read.csv('AQI.csv')#读取数据
+
+p=pbinom(sum(AQI>=101),length(AQI$AQI),0.25)#分位数检验p值
+p
+```
+
+## 2、给出一组饮料连续120天的价格数据，请按新教材中的S1和S3进行趋势存在性检验，给出检验结果，同时和lm线性趋势检验的结果进行比较。
+
+
+```{r}
+data=read.csv('t2.txt')#读取数据
+data=data$data
+N=length(data)
+plot(1:N,data,type='l',xlab='day',ylab='price')#从图像难以看到明显的趋势
+```
+
+### (1) Cox-Stuart S1统计量检验
+$$H_0: 数据无趋势\quad v.s.\quad H_1: 数据有增长或减少趋势$$
+构造$S_1$统计量与检验统计量$S^*$:
+$$S_1=\sum_{i=1}^{\lfloor N/2 \rfloor}(N-2i+1)h_{i,N-i+1}$$
+$$S_1^*=\frac{S_1-N^2/8}{\sqrt{N(N^2-1)/24}}=-1.935641$$
+最终得到$p$值$P(S_1^*<-1.935641)=0.02639947<\alpha=0.05$，因此拒绝原假设，认为数据具有增长趋势。
+
+```{r}
+k=floor(N/2)#数对个数
+
+#构造数对
+pair1=seq(1,k)
+pair2=seq(N,N-k+1,-1)
+S1=sum((pair2-pair1)*((data[pair1]-data[pair2])>0))
+
+#构造近似正态统计量
+S1_star=(S1-N^2/8)/(sqrt(N*(N^2-1)/24))
+
+#p-value
+pnorm(S1_star)
+```
+
+
+### (2) Cox-Stuart S3统计量检验
+$$H_0: 数据无趋势\quad v.s.\quad H_1: 数据有增长或减少趋势$$
+
+$$k=\lfloor\frac{N}{3}\rfloor$$
+$$S_3=\sum_{i=1}^{k}h_{i,i+2k}$$
+在大样本下，构造近似正态统计量，$Z=\frac{S_3-\frac{k}{2}}{\sqrt{k/4}}=-2.529822$，得到$p$值$p=2P(Z<-2.529822)=0.01141204<\alpha$，因此拒绝原假设，认为数据具有增长趋势。
+
+```{r}
+N=length(data)
+k=floor(N/3)#数对个数
+
+#构造数对
+pair1=seq(1,k)
+S3=sum((data[pair1]-data[pair1+2*k])>0)
+
+#转换为符号检验
+#为大样本，因此构建正态统计量
+S3_star=(S3-k/2)/(sqrt(k/4))
+
+#p-value
+2*pnorm(S3_star)
+```
+
+### (3) lm线性趋势检验
+确立假设：
+$H_0: 数据无趋势(\beta_1=0)\quad v.s.\quad H_1: 数据有减少趋势(\beta_1<0)$。其中检验统计量：$$t=\frac{\hat\beta_1}{\sqrt{\hat\sigma^2/\sum(x_i-\bar x)^2}}\sim t(n-2)$$
+
+最后计算得到$p$值$p=0.0573979>\alpha$，因此在lm线性趋势检验下，不能认为数据具有趋势。
+```{r}
+#方法一：手动构建t检验统计量做检验
+x=seq(1,N)#线性回归的自变量，即连续121天的编号
+
+#将data与x进行线性回归，获得回归系数
+fit=lm((data~(x)))
+
+#构造t检验统计量
+t=fit$coefficients[2]/sqrt(sum(fit$residuals^2)
+    /((N-2)*sum((x-mean(x))^2)))
+
+#计算t检验统计量的分位数，注意是双边检验，需要乘以2
+2*(1-pt(t,N-2))
+```
+
+
+也可以使用R语言的*方差分析函数*（ANOVA，analysis of variance）直接得到$p$值（同样是双侧检验），$p$值与前述结果相同。
+```{r}
+#方法二：直接使用avona函数
+anova(lm(data~(x)))$`Pr(>F)`#anova函数直接求得双侧p值
+```
+
+### （4）检验结果对比
+在95%置信水平下：
+
+|            | Cox-Stuart S1 |  Cox-Stuart S3  | lm线性趋势检验 |
+| ---------- | ------------  | ----------      | --- |
+| $p$值      |  0.02639947|    0.01141204    | 0.05739786 |
+| 结论       |  增长趋势 |   增长趋势   | 无趋势 |
+
+## 3、新教材P54，例2.5，南美洲失业率回归结果和书上的S1结果比较
+
+
+```{r}
+UNE.rate<-c(8.5,7.1,8.2,11.5,7.0,8.2,9.5,7.8,9.2,10.2,9.0,9.4,9.2,8.9,
+            10.5,8.9,7.3,8.8,8.4,6.9,8.0,7.8,6.3,7.5,8.7,7.0,8.4,9.4,
+            8.2,8.6,8.0,7.6,11.1,7.3,5.5,7.0)
+N=length(UNE.rate)
+x=1:N
+
+#将UNE.rate与x进行线性回归
+fit=lm((UNE.rate~(x)))
+fit
+```
+建模得到截距项$\hat\beta_0=9.02238$，斜率$\hat\beta_1=-0.03589$，故数据的回归模型：$$\hat y=9.02238-0.03589x$$
+由于$\hat\beta_1<0$，因此确立假设：
+$$H_0: 数据无趋势(\beta_1=0)\quad v.s.\quad H_1: 数据有减少趋势(\beta_1<0)$$
+检验统计量：$$t=\frac{\hat\beta_1}{\sqrt{\hat\sigma^2/\sum(x_i-\bar x)^2}}\sim t(n-2)$$
+得到$p$值$p=0.04074966$，因此在95%的置信水平下拒绝原假设，认为数据具有减少趋势。对比教材p54页S1结果$p=0.01556232$，两种检验都得出了数据具有减小趋势的结果，但S1检验的结果更加显著。
+```{r}
+#t检验统计量，自由度N-2
+t=fit$coefficients[2]/sqrt(sum(fit$residuals^2)
+    /((N-2)*sum((x-mean(x))^2)))
+
+#p-value（单侧）
+pt(t,N-2)
+```
+
