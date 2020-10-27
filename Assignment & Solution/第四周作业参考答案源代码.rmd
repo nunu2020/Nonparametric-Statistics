@@ -1,0 +1,836 @@
+---
+title: "第四周作业参考答案源代码"
+author: ""
+date: "2020年10月27日"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 2 
+    toc_float: true
+    number_sections: false
+    theme: lumen
+
+---
+<style type="text/css">
+body{
+    margin: 0 auto;
+    font-family: "Microsoft YaHei", arial,sans-serif;
+    color: #444444;
+    line-height: 1;
+    padding: 30px;
+}
+@media screen and (min-width: 768px) {
+    body {
+        width: 748px;
+        margin: 10px auto;
+    }
+}
+h1, h2, h3, h4 {
+    color: #111111;
+    font-weight: 400;
+    margin-top: 1em;
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: Georgia, Palatino, serif;
+}
+h1, h2, h3, h4, h5, p , dl{
+    margin-bottom: 16px;
+    padding: 0;
+}
+h1 {
+    font-size: 48px;
+    line-height: 54px;
+}
+h2 {
+    font-size: 36px;
+    line-height: 42px;
+}
+h1, h2 {
+    border-bottom: 1px solid #EFEAEA;
+    padding-bottom: 10px;
+}
+h3 {
+    font-size: 24px;
+    line-height: 30px;
+}
+h4 {
+    font-size: 21px;
+    line-height: 26px;
+}
+h5 {
+    font-size: 18px;
+    list-style: 23px;
+}
+a {
+    color: #0099ff;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+}
+a:hover {
+    text-decoration: none;
+    color: #ff6600;
+}
+a:visited {
+    /*color: purple;*/
+}
+ul, ol {
+    padding: 0;
+    padding-left: 24px;
+    margin: 0;
+}
+li {
+    line-height: 24px;
+}
+p, ul, ol {
+    font-size: 16px;
+    line-height: 24px;
+}
+
+ol ol, ul ol {
+    list-style-type: lower-roman;
+}
+
+/*pre {
+    padding: 0px 24px;
+    max-width: 800px;
+    white-space: pre-wrap;
+}
+code {
+    font-family: Consolas, Monaco, Andale Mono, monospace;
+    line-height: 1.5;
+    font-size: 13px;
+}*/
+
+code, pre {
+    border-radius: 3px;
+    background-color:#f7f7f7;
+    color: inherit;
+}
+
+code {
+    font-family: Consolas, Monaco, Andale Mono, monospace;
+    margin: 0 2px;
+}
+
+pre {
+    line-height: 1.7em;
+    overflow: auto;
+    padding: 6px 10px;
+    border-left: 4px solid #6CE26C;
+}
+
+pre > code {
+    border: 0;
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    font-size: .85em;
+    white-space: pre;
+    background: 0 0;
+
+}
+
+code {
+    color: #666555;
+}
+
+
+/** markdown preview plus 对于代码块的处理有些问题, 所以使用统一的颜色 */
+/*code .keyword {
+  color: #8959a8;
+}
+
+code .number {
+  color: #f5871f;
+}
+
+code .comment {
+  color: #998
+}*/
+
+aside {
+    display: block;
+    float: right;
+    width: 390px;
+}
+blockquote {
+    border-left:.5em solid #eee;
+    padding: 0 0 0 2em;
+    margin-left:0;
+}
+blockquote  cite {
+    font-size:14px;
+    line-height:20px;
+    color:#bfbfbf;
+}
+blockquote cite:before {
+    content: '\2014 \00A0';
+}
+
+blockquote p {
+    color: #666;
+}
+
+pre, code, tt {
+
+  font-size: 16px;
+
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+
+}
+
+ 
+
+code, tt {
+
+  margin: 0 0px;
+
+  padding: 0px 0px;
+
+  white-space: nowrap;
+
+  border: 1px solid #eaeaea;
+
+  background-color: #f8f8f8;
+
+  border-radius: 3px;
+
+}
+
+ 
+
+pre>code {
+
+  margin: 0;
+
+  padding: 0;
+
+  white-space: pre;
+
+  color: #338000;
+
+  border: none;
+
+  background: transparent;
+
+ 
+
+}
+
+ 
+
+pre {
+
+  background-color: #f8f8f8;
+
+  border: 1px solid #ccc;
+
+  font-size: 16px;
+
+  line-height: 19px;
+
+  overflow: auto;
+
+  padding: 6px 10px;
+
+  border-radius: 3px;
+
+}
+
+ 
+
+pre code, pre tt {
+
+  background-color: transparent;
+
+  border: none;
+
+}
+
+/* QUOTES
+
+=============================================================================*/
+
+ 
+
+blockquote {
+
+  border-left: 4px solid #DDD;
+
+  padding: 0 15px;
+
+  color: #777;
+
+}
+
+ 
+
+blockquote>:first-child {
+
+  margin-top: 0px;
+
+}
+
+ 
+
+blockquote>:last-child {
+
+  margin-bottom: 0px;
+
+}
+
+ 
+
+/* HORIZONTAL RULES
+
+=============================================================================*/
+
+ 
+
+hr {
+
+  clear: both;
+
+  margin: 15px 0;
+
+  height: 0px;
+
+  overflow: hidden;
+
+  border: none;
+
+  background: transparent;
+
+  border-bottom: 4px solid #ddd;
+
+  padding: 0;
+
+}
+
+ 
+
+
+hr {
+    text-align: left;
+    color: #999;
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+}
+
+dl {
+    padding: 0;
+}
+
+dl dt {
+    padding: 10px 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold;
+}
+
+dl dd {
+    padding: 0 16px;
+    margin-bottom: 16px;
+}
+
+dd {
+    margin-left: 0;
+}
+
+/* Code below this line is copyright Twitter Inc. */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%;
+    margin: 0;
+    vertical-align: baseline;
+    *vertical-align: middle;
+}
+button, input {
+    line-height: normal;
+    *overflow: visible;
+}
+button::-moz-focus-inner, input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+    cursor: pointer;
+    -webkit-appearance: button;
+}
+input[type=checkbox], input[type=radio] {
+    cursor: pointer;
+}
+/* override default chrome & firefox settings */
+input:not([type="image"]), textarea {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+input[type="search"] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+label,
+input,
+select,
+textarea {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: normal;
+    margin-bottom: 18px;
+}
+input[type=checkbox], input[type=radio] {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+input[type=text],
+input[type=password],
+textarea,
+select {
+    display: inline-block;
+    width: 210px;
+    padding: 4px;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 18px;
+    height: 18px;
+    color: #808080;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+select, input[type=file] {
+    height: 27px;
+    line-height: 27px;
+}
+textarea {
+    height: auto;
+}
+/* grey out placeholders */
+:-moz-placeholder {
+    color: #bfbfbf;
+}
+::-webkit-input-placeholder {
+    color: #bfbfbf;
+}
+input[type=text],
+input[type=password],
+select,
+textarea {
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+input[type=text]:focus, input[type=password]:focus, textarea:focus {
+    outline: none;
+    border-color: rgba(82, 168, 236, 0.8);
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+    -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+/* buttons */
+button {
+    display: inline-block;
+    padding: 4px 14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    background-color: #0064cd;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));
+    background-image: -moz-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -ms-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));
+    background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+    background-image: linear-gradient(top, #049cdb, #0064cd);
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    border: 1px solid #004b9a;
+    border-bottom-color: #003f81;
+    -webkit-transition: 0.1s linear all;
+    -moz-transition: 0.1s linear all;
+    transition: 0.1s linear all;
+    border-color: #0064cd #0064cd #003f81;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+button:hover {
+    color: #fff;
+    background-position: 0 -15px;
+    text-decoration: none;
+}
+button:active {
+    -webkit-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+table {
+    *border-collapse: collapse; /* IE7 and lower */
+    border-spacing: 0;
+    width: 100%;
+}
+table {
+    border: solid #ccc 1px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    /*-webkit-box-shadow: 0 1px 1px #ccc;
+    -moz-box-shadow: 0 1px 1px #ccc;
+    box-shadow: 0 1px 1px #ccc;   */
+}
+table tr:hover {
+    background: #fbf8e9;
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
+}
+table td, .table th {
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+table th {
+    background-color: #dce9f9;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:    -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:     -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:      -o-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:         linear-gradient(top, #ebf3fc, #dce9f9);
+    /*-webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+    -moz-box-shadow:0 1px 0 rgba(255,255,255,.8) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;*/
+    border-top: none;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+    padding: 5px;
+}
+
+table td:first-child, table th:first-child {
+    border-left: none;
+}
+
+table th:first-child {
+    -moz-border-radius: 4px 0 0 0;
+    -webkit-border-radius: 4px 0 0 0;
+    border-radius: 4px 0 0 0;
+}
+table th:last-child {
+    -moz-border-radius: 0 4px 0 0;
+    -webkit-border-radius: 0 4px 0 0;
+    border-radius: 0 4px 0 0;
+}
+table th:only-child{
+    -moz-border-radius: 4px 4px 0 0;
+    -webkit-border-radius: 4px 4px 0 0;
+    border-radius: 4px 4px 0 0;
+}
+table tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 4px;
+    -webkit-border-radius: 0 0 0 4px;
+    border-radius: 0 0 0 4px;
+}
+table tr:last-child td:last-child {
+    -moz-border-radius: 0 0 4px 0;
+    -webkit-border-radius: 0 0 4px 0;
+    border-radius: 0 0 4px 0;
+}
+
+#TOC {
+  left: 60px;
+  margin: 20px 0px 10px 0px;
+}
+
+.main-container {
+  max-width: 1800px;
+  margin-left: -220px;
+  margin-right: -205px;
+}
+
+options(width = 600px)
+
+</style>
+
+
+
+#1. 最小次序统计量的分布函数
+
+最小次序统计量 $X_{(1)}$ 的分布函数为
+
+$F_{1}(x)$
+
+$=P\left(X_{(1)} \leq x\right)=P\left(\right.$ 至少1个 $X_{i}$ 小于或等于 $\left.x\right)$
+
+$=\sum_{i=1}^{n}\left(\begin{array}{l}n \\ i\end{array}\right) F(x)^{i}[1-F(x)]^{n-i}$
+
+如果总体分布密度 $f(x)$ 存在，则最小次序统计量 $X_{(1)}$ 的分布函数为
+
+$f_{1}(x)=\frac{n !}{(n-1) !} f(x)[1-F(x)]^{n-1}$
+
+
+以下计算按照上述公式进行。
+
+```{r message=FALSE, warning = FALSE}
+#引入geyser数据集
+library(MASS)
+attach(geyser)
+
+#样本量
+n <- 20
+
+#在已知总体（geyser$duration）的前提下，geyser$duration的分布是离散的均匀分布，分布函数可以用经验分布函数来计算
+Fx <- ecdf(geyser$duration)
+
+#根据最小次序统计量的分布函数的表达式，将其分为三部分，分别计算
+#计算表达式中的常数项
+constant <- function(j){
+  return(choose(n,j))
+}
+#计算表达式中分布函数的j次方
+Fx1 <- function(x,j){
+  return(Fx(x)^j)
+}
+#计算表达式中（1-分布函数）的（n-j）次方
+Fx2 <- function(x, j){
+  return((1-Fx(x))^(n-j))
+}
+#根据最小次序统计量的分布函数的表达式，将上面三部分的乘积求和，得到其分布函数F_min
+F_min  <-  function(x) {
+  res <- 0
+  for(i in 1:n){
+    res <- res + constant(i)*Fx1(x,i)*Fx2(x,i)
+  }
+  return(res)
+}
+
+#最小次序统计量可能取到的最小值
+min_duration <- min(duration)
+min_duration
+#最小次序统计量可能取到的最大值
+max_duration <- sort(duration, decreasing = TRUE)[20]
+max_duration
+#最小次序统计量的理论分布函数在定义域[0.83,4.77]上的图像
+plot(function(x) F_min(x), from = min_duration, to = max_duration, main = "最小次序统计量的理论分布函数", xlab = "x", ylab = "F_theo(x)")
+
+#下面通过抽样求出最小次序统计量的经验分布函数
+#50个样本的最小值记录在min_s中
+#初始化
+min_s <- rep(0,50)
+#得到最小值的观测样本
+for(i in 1:50){
+#不放回地抽取20个数据
+  samp <- sample(duration, 20, replace = FALSE)
+  min_samp <- min(samp)
+  min_s[i] <- min_samp
+}
+
+#用plot()和ggplot2包画出最小次序统计量的经验分布函数
+
+#画图方式1：用plot函数
+#用ecdf()函数计算min_s的经验分布函数
+Fn_min_samp <- ecdf(min_s)
+#画出min_s的经验分布函数
+#用plot函数
+#设置与x轴平行的线为红色，与y轴平行的线为黄色，阶梯转折点为蓝色
+plot(Fn_min_samp, verticals = TRUE,do.points =TRUE,lwd=2,col.points="steelblue",cex=0.1,col.hor="red3",col.vert="bisque",main="最小次序统计量的经验分布函数", xlab = "min_sample", ylab = "F_ecdf(x)")
+
+#画图方式2：用ggplot函数
+min_df <- as.data.frame(min_s)
+library(ggplot2)
+ggplot(min_df, aes(min_s)) + stat_ecdf(geom = "step") +
+   theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_blank()) + theme_classic() +
+  labs(title="最小次序统计量的经验分布函数",
+     y = "F_ecdf(x)", x="min_sample")
+
+#将经验分布函数和理论分布函数画在同一张图上，进行比较
+plot.range1 <- data.frame(x=min_s, Functions = factor(1))
+#由于抽样时，抽到样本的最小值超过2.2的概率很小，所以为了便于比较，将理论分布函数中x的范围调整到和经验分布函数比较接近
+plot.range2 <- data.frame(x=c(0.65, 2.15), Functions = factor(2))
+
+ggplot(NULL, aes(x=x, colour=Functions)) +
+#画出经验分布函数，颜色为红色
+  stat_ecdf(data = plot.range1, geom = "step") +
+#画出理论分布函数，颜色为橙色
+  stat_function(data = plot.range2, fun = F_min) +
+  scale_colour_manual(values = c("red", "orange"), labels = c("samp", "precise")) +
+  theme(axis.title.y=element_blank(), panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_blank(), panel.background = element_blank(), legend.position = "bottom") +
+  labs(title="经验分布函数和理论分布函数对比",
+     y = "F(x)", x="min_sample")
+
+```
+上图中，红色线为经验分布函数，橙色线为理论分布函数。
+
+从图上观察得到，经验分布函数和理论分布函数较为接近。
+
+
+利用推导结果：
+![avatar](G:/非参数统计/作业/第四周/1.png)
+```{r}
+###法二
+library("MASS")
+a <- geyser$duration
+b <- vector()
+for(i in 1:50){
+  set.seed(i)
+  s <- sample(a,20,replace = F)
+  b[i] <- min(s)
+}
+b.sort <- sort(b)
+b.rank <- rank(b.sort,ties.method="first")  
+b.cdf <- b.rank/length(b)
+plot(b.sort,b.cdf,col=1,xlim = c(0.5,2),ylim = c(0,1),xlab = 'sort',ylab = 'cdf')
+N1 <- length(b)
+segments(b.sort[1:(N1-1)],b.cdf[1:(N1-1)],b.sort[2:N1],b.cdf[2:N1],col = 1)
+par(new=T)
+N2 <- length(a)
+a.sort <- sort(a)
+a.rank <- rank(a.sort,ties.method="first")  
+a.cdf <- a.rank/length(a)
+min.a.cdf <- 1-(1-a.cdf)^20
+plot(a.sort,min.a.cdf,xlim = c(0.5,2),ylim = c(0,1),xlab = '',ylab = '',col=2)
+segments(a.sort[1:(N2-1)],min.a.cdf[1:(N2-1)],a.sort[2:N2],min.a.cdf[2:N2],col=2)
+legend("topleft", inset=.01, title="曲线区分", c("经验分布函数","理论分布函数"),lty=c(1,1),col=c(1,2),cex = 0.7)
+```
+
+
+
+
+
+#2.U统计量
+
+##2.1
+
+证明：
+
+$E(\operatorname{sgn}(x))=P(x>0)-P(x<0)$
+
+$E\left(h\left(X_{1}, X_{2}, X_{3}\right)\right)=E\left(\operatorname{sgn}\left(2 X_{1}-X_{2}-X_{3}\right)\right)$
+
+$=P\left(2 X_{1}-X_{2}-X_{3}>0\right)-P\left(2 X_{1}-X_{2}-X_{3}<0\right)$
+
+$=P\left(X_{1}>\frac{X_{2}+X_{3}}{2}\right)-P\left(X_{1}<\frac{X_{2}+X_{3}}{2}\right)=\theta(F)$
+
+所以
+
+$h\left(X_{1}, X_{2}, X_{3}\right)=\operatorname{sgn}\left(2 X_{1}-X_{2}-X_{3}\right)$ 是
+
+概率 $\theta(F)=P\left(X_{1}>\frac{X_{2}+X_{3}}{2}\right)-P\left(X_{1}<\frac{X_{2}+X_{3}}{2}\right) \cdot$ 的无偏估计。
+
+##2.2
+
+证明：
+
+$F(x)$ 对称，则有 $P\left(2 X_{1}-\left(X_{2}+X_{3}\right)>0\right)=P\left(2 X_{1}-\left(X_{2}+X_{3}\right)<0\right)=\frac{1}{2}$
+
+因此 $\theta(F)=P\left(X_{1}>\frac{X_{2}+X_{3}}{2}\right)-P\left(X_{1}<\frac{X_{2}+X_{3}}{2}\right)=0$
+
+##2.3
+
+```{r  message=FALSE, warning = FALSE}
+
+#参数X为向量
+#定义h(X1,X2,X3)
+h <- function(X){
+  if(((2*X[1]) -X[2] - X[3])>0){
+    return(1)
+  }else if((2*X[1] -X[2] - X[3])<0){
+    return(-1)
+  }else{return(0)}
+}
+#对X1,X2,X3所有可能排列得到的h(X)求平均，得到对称的估计
+h_sym <- function(X){
+  library(gtools)
+#permu的每一行是X1,X2,X3的一种可能排列
+  permu <- permutations(3, 3, X)
+#对每一种X1,X2,X3的可能排列求出h(X)后再平均
+  h_permu <- apply(permu, 1, h)
+  return(sum(h_permu)/6)
+}
+#得到U统计量
+U_stat <- function(samp, num, k){
+  library(gtools)
+#combi的每一行都是从samp中任意选取三个值作为X1,X2,X3的一个可能结果
+  combi <- combinations(num, k, samp)
+  h_sym_samp <- apply(combi, 1, h_sym)
+  return(sum(h_sym_samp)/(choose(num, k)))
+}
+
+#样本量
+N <- 40
+#一共抽Num_samp组样本，每组样本的样本量都是N
+Num_samp <- 40
+#初始化U统计量
+res_U_allsamp <- rep(0, Num_samp)
+#对每一组样本求得U统计量
+for(i in 1:Num_samp){
+#从N(0,1)中选取随机数alpha
+  alpha_samp <- rnorm(N)
+  x <- exp(alpha_samp)
+#对这一组样本计算U统计量，存入res_U_allsamp中
+  res <- U_stat(x, N, 3)
+  res_U_allsamp[i] <- res
+}
+#构建数据框用于作图
+df <- as.data.frame(res_U_allsamp)
+library(ggplot2)
+ggplot(df, aes(x = res_U_allsamp)) + geom_density() +
+#增加红色虚线，标识均值所在的位置
+  geom_vline(aes(xintercept=mean(res_U_allsamp)),
+               color="red", linetype="dashed", size=1) +
+#增加蓝色虚线，标识中位数所在的位置
+  geom_vline(aes(xintercept=median(res_U_allsamp)), 
+               color="blue", linetype="dashed", size=1) +
+#设置坐标轴和背景格式
+  theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_blank()) + theme_classic() +
+  labs(title="U统计量的密度函数",
+     y = "density", x="U_statistic")
+
+
+```
+
+图上的红色线为均值所在的位置，蓝色线为中位数所在的位置。可以看出均值大于中位数。
+
+从图上可以看出，U统计量的分布是右偏的。
+
+$\theta(F)≠0$，$F(x)$不是对称的。
+
+X的分布也是右偏的。
