@@ -1,0 +1,392 @@
+---
+title: "第六周作业参考答案"
+author: " "
+date: "10/15/2020"
+output: 
+  rmdformats::readthedown:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    toc_depth: 4
+    gallery: false
+    highlight: tango
+    df_print: kable
+    
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning=FALSE,mwssage=FALSE)
+library(knitr)
+```
+
+## 1、新教材2.4 下表中的数据是两场篮球联赛中三分球的进球次数，考察两场联赛三分球得分次数是否存在显著性差异。
+```{r}
+#导入数据至dataframe
+league1<-c(91,46,108,99,110,105,191,57,34,81)
+league2<-c(81,51,63,51,46,45,66,64,90,28)
+leaguedata=data.frame(league1,league2)
+
+#查看数据头部
+head(leaguedata)
+```
+
+
+### （1）采用符号检验；
+
+确立假设问题为$H_0: 两场联赛三分球得分次数无显著性差异\quad v.s.\quad H_1: 两场联赛三分球得分次数存在显著性差异$
+
+取$\alpha=0.05$，使用符号检验，设联赛$i$中第$j$队的三分球进球数表示为$x_{ij},\quad i=1,2,\quad j=1,2...10$，那么定义联赛1进球大于联赛2的数据量$S^+=\sum\limits_{j=1}^{10}I(x_{1j}>x_{2j})=7$，联赛2进球大于联赛1的数据量$S^-=\sum\limits_{j=1}^{10}I(x_{1j}<x_{2j})=3$，有效数据量$S^++S^-=n'=10$，由此、因此假设问题可以改写为：$$H_0: S^+=S^-\quad v.s.\quad H_1: S^+\neq S^-$$
+
+小样本下进行符号检验，取$k=min\{S^+,S^-\}$，假设检验的$p$值$p=2P_{binom}(K\leq k|n',p=0.5)=0.34375>\alpha$，因此在显著性水平$\alpha$下不能认为二者具有显著差异。
+
+```{r}
+#联赛1进球大于联赛2的数据量
+S_plus=sum(leaguedata$league1>leaguedata$league2)
+
+#联赛2进球大于联赛1的数据量
+S_minus=sum(leaguedata$league1<leaguedata$league2)
+
+#有效数据量
+n=S_plus+S_minus
+
+#小样本下符号检验
+k=min(S_plus,S_minus)
+2*pbinom(k,n,0.5)
+```
+
+### （2）采用配对Wilcoxon符号秩检验；
+
+假设问题为$H_0: 两场联赛三分球得分次数无显著性差异\quad v.s.\quad H_1: 两场联赛三分球得分次数存在显著性差异$
+
+符号检验仅考虑考虑数据在对称中心哪一侧，但Wilcoxon符号秩检验不仅考虑数据在对称中心哪一侧，同时还考虑数据位于对称中心但距离。因此定义$X_i=x_{1i}-x_{2i}$，在零假设下对称中心为0。如果两场联赛三分球得分次数无显著性差异，则$X$的分布的中位数为0，否则不等于0，因此在Wilcoxon符号秩检验下假设问题可以表示为：
+$$H_0: M=0\quad v.s.\quad H_0: M\neq 0$$
+相应的统计量取值如下表所示，：
+
+```{r}
+#样本取值X
+X=leaguedata$league1-leaguedata$league2
+
+#绝对值样本的秩R_{i}^{+}
+R=rank(abs(X))
+
+#符号W_i
+W=as.numeric(X>0)
+
+#反秩D_i
+D=1:length(leaguedata$league1)
+
+#输出表格展示
+wil_table=data.frame(id=paste('$X_{',1:length(leaguedata$league1),'}$',sep=''),X,R,W,D)
+colnames(wil_table) = c('变量','$X_i$','绝对值样本的秩$R_{i}^{+}$','符号$W_i$','反秩$D_i$')
+kable(t(wil_table))
+```
+
+
+取显著性水平$\alpha=0.05$Wilcoxon符号秩统计量为$W^+=\sum_{i=1}^nR_j^+W_j=45$，$W^-=\sum_{i=1}^nR_j^+W_j=10$，其中$W^++W^-=\frac{n(n+1)}{2}=55$。令$W=min(W^+,W^-)=10$，求得$W$的双侧$p$值$p=2P(W<10,n=10)=0.08398438>\alpha=0.05$，因此不能拒绝原假设，不能认为二者具有显著差异，结论与符号检验相同。
+
+```{r}
+W_plus=sum(W*R)
+W_minus=sum((1-W)*R)
+W=min(W_plus,W_minus)
+n=length(leaguedata$league1)
+
+#W的密度函数
+dwilxonfun=function(N)
+{
+  a=c(1,1)# when n=1 frequency of W+=1 or 0
+  n=1
+  pp=NULL # distribute of all size from 2 to N
+  aa=NULL # frequency of all size from 2 to N
+  for (i in 2:N)
+  {
+    t=c(rep(0,i),a)
+    a=c(a,rep(0,i))+t
+    p=a/(2^i)     #density of wilcox distribut when size=N
+  }
+  p
+}
+
+#双侧p值
+#由于W的分布的取值是从0开始的，但数组的下标是从1开始的，因此取1:(W+!)
+p=2*sum(dwilxonfun(n)[1:(W+1)])
+p
+```
+
+
+此外，R语言提供了直接进行Wilcoxon符号秩检验的函数“wilcox.test”，支持配对样本的检验，下面展示直接调用此函数得到的检验结果，$p$值结果与手工计算相同。
+```{r}
+#two.sided表示双侧检验，paired=TRUE表示此次检验是配对样本的检验
+wilcox.test(league1,league2,alternative='two.sided',paired=TRUE)
+```
+
+### （3）在这些数据中哪个检验更好？为什么？
+
+- 符号检验结果为两者不存在显著性差异，配对Wilcoxon符号秩检验在$95\%$置信水平下也认为两者不存在显著性差异，不过在$90\%$置信水平下可以认为两者存在显著差异
+- 我们首先简单地观察一下数据的分布
+  - 注意到，得分超过100分的均为第一次联赛，可以直观的感觉到两次比赛存在差异。
+  - 而且，第二次联赛超过第一次联赛时，大部分时候都是小幅超过；第一次联赛超过第二次联赛时，大部分时候是大幅超越。
+  
+- 故而使用符号检验不能反应两者相差的幅度大小
+  - 我们可以认为，在使用在这些数据中，配对Wilcoxon检验更好
+
+```{r}
+library(ggplot2)
+basketball <- read.csv("C:/Users/Lenovo/Desktop/非参作业/2.4basketball.csv", header = T)
+p <- ggplot(aes(y = 联赛2, x = 队伍序号), data = basketball) + geom_point(aes(colour = "联赛2"))
+# 加入两次的点
+p <- p + geom_point(aes(x = 队伍序号, y = 联赛1, colour = "联赛1")) 
+# 加入分割线
+p <- p + geom_hline(yintercept = 100, linetype = 3) 
+# 加入标签
+p <- p + scale_x_continuous(limits=c(1,10), breaks=seq(1, 10, 1)) + ylab("联赛三分球进球次数") + ggtitle("两次联赛三分进球数对比") 
+# 加入图例
+p <- p + scale_colour_manual(values = c("联赛1"="black", "联赛2"="red")) + guides(colour=guide_legend(title=NULL)) + theme(plot.title = element_text(hjust = 0.5), legend.position="top")
+print(p)
+```
+
+
+
+
+### 2.5 一个监听器收到如下信号，能否说该信号是纯随机干扰？
+
+01011100110000111111111010011101010100
+00000010110011101010001001010100000000
+
+取$\alpha=0.05$，进行两类随机游程检验。$$H_1:该信号是纯随机干扰\quad v.s.\quad H_1:该信号不是纯随机干扰$$
+
+分析数据得$n=76,n_0=42,n_1=34$，游程数$R=37$，在大样本下，利用超几何分布近似正态的均值与方差：
+$$E_R=\frac{2n_1n_0}{n_1+n_0}+1$$
+$$Var_R=\frac{2n_1n_0(2n_1n_0-n_0-n_1)}{(n_1+n_0)^2(n_1+n_0-1)}$$
+$$Z=\frac{R-E_r}{\sqrt{Var_R}}=-0.3688165$$
+得到双侧检验的$p$值$p=2P(Z<-0.3688165)=0.7122645>\alpha$，故不能拒绝$H_1$，认为该信号是纯随机干扰。
+
+
+
+```{r}
+#以字符串输入
+signal_text='0101110011000011111111101001110101010000000010110011101010001001010100000000'
+
+#转换为整数数组
+signal=as.numeric(strsplit(signal_text,split='')[[1]])
+
+n=length(signal)#数据长度
+n0=sum(signal==0)#0的个数
+n1=n-n0#1的个数
+
+#游程个数，即相邻两数变化的次数加一
+R=sum(signal[1:(n-1)]!=signal[2:n])+1
+
+#大样本下，利用近似正态分布检验
+ER=2*n1*n0/(n1+n0)+1
+VarR=2*n1*n0*(2*n1*n0-n0-n1)/((n1+n0)^2*(n1+n0-1))
+z=(R-ER)/sqrt(VarR)
+
+#双侧p值
+2*pnorm(z)
+```
+
+同样，R也提供了封装好的实现两类随机游程检验的函数runs.test，需加载包tseries。这里展示直接调用此函数得到的检验结果，**$p$值结果与手工计算相同**。
+
+```{r}
+library(tseries)#加载tseries包
+y=factor(signal)#数组转换为因子（factor）
+runs.test(y)#进行随机游程检验（近似正态）
+```
+
+
+
+## 2.14 为考察两种生产方法的生产效率是否有显著差异，随机抽取10人用方法A进行生产，抽取12人采用方法B进行生产，并记录下20人的日产量：A方法：92,69,72,40,90,53,85,87,89,88，B方法：78,95,58,65,39,67,64,75,60,80,83,96。请问两种方法的生产效率的影响不同吗？请问用wilcox.test应该怎样设置假设，得到怎样的结果，该题目可以使用随机游程方法来解决吗？
+
+
+```{r}
+#加载数据
+A<-c(92,69,72,40,90,53,85,87,89,88)
+B<-c(78,95,58,65,39,67,64,75,60,80,83,96)
+``` 
+
+<!---
+par(mfrow=c(1,3))
+hist(A)
+hist(B)
+boxplot(A,B)
+```
+
+---->
+### （1）wilcoxon秩和检验
+
+$$H_0:A与B无显著差异\quad v.s.\quad H_1:A与B具有显著差异$$
+
+为确定两种方法的效率是否具有显著差异，取$\alpha=0.05$，选用Wilcoxon秩和检验(Wilcoxon rank-sum test) 。Wilcoxon秩和检验是美国的统计学家Frank Wilcoxon提出的一个非参的假设检验方法，一般用来检测两个数据集是否来自于相同分布的总体。手动进行Wilcoxon秩和检验的步骤如下：
+
+1. 将A、B两数据合并为一个序列AB，从小到大排序，设A、B、AB的长度分别为$n_1$，$n_2$，$n$。
+2. 讲AB进行升序排序，分别计算A、B两序列的秩和$$R_1=20+9+10+2+19+3+15+16+18+17=129$$ $$R_2=12+21+4+7+1+8+6+11+5+13+14+22=124$$
+3. 令$T$为小样本序列的秩和$T=R_1=129$，计算$$U_1=n_1n_2+2n_1​(n_1​+1)−T=46$$ $$U_2=n_1n_2−U_1=74$$
+4. 由于 $U_1$更小，利用$U_1$查Wilcoxon 双尾临界表（使用pwilcox函数）计算双侧$p$值，得到$p=0.381$
+
+
+
+因此不能拒绝原假设，在Wilcoxon秩和检验之下，两种生产效率不具有显著差异。
+
+```{r}
+AB=c(A,B)#合并序列
+n1=length(A)#序列A长度
+n2=length(B)#序列B长度
+n=n1+n2#总长度
+
+R=rank(AB)
+
+R1=sum(R[1:n1])
+R2=sum(R[(n1+1):n])
+T=R1#T为小样本序列的秩和
+
+U1=n1*n2+n1*(n1+1)/2-T
+U2=n1*n2-U1
+
+#检验p值
+pwilcox(U1,n1,n2)*2
+```
+
+R语言进行Wilcoxon秩和检验的函数同样是wilcox.test，但是需要同时输入$x$与$y$两个参数并且设置paired=FALSE（或者不设定paired参数），经过Wilcoxon秩和检验得到$p=0.381>\alpha$，p值结果相同。
+
+关于wilcox.test这一函数，它封装了以Wilcoxon命名的两种非参数检验方法：**秩和检验和符号秩检验。**
+
+* 当只给定一个参数x，或给定两个参数x,y（要求两样本长度相同）并且paired=TRUE时，执行的是符号秩检验（Wilcoxon signed rank test）。
+
+* 当给定两个参数x,y（两样本长度可不同），设定paired=FALSE（或者不设定paired参数），执行的是秩和检验（Wilcoxon rank sum test）。
+
+1（2）使用的是第一种情况，本题属于第二种情况。
+
+
+```{r}
+wilcox.test(A,B)
+```
+
+### （2）使用随机游程检验
+
+
+$$H_0:A与B无显著差异\quad v.s.\quad H_1:A与B具有显著差异$$
+
+设定$\alpha=0.05$。如果原假设成立，那么将两种分布抽取的样本A与B合并并且从小到大排序后得到的序列，两种样本的交替出现应该是随机的，因此可以使用随机游程检验。
+
+理论上，如果F与G分布存在显著差异，**那么两个样本的取值间隔会较大，导致游程较少**；反之，如果分布相似，那么**两个样本的取值更可能交替出现，导致游程较多**。因此对游程进行检验的步骤如下：
+
+
+*注意：此时不论数据是否具有差异均会体现为游程不具备随机性，因此应当对假设进行修改，原假设：游程数多，即游程交替频繁；备择假设：游程数少，即游程交替不频繁*
+
+
+1. 将A、B两数据合并为一个序列AB，从小到大排序，设A、B、AB的长度分别为$n_0$，$n_1$，$n$。
+2. 排序后的AB如果样本来自于A，则取值为0，否则取为1，从而构造游程
+3. 计算游程个数$R=7$，再构造$R$的概率密度函数：
+$$P(R=2k)=\frac{2*C_{n_0-1}^{k-1}*C_{n_1-1}^{k-1}}{C_n^{n_1}}$$
+$$P(R=2k+1)=\frac{C_{n_0-1}^{k-1}*C_{n_1-1}^{k}+C_{n_0-1}^{k}*C_{n_1-1}^{k-1}}{C_n^{n_1}}$$
+
+```{r}
+run=ifelse(sort(c(A,B))%in%A,0,1)
+
+n=length(run)#数据长度
+n0=length(A)
+n1=length(B)
+
+#游程个数，即相邻两数变化的次数加一
+R=sum(run[1:(n-1)]!=run[2:n])+1
+
+#R的概率密度
+run_prob<-function(n,n0,n1)
+{
+  p<-c()
+  for(R in 2:n)
+  {
+    if(R%%2==0)
+    {
+      k=R/2
+      p[R-1]=2*choose(n1-1,k-1)*choose(n0-1,k-1)/choose(n,n1)
+    }
+    else{
+      k=(R-1)/2
+      p[R-1]=(choose(n1-1,k-1)*choose(n0-1,k)+choose(n1-1,k)*choose(n0-1,k-1))/choose(n,n1)
+    }
+  }
+  return(p)
+}
+
+#小样本下，利用R的精确分布得到p值
+sum(run_prob(n,n0,n1)[1:(R-1)])
+
+```
+
+
+## 英文教材P21 2.3.2 $\theta$=2的情况
+
+
+
+
+
+```{r}
+#模拟函数，返回两种检验拒绝原假设的比例
+sim<-function(mu)
+{
+  n = 30; df = 2; nsims = 10000; collwil = rep(0,nsims)
+  collt = rep(0,nsims)
+  for(i in 1:nsims){
+    x = rt(n,df) + mu
+    wil = wilcox.test(x)
+    collwil[i] = wil$p.value
+    ttest = t.test(x)
+    collt[i] = ttest$p.value
+  }
+  powwil = rep(0,nsims); powwil[collwil <= .05] = 1
+  powerwil = sum(powwil)/nsims
+  powt = rep(0,nsims); powt[collt <= .05] = 1
+  powert = sum(powt)/nsims
+  return(c(powerwil,powert))
+}
+
+
+mu_range<-seq(0,2,0.1)#图像横轴
+t_range<-c()
+wil_range<-c()
+for (i in mu_range)
+{
+  temp=sim(i)
+  t_range<-c(t_range,temp[2])#填入图像纵轴
+  wil_range<-c(wil_range,temp[1])
+}
+
+table=data.frame(wil_range[c(1,6,11,21)],t_range[c(1,6,11,21)])
+colnames(table)<-c('**wilcox.test**','**t.test**')
+row.names(table) = paste('$μ=',c(0,0.5,1,2),'$',sep='')
+kable(t(table))#输出mu=0,0.5,1,2下的结果到表格
+
+```
+
+```{r}
+#绘制$\mu$在$[0,2]$变动下的图像
+plot(mu_range,t_range,type='l',col='blue',xlab='μ',ylab='拒绝原假设的频率',family='PingFang SC',ylim=c(-0.05,1.05))
+lines(mu_range,wil_range,lty=2,col='red')
+legend("bottomright",c("wilcox.test","t.test"),
+       lty=c(2,1),col=c('red','blue'),cex=1.2)#图例
+abline(v=c(0,0.5,1,2),lty=4,col='grey')
+```
+
+分别在均值为$\mu=0,0.5,1,2$下生成t分布的随机样本，取显著性水平$\alpha=0.05$，对如下检验问题：
+$$H_0:\mu=0\quad v.s.\quad H_1:\mu\neq0$$
+进行检验。上表得到的是10000次检验中每个检验得到拒绝原假设的结果的频率。同时为进一步研究两种检验拒绝原假设的频率随$\mu$的变化情况，使得$\mu$在$[0,2]$变动，**绘制图像如上图所示**，观察图像得到结论：
+
+对于这一问题，
+
+（1）当$\mu=0$时，这时零假设为真。Wilcoxon符号秩检验不依赖分布，所以拒绝原假设的频率十分接近显著性水平$\alpha$。由于生成的随机样本服从自由度为2的t分布，均值为0，由中心极限定理，这30个数据的均值近似服从均值为0的正态分布，因此使用t检验对这组数据的均值进行检验能够得到更好的检验结果（拒绝原假设的频率更低）。
+
+
+（2）当$\mu=0.5,1,2$时，这时零假设不真，可以看到Wilcoxon符号秩检验比t检验更有效，特别是在$0.5<\mu<1.5$内，Wilcoxon符号秩检验拒绝原假设的频率显著地高于t检验，而在$\mu>1.5$后，由于二者拒绝原假设的频率都已超过0.9，导致二者差距逐渐减小（如上图）。
+
+
+
+
+
+
+
+
+
+
+
