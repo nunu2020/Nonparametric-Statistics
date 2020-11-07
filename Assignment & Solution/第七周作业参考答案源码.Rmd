@@ -1,0 +1,1239 @@
+---
+title: "第七周作业"
+author: "***"
+date: "2020年10月29日"
+output: 
+  html_document:
+    toc: true # table of content true
+    toc_depth: 2  # upto three depths of headings (specified by #, ## and ###)
+    toc_float: true
+    number_sections: false
+    theme: lumen
+editor_options: 
+  chunk_output_type: console
+---
+<style type="text/css">
+body{
+    margin: 0 auto;
+    font-family: "Microsoft YaHei", arial,sans-serif;
+    color: #444444;
+    line-height: 1;
+    padding: 30px;
+}
+@media screen and (min-width: 768px) {
+    body {
+        width: 748px;
+        margin: 10px auto;
+    }
+}
+h1, h2, h3, h4 {
+    color: #111111;
+    font-weight: 400;
+    margin-top: 1em;
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: Georgia, Palatino, serif;
+}
+h1, h2, h3, h4, h5, p , dl{
+    margin-bottom: 16px;
+    padding: 0;
+}
+h1 {
+    font-size: 48px;
+    line-height: 54px;
+}
+h2 {
+    font-size: 36px;
+    line-height: 42px;
+}
+h1, h2 {
+    border-bottom: 1px solid #EFEAEA;
+    padding-bottom: 10px;
+}
+h3 {
+    font-size: 24px;
+    line-height: 30px;
+}
+h4 {
+    font-size: 21px;
+    line-height: 26px;
+}
+h5 {
+    font-size: 18px;
+    list-style: 23px;
+}
+a {
+    color: #0099ff;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+}
+a:hover {
+    text-decoration: none;
+    color: #ff6600;
+}
+a:visited {
+    /*color: purple;*/
+}
+ul, ol {
+    padding: 0;
+    padding-left: 24px;
+    margin: 0;
+}
+li {
+    line-height: 24px;
+}
+p, ul, ol {
+    font-size: 16px;
+    line-height: 24px;
+}
+
+ol ol, ul ol {
+    list-style-type: lower-roman;
+}
+
+/*pre {
+    padding: 0px 24px;
+    max-width: 800px;
+    white-space: pre-wrap;
+}
+code {
+    font-family: Consolas, Monaco, Andale Mono, monospace;
+    line-height: 1.5;
+    font-size: 13px;
+}*/
+
+code, pre {
+    border-radius: 3px;
+    background-color:#f7f7f7;
+    color: inherit;
+}
+
+code {
+    font-family: Consolas, Monaco, Andale Mono, monospace;
+    margin: 0 2px;
+}
+
+pre {
+    line-height: 1.7em;
+    overflow: auto;
+    padding: 6px 10px;
+    border-left: 5px solid #6CE26C;
+}
+
+pre > code {
+    border: 0;
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    font-size: .85em;
+    white-space: pre;
+    background: 0 0;
+
+}
+
+code {
+    color: #666555;
+}
+
+
+/** markdown preview plus 对于代码块的处理有些问题, 所以使用统一的颜色 */
+/*code .keyword {
+  color: #8959a8;
+}
+
+code .number {
+  color: #f5871f;
+}
+
+code .comment {
+  color: #998
+}*/
+
+aside {
+    display: block;
+    float: right;
+    width: 390px;
+}
+blockquote {
+    border-left:.5em solid #eee;
+    padding: 0 0 0 2em;
+    margin-left:0;
+}
+blockquote  cite {
+    font-size:14px;
+    line-height:20px;
+    color:#bfbfbf;
+}
+blockquote cite:before {
+    content: '\2014 \00A0';
+}
+
+blockquote p {
+    color: #666;
+}
+
+pre, code, tt {
+
+  font-size: 16px;
+
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+
+}
+
+ 
+
+code, tt {
+
+  margin: 0 0px;
+
+  padding: 0px 0px;
+
+  white-space: nowrap;
+
+  border: 1px solid #eaeaea;
+
+  background-color: #f8f8f8;
+
+  border-radius: 3px;
+
+}
+
+ 
+
+pre>code {
+
+  margin: 0;
+
+  padding: 0;
+
+  white-space: pre;
+
+  color: #338000;
+
+  border: none;
+
+  background: transparent;
+
+ 
+
+}
+
+ 
+
+pre {
+
+  background-color: #f8f8f8;
+
+  border: 1px solid #ccc;
+
+  font-size: 16px;
+
+  line-height: 19px;
+
+  overflow: auto;
+
+  padding: 6px 10px;
+
+  border-radius: 3px;
+
+}
+
+ 
+
+pre code, pre tt {
+
+  background-color: transparent;
+
+  border: none;
+
+}
+
+/* QUOTES
+
+=============================================================================*/
+
+ 
+
+blockquote {
+
+  border-left: 4px solid #DDD;
+
+  padding: 0 15px;
+
+  color: #777;
+
+}
+
+ 
+
+blockquote>:first-child {
+
+  margin-top: 0px;
+
+}
+
+ 
+
+blockquote>:last-child {
+
+  margin-bottom: 0px;
+
+}
+
+ 
+
+/* HORIZONTAL RULES
+
+=============================================================================*/
+
+ 
+
+hr {
+
+  clear: both;
+
+  margin: 15px 0;
+
+  height: 0px;
+
+  overflow: hidden;
+
+  border: none;
+
+  background: transparent;
+
+  border-bottom: 4px solid #ddd;
+
+  padding: 0;
+
+}
+
+ 
+
+
+hr {
+    text-align: left;
+    color: #999;
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+}
+
+dl {
+    padding: 0;
+}
+
+dl dt {
+    padding: 10px 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold;
+}
+
+dl dd {
+    padding: 0 16px;
+    margin-bottom: 16px;
+}
+
+dd {
+    margin-left: 0;
+}
+
+/* Code below this line is copyright Twitter Inc. */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%;
+    margin: 0;
+    vertical-align: baseline;
+    *vertical-align: middle;
+}
+button, input {
+    line-height: normal;
+    *overflow: visible;
+}
+button::-moz-focus-inner, input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+    cursor: pointer;
+    -webkit-appearance: button;
+}
+input[type=checkbox], input[type=radio] {
+    cursor: pointer;
+}
+/* override default chrome & firefox settings */
+input:not([type="image"]), textarea {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+input[type="search"] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+label,
+input,
+select,
+textarea {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: normal;
+    margin-bottom: 18px;
+}
+input[type=checkbox], input[type=radio] {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+input[type=text],
+input[type=password],
+textarea,
+select {
+    display: inline-block;
+    width: 210px;
+    padding: 4px;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 18px;
+    height: 18px;
+    color: #808080;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+select, input[type=file] {
+    height: 27px;
+    line-height: 27px;
+}
+textarea {
+    height: auto;
+}
+/* grey out placeholders */
+:-moz-placeholder {
+    color: #bfbfbf;
+}
+::-webkit-input-placeholder {
+    color: #bfbfbf;
+}
+input[type=text],
+input[type=password],
+select,
+textarea {
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+input[type=text]:focus, input[type=password]:focus, textarea:focus {
+    outline: none;
+    border-color: rgba(82, 168, 236, 0.8);
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+    -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+/* buttons */
+button {
+    display: inline-block;
+    padding: 4px 14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    background-color: #0064cd;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));
+    background-image: -moz-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -ms-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));
+    background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+    background-image: linear-gradient(top, #049cdb, #0064cd);
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    border: 1px solid #004b9a;
+    border-bottom-color: #003f81;
+    -webkit-transition: 0.1s linear all;
+    -moz-transition: 0.1s linear all;
+    transition: 0.1s linear all;
+    border-color: #0064cd #0064cd #003f81;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+button:hover {
+    color: #fff;
+    background-position: 0 -15px;
+    text-decoration: none;
+}
+button:active {
+    -webkit-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+table {
+    *border-collapse: collapse; /* IE7 and lower */
+    border-spacing: 0;
+    width: 100%;
+}
+table {
+    border: solid #ccc 1px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    /*-webkit-box-shadow: 0 1px 1px #ccc;
+    -moz-box-shadow: 0 1px 1px #ccc;
+    box-shadow: 0 1px 1px #ccc;   */
+}
+table tr:hover {
+    background: #fbf8e9;
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
+}
+table td, .table th {
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #dce9f9;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:    -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:     -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:      -o-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:         linear-gradient(top, #ebf3fc, #dce9f9);
+    /*-webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+    -moz-box-shadow:0 1px 0 rgba(255,255,255,.8) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;*/
+    border-top: none;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+    padding: 5px;
+}
+
+table td:first-child, table th:first-child {
+    border-left: none;
+}
+
+table th:first-child {
+    -moz-border-radius: 6px 0 0 0;
+    -webkit-border-radius: 6px 0 0 0;
+    border-radius: 6px 0 0 0;
+}
+table th:last-child {
+    -moz-border-radius: 0 6px 0 0;
+    -webkit-border-radius: 0 6px 0 0;
+    border-radius: 0 6px 0 0;
+}
+table th:only-child{
+    -moz-border-radius: 6px 6px 0 0;
+    -webkit-border-radius: 6px 6px 0 0;
+    border-radius: 6px 6px 0 0;
+}
+table tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 6px;
+    -webkit-border-radius: 0 0 0 6px;
+    border-radius: 0 0 0 6px;
+}
+table tr:last-child td:last-child {
+    -moz-border-radius: 0 0 6px 0;
+    -webkit-border-radius: 0 0 6px 0;
+    border-radius: 0 0 6px 0;
+}
+
+#TOC {
+  left: 60px;
+  margin: 20px 0px 10px 0px;
+}
+
+.main-container {
+  max-width: 1800px;
+  margin-left: -220px;
+  margin-right: -205px;
+}
+
+options(width = 600px)
+
+</style>
+
+#2.8.9 Wilcoxon符号秩检验
+
+## Problem  
+The data for the nursery school study were drawn from page 79 of Siegel (1956). In the data table, there is an obvious typographical error. In the 8th set of twins, the score for the the twin that stayed at home is typed as 82 when it should be 62. Rerun the signed-rank $Wilcoxon$ and $t-analyses$ using the typographical error value of 82.
+
+## Solution  
+
+
+```{r warning=FALSE, message=FALSE}
+school <- c(82,69,73,43,58,56,76,65)
+#将第八组的home的值改为82
+home <- c(63,42,74,37,51,43,80,82)
+response <- school - home
+#进行Wilcoxon符号秩检验
+wilcox.test(response, alternative="greater", conf.int=TRUE)
+#进行t检验
+t.test(response, alternative="greater", conf.int=TRUE)
+
+```
+
+
+#2.8.10 污染正态分布
+
+## Problem  
+The contaminated normal distribution is frequently used in simulation studies. $A$ standardized variable, $X$, having this distribution can be written as
+$$X = (1 − I_{\epsilon})Z + cI_{\epsilon}Z,$$
+where $0 ≤ \epsilon < 1$, $I_{\epsilon}$ has a binomial distribution with $n = 1$ and probability of success $\epsilon$, $Z$ has a standard normal distribution, $c > 1$, and $I_{\epsilon}$ and $Z$ are independent random variables. When sampling from the distribution of $X$, $(1 − \epsilon)100%$ of the time the observations are drawn from a $N (0, 1)$ distribution but $\epsilon100%$ of the time the observations are drawn from a $N(0,c^2)$. These later observations are often outliers. The distribution of $X$ is a mixture distribution; see, for example, Section 3.4.1 of Hogg et al. (2013). We say that $X$ has a $CN(c,\epsilon)$ distribution.
+
+1. Using the $R$ functions rbinom and rnorm, write an $R$ function which obtains a random sample of size n from a contaminated nor- mal distribution $CN(c,\epsilon)$.
+
+2. Obtain samples of size 100 from a $N(0,1)$ distribution and a $CN(16,0.25)$ distribution. Form histograms and comparison box- plots of the samples. Discuss the results.
+
+
+## Solution  
+
+
+###(1)从CN(c,ε)中抽样的函数
+
+```{r warning=FALSE, message=FALSE}
+#得到n个服从CN(c, ε)的随机数
+CN_samp_func <- function(n, c, eps){
+  set.seed(1234)#设置随机数种子，使结果具有可复现性
+#从成功概率为eps的二项分布中抽样
+  choice <- rbinom(n, 1, prob = eps)
+#试验成功则有choice=1，此时从N(0, c^2)中选取样本
+#试验失败则有choice=0，此时从N(0, 1)中选取样本
+#由于ifelse()函数只运行参数yes和no中的rnorm各一次，所以choice=0或1的情况都需要产生n个（而不是1个）服从正态分布的随机数，否则同一个随机数将会重复出现。
+#返回n个服从CN(c, ε)的随机数
+  return(ifelse(choice == 0, yes = rnorm(n, 0, 1), no = rnorm(n, 0, c)))
+}
+
+```
+
+###(2)抽样并进行对比
+
+```{r warning=FALSE, message=FALSE}
+#样本量
+n <- 100
+#从正态分布中抽样
+norm_samp <- rnorm(n, 0, 1)
+#从污染正态分布中抽样
+cn_samp <- CN_samp_func(n, 16, 0.25)
+#构建包含样本的数据框
+#第一列为因子类型，表示样本来自的分布为正态分布或者污染正态分布
+#第二列为样本值
+samp_df <- data.frame(
+  distr = as.factor(c(rep("正态分布", n), rep("污染正态分布", n))),
+  samp_value = c(norm_samp, cn_samp)
+)
+
+
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+#画出正态分布和污染正态分布的样本的分组箱线图
+ggplot(samp_df, aes(x = distr, y = samp_value)) +
+  geom_boxplot(fill = "grey") +
+  theme_minimal() +
+  labs(x = "总体分布", y = "样本", 
+       title = "正态分布和污染正态分布的样本的分组箱线图")
+```
+
+从正态分布和污染正态分布的样本的分组箱线图中可以看到，
+
+来自两个分布的样本的箱子的厚度、位置都大致接近，
+
+但是来自污染正态分布中的样本出现较多异常值。
+
+由于异常值的存在，箱子被压扁，所以接下来去除异常值后再画出分组箱线图，以观察箱子的差异。
+
+```{r warning=FALSE, message=FALSE}
+#去除污染正态分布样本中的异常值后的分组箱线图
+ggplot(samp_df, aes(x = distr, y = samp_value)) +
+#去除异常值
+  geom_boxplot(fill = "grey", alpha = 0.6, outlier.shape = NA) +
+#调整y轴的范围
+  coord_cartesian(ylim = quantile(samp_df$samp_value, c(0.1, 0.9))) +
+  theme_minimal() +
+  labs(x = "总体分布", y = "样本", 
+       title = "去除污染正态分布样本中的异常值后的分组箱线图")
+```
+
+由于样本量较小，去除异常值后，两者的箱子没有不是以0为对称轴的对称形状。
+
+这是由于抽样的偶然性。在增大样本量后，箱子将会接近对称。
+
+接下来画出正态分布和污染正态分布的样本的直方图。
+
+```{r warning=FALSE, message=FALSE}
+ggplot(samp_df, aes(x=samp_value, fill=distr)) +
+  geom_histogram( color="#e9ecef", alpha=0.5, position = 'identity') +
+  theme_ipsum() +
+#图例位置
+  theme(legend.position = "bottom") +
+#设置图例标签
+  scale_fill_manual(name = "总体分布", labels = c("污染正态分布", "正态分布"), values=c("#69b3a2", "#404080")) +
+  labs(fill="", x = "样本", title = "正态分布和污染正态分布的样本的直方图")
+```
+
+从直方图中可以看出，来自污染正态分布和正态分布的样本都集中在0附近
+
+但是来自污染正态分布的样本出现较多异常值。
+
+#2.8.12 统计量的有效性
+
+## Problem  
+
+The ratio of the expected squared lengths of confidence intervals is a measure of efficiency between two estimators. Based on a simulation of size 10,000, estimate this ratio between the Hodges–Lehmann and the sample mean for $n = 30$ when the population has a standard normal distribution. Use 95% confidence intervals. Repeat the study when the population has a t-distribution with 2 degrees of freedom.
+
+## Solution  
+The usual confidence interval for $θ$ is $[X − t_{α/2,n−1}(\frac{s}{\sqrt{n}}), X +
+t_{α/2,n−1}(\frac{s}{\sqrt{n}})]$,
+
+For the signed-rank Wilcoxon, the estimator of location is the Hodges–
+Lehmann estimator which is given by
+$$\hat{θ}_W = med_{i≤j} \{\frac{X_i + X_j}{2} \} $$
+The pairwise averages $A_{ij} = \frac{X_i +X_j}{2}, i ≤ j$, are called the Walsh averages
+of the sample. Let $A_{(1)} < · · · < A_{(n(n+1)/2)} $denote the ordered Walsh averages.
+Then a $(1 − α)$100% confidence interval for $θ$ is
+$[A_{(c_2+1)}, A_{([n(n+1)/2]−c_2)}]$,
+$c_2$ is the $α/2$ quantile of the signed-rank Wilcoxon distribution. 
+
+so,
+$$ratio = \frac{E(confidence\_Interval_{HL}^2)}{E(confidence\_Interval_{mean}^2}=\frac{E(A_{(n(n+1)/2-c_2)}-A_{(c_2+1)})}{E(2t_{\alpha/2,n-1}\frac{s}{\sqrt n})} $$
+
+```{r warning=FALSE, message=FALSE}
+#每组的样本量为n
+n <- 30
+#共抽取nsims组样本
+nsims <- 10000
+#从标准正态分布中抽取样本，每一行为一组样本，共nsims行
+x_samp_norm <- matrix(rnorm(n*nsims), nrow = nsims, ncol = n)
+#从自由度为2的t分布中抽取样本，每一行为一组样本，共nsims行
+x_samp_t <- matrix(rt(n*nsims, df = 2), nrow = nsims, ncol = n)
+
+#计算HL统计量的置信区间长度的平方
+CI_wil_func <- function(data){
+  wil_test <- wilcox.test(data, conf.int = TRUE)
+  return((wil_test$conf.int[2]-wil_test$conf.int[1])^2)#用wilcoxon.test自带的置信区间计算长度
+}
+#计算样本均值的置信区间长度的平方
+CI_t_func <- function(data){
+  t_test <- t.test(data, conf.int = TRUE)
+  return((t_test$conf.int[2]-t_test$conf.int[1])^2)#用t.test自带的置信区间计算长度，就不需要自己写函数实现了
+}
+
+#总体为标准正态分布时，计算两种统计量构建的置信区间的长度平方的均值之比
+effi_norm <- mean(apply(x_samp_norm, 1, CI_wil_func))/mean(apply(x_samp_norm, 1, CI_t_func))
+effi_norm
+
+#总体为自由度为2的t分布时，计算两种统计量构建的置信区间的长度平方的均值之比
+effi_t <- mean(apply(x_samp_t, 1, CI_wil_func))/mean(apply(x_samp_t, 1, CI_t_func))
+effi_t
+
+```
+
+#2.8.14 显著性水平、势
+
+## Problem  
+
+Let p be the probability of success. Suppose it is of interest to test
+$$H_0 : p=0.30 versus H_A : p<0.30.$$
+Let $S$ be the number of successes out of 75 trials. Suppose we reject $H_0$, if $S ≤ 16$.
+
+(a) Determine the significance level of the test.
+
+(b) Determine the power of the test if the true $p$ is 0.25.
+
+(c) Determine the power function for the test for the sequence for the probabilities of success in the set ${0.02, 0.03, . . . , 0.35}$. Then obtain a plot of the power curve.
+
+
+##(1)显著性水平
+
+分别计算显著性水平的理论值和经验值。
+
+```{r warning=FALSE, message=FALSE}
+#由于已知为二项分布，所以可以计算显著性水平的理论值
+#显著性水平等于在n=75,p=0.3的二项分布中，成功次数小于等于16的概率
+sig <- pbinom(16, 75, 0.3)
+sig
+
+#也可以多次抽样，计算显著性水平的经验值
+#样本量为n
+n <- 100000
+
+set.seed(1234)
+#从二项分布中抽样，得到成功次数
+succ_num <- rbinom(nsims, 75, 0.3)
+#成功次数小于等于16则拒绝原假设
+sig_trial <- sum(succ_num<=16)/nsims
+#得到显著性水平的经验值
+sig_trial
+```
+
+##(2)势
+
+分别计算势的理论值和经验值。
+
+```{r warning=FALSE, message=FALSE}
+#计算势的理论值
+#势等于n=75,p=0.25的二项分布中，成功次数小于等于16的概率
+power_test <- pbinom(16, 75, 0.25)
+power_test
+
+#也可以多次抽样，计算势的经验值
+set.seed(1234)
+#样本量为n
+n <- 100000
+#真实的p
+p_true <- 0.25
+#从二项分布中抽样，得到成功次数
+trial <- rbinom(nsims, 75, p_true)
+#成功次数小于等于16则拒绝原假设
+power_trial <- sum(trial <= 16)/nsims
+#得到势的经验值
+power_trial
+```
+
+##(3)画图
+
+可以分别采用势的理论值和经验值画图，图形非常接近。
+
+```{r warning=FALSE, message=FALSE}
+p_seq <- seq(from = 0.02, to = 0.35, by = 0.01)
+#每一组的样本量为n
+n <- 10000
+
+set.seed(1234)
+
+#计算势的理论值
+power_func_theo <- function(p){
+  return(pbinom(16, 75, p))
+}
+#计算势的经验值
+power_func_empi <- function(p){
+  trial <- rbinom(n, 75, p)
+  power_trial <- (sum(trial <= 16))/n
+  return(power_trial)
+}
+
+power_df_func_empi <- function(p){
+  sapply(p, power_func_empi)
+}
+#构建数据框，用来画图
+plot.range.theo <- data.frame(x=p_seq, Functions = factor(1))
+plot.range.empi <- data.frame(x=p_seq, Functions = factor(2))
+
+library(ggplot2)
+library(hrbrthemes)
+#画出检验的势的变化曲线
+ggplot(NULL, aes(x=x, color = Functions)) +
+#画出检验的势的理论值的变化曲线，颜色为红色
+  geom_function(data = plot.range.theo, fun = power_func_theo)+
+#画出检验的势的经验值的变化曲线，颜色为橙色
+  geom_function(data = plot.range.empi, fun = power_df_func_empi) +
+  scale_colour_manual(values = c("red", "orange"), 
+                      labels = c("势的理论值", "势的经验值"),
+                      name = "") +
+  theme_ipsum() +
+  theme(legend.position = "bottom") +
+  labs(title="检验的势的变化曲线",
+       y = "势", x="p")
+```
+
+势的经验值和理论值几乎重合。
+
+
+#2.8.16 Wald检验、Score检验
+
+## Problem  
+
+Simulate the power of the Wald and scores type two-sample proportions test for the hypotheses
+$$H_0 : p_1 =p_2 versus H_A : p_1 >p_2.$$
+for the following situation. Assume that population 1 is Bernoulli with $p_1 = 0.6$; population 2 is Bernoulli with $p_2 = 0.5$; the level is $\alpha = 0.05$; and $n_1 = n_2 = 50$. Recall that the call $rbinom(m,n,p)$ returns m binomial variates with distribution $bin(n, p)$.
+
+原假设和备择假设为
+
+$H_0:p_1=p_2$ $v.s.$ $H_1:p_1>p_2$
+
+##(1)Wald检验
+
+Wald检验的检验统计量为
+
+$$
+T S=\frac{\hat{p}_{1}-\hat{p}_{2}}{\sqrt{\frac{\hat{p}_{1}\left(1-\hat{p}_{1}\right)}{n_{1}}+\frac{\hat{p}_{2}\left(1-\hat{p}_{2}\right)}{n_{2}}}}
+$$
+
+在$n_1,n_2$较大时，该统计量近似服从正态分布。
+
+##(2)Score检验
+
+Score检验的检验统计量为
+
+$$
+T S=\frac{\hat{p}_{1}-\hat{p}_{2}}{\sqrt{\hat{p}(1-\hat{p})\left(\frac{1}{n_{1}}+\frac{1}{n_{2}}\right)}}
+$$
+
+其中
+$$
+\hat{p}=\frac{X+Y}{n_1+n_2}=\frac{n_1 \hat{p}_{1}+n_2 \hat{p}_{2}}{n_1+n_2}
+$$
+
+是在原假设成立的条件下，即$p_1=p_2=p$时，用合样本的频率来估计共同的$p$。
+
+在$n_1,n_2$较大时，该统计量近似服从正态分布。
+
+```{r warning=FALSE, message=FALSE}
+set.seed(1234)
+
+#共抽取nsims组样本
+nsims <- 10000
+
+p1 <- 0.6
+p2 <- 0.5
+
+#记录每组样本进行Wald检验的p值
+p_wald_samp <- rep(0, nsims)
+#记录每组样本进行Score检验的p值
+p_score_samp <- rep(0, nsims)
+#记录每组样本进行Wald检验的p值是否小于0.05，小于则为1，否则为0
+pow_wald <- rep(0, nsims)
+#记录每组样本进行Score检验的p值是否小于0.05，小于则为1，否则为0
+pow_score <- rep(0, nsims)
+
+
+for(i in 1:nsims){
+#从总体1中抽样
+  samp1 <- rbinom(1, 50, p1)
+#从总体2中抽样
+  samp2 <- rbinom(1, 50, p2)
+
+#p1的估计值
+  p1_hat <- samp1/50
+  p1_hat
+#p2的估计值
+  p2_hat <- samp2/50
+  p2_hat
+#在原假设成立时，p=p1=p2的估计值
+  p_hat <- (samp1+samp2)/(50+50)
+
+#Wald检验的检验统计量
+  TS_wald <- (p1_hat-p2_hat)/(sqrt((p1_hat*(1-p1_hat)/50)+(p2_hat*(1-p2_hat)/50)))
+#wald检验的p值（用正态分布近似）
+  p_wald <- 1 - pnorm(TS_wald)
+  p_wald_samp[i] <- p_wald
+}
+
+#score检验的检验统计量
+  TS_score <- (p1_hat-p2_hat)/(sqrt(p_hat*(1-p_hat)*(1/50+1/50)))
+#score检验的p值（用正态分布近似）
+  p_score <- 1 - pnorm(TS_score)
+  p_score_samp[i] <- p_score
+
+#计算Wald检验的势
+pow_wald[p_wald_samp <= 0.05] <- 1
+power_wald <- sum(pow_wald)/nsims
+#计算Score检验的势
+pow_score[p_score_samp <= 0.05] <- 1
+power_score <- sum(pow_score)/nsims
+
+#输出结果
+knitr::kable(data.frame("Wald检验的势"=power_wald, "Score检验的势"=power_score),
+             format = "html")
+
+```
+
+#2.8.25 Bonferroni同时置信区间
+
+## Problem  
+Let $0 < α < 1$. Suppose $I_1$ and $I_2$ are respective confidence intervals for two parameters $θ_1$ and $θ_2$ both with confidence coefficient $1 − (α/2)$; that is,
+$$P_{θ_i}[θ_i ∈ I_i] = 1 − \frac{α}{2} , i = 1, 2.$$
+Show that the simultaneous confidence for both intervals is at least $1 − α, i.e.$,
+$$P_{θ_1,θ_2}[{θ_1 ∈ I_1} ∩ {θ_2 ∈ I_2}] ≥ 1 − α.$$
+Hint: Use the method of complements and Boole’s inequality, $P [A ∪ B] ≤P (a) + P (B)$. 
+
+Extend the argument to m intervals each with confidence coefficient $1 − (α/2)$ to obtain a set of m simultaneous Bonferroni confidence intervals.
+
+
+##(1)两个置信区间
+
+由德・摩根定律
+$$
+P\left(A_{1} \cap A_{2}\right)=1-P\left(A_{1} \cup A_{2}\right)
+$$
+
+由 Boole 不等式 
+
+$$
+P\left(A_{1}^{\prime} \cup A_{2}^{\prime}\right) \leq P\left(A_{1}^{\prime}\right)+P\left(A_{2}^{\prime}\right)
+$$
+
+已知
+
+$${P_{\theta_{i}}}\left[\theta_{i} \in I_{i}\right]=1-\frac{\alpha}{2}, \quad i=1,2
+$$
+
+用 $A_{i}$ 表示事件 $\theta_{i} \in I_{i} ,\ i=1,2$
+
+得到
+
+$$P_{\theta_{1}, \theta_{2}}\left[\left\{\theta_{1} \in I_{1}\right\} \cap\left\{\theta_{2} \in I_{2}\right\}\right] \geq 1-\left[P\left(A_{1}^{\prime}\right)+P\left(A_{2}^{\prime}\right)\right]=1-\left(\frac{\alpha}{2}+\frac{\alpha}{2}\right)=1-\alpha
+$$
+
+$$P_{\theta_{1}, \theta_{2}}\left[\left\{\theta_{1} \in I_{1}\right\} \cap\left\{\theta_{2} \in I_{2}\right\}\right] \geq 1-\alpha
+$$
+
+##(2)推广到m个置信区间
+
+由德・摩根定律
+
+$$P\left(A_{1} \cap A_{2} \cap \ldots \cap A_{m}\right)=1-P\left(A_{1}^{\prime} \cup A_{2}^{\prime} \cup \ldots \cup A_{m}^{\prime}\right)
+$$
+
+Bonferroni不等式
+
+$$P\left(A_{1}^{\prime} \cup A_{2}^{\prime} \cup \ldots \cup A_{m}^{\prime}\right) \leq \sum_{i=1}^{m} P\left(A_{i}^{\prime}\right)
+$$
+
+因此，有
+
+$$P\left(A_{1} \cap A_{2} \cap \ldots \cap A_{m}\right) \geq 1-\sum_{i=1}^{m} P\left(A_{i}^{\prime}\right)
+$$
+
+已知
+
+$$P\left(\theta_{j} \in I_{j}\right)=1-\left(\frac{\alpha}{2}\right), j=1,2, \ldots, \mathrm{m}
+$$
+
+用 $A_{j}$ 表示事件 $\theta_{j} \in I_{j}$
+
+则由 Bonferroni不等式得到 
+
+$$P\left(\theta_{1} \in I_{1}, \theta_{2} \in I_{2}, \ldots \theta_{m} \in I_{m}\right) \geq 1-\sum_{i=1}^{m} P\left(\theta_{j} \notin I_{j}\right) \quad=1-\sum_{i=1}^{m} \frac{\alpha}{2}=1-\frac{m \alpha}{2}
+$$
+
+$$P\left(\theta_{1} \in I_{1}, \theta_{2} \in I_{2}, \ldots \theta_{m} \in I_{m}\right) \geq 1-\frac{m \alpha}{2}
+$$
+
+
+#2.11 Bootstrap方法
+
+参数$\mu$的极大似然估计是$\overline{X}$
+
+根据极大似然估计的不变原理，得到
+
+$\theta=e^{\mu}$的极大似然估计为$\hat{\theta}=e^{\overline{X}}$
+
+##(1)抽取样本
+```{r warning=FALSE, message=FALSE}
+#样本量为n
+n <- 100
+
+set.seed(19)
+#抽取样本
+x_samp <- rnorm(n, 5, 1)
+
+#θ的真实值
+theta_true <- exp(5)
+theta_true
+```
+
+##(2)参数Bootstrap方法
+
+在已知总体分布为正态分布的前提下，可以采用参数Bootstrap方法。
+
+用$\mu$的极大似然估计$\overline{X}$代替$\mu$，
+
+再从$N(\overline{X},1)$中抽样。
+
+再根据
+
+$$
+C_{n}=\left(2 \hat{\theta}_{n}-\hat{\theta}_{1-\frac{\alpha}{2}}^{*}, 2 \hat{\theta}_{n}-\hat{\theta}_{\frac{\alpha}{2}}^{*}\right)
+$$
+
+得到$1-\alpha$ Bootstrap 枢轴量置信区间。
+
+```{r warning=FALSE, message=FALSE}
+#参数Bootstrap方法
+
+#一共抽取nsims组样本
+nsims <- 10000
+#参数Bootstrap方法每组的样本量
+n_para <- 30
+
+#均值μ的极大似然估计为样本均值
+x_bar_est <- mean(x_samp)
+x_bar_est
+#用均值μ的极大似然估计代替μ，得到N(x_bar, 1)，再从中抽样
+x_bar_boot_para <- replicate(nsims, expr = {
+    y <- rnorm(n_para, x_bar_est, 1)
+    return(mean(y))
+})
+#使用参数Bootstrap方法得到的θ的估计值
+theta_est_boot_para <- exp(mean(x_bar_boot_para))
+
+
+#枢轴量法计算置信区间
+#置信下限
+L_para <- exp(2*mean(x_bar_boot_para)-quantile(x_bar_boot_para, 0.975))
+names(L_para) <- NULL
+#置信上限
+U_para <- exp(2*mean(x_bar_boot_para)-quantile(x_bar_boot_para, 0.025))
+names(U_para) <- NULL
+
+#估计的标准差
+sd_para <- sd(exp(x_bar_boot_para))
+
+#输出结果
+knitr::kable(data.frame("参数方法的θ的估计值" = theta_est_boot_para, 
+  "参数方法的置信下限" = L_para, 
+  "参数方法的置信上限" = U_para, 
+  "参数方法的估计标准差" = sd_para ),
+  format = "html")
+
+```
+
+##(3)非参数Bootstrap方法
+
+从已有的样本x_samp中重复进行有放回的抽样，
+
+再根据
+
+$$
+C_{n}=\left(2 \hat{\theta}_{n}-\hat{\theta}_{1-\frac{\alpha}{2}}^{*}, 2 \hat{\theta}_{n}-\hat{\theta}_{\frac{\alpha}{2}}^{*}\right)
+$$
+
+得到$1-\alpha$ Bootstrap 枢轴量置信区间
+
+
+```{r warning=FALSE, message=FALSE}
+#非参数Bootstrap方法
+
+#一共抽取nsims组样本
+nsims <- 10000
+#非参数Bootstrap方法每组的样本量
+n_non <- 30
+#从已有的样本x_samp中有放回地抽样
+#得到每组样本的均值
+x_bar_boot_non <- replicate(nsims, expr = {
+    y <- sample(x_samp, size = n_non, replace = TRUE)
+    return(mean(y))
+})
+
+#使用非参数Bootstrap方法得到的θ的估计值
+theta_est_boot_non <- exp(mean(x_bar_boot_non))
+#使用枢轴量法得到置信区间
+#置信下限
+L_non <- exp(2*mean(x_bar_boot_non)-quantile(x_bar_boot_non, 0.975))
+names(L_non) <- NULL
+#置信上限
+U_non <- exp(2*mean(x_bar_boot_non)-quantile(x_bar_boot_non, 0.025))
+names(U_non) <- NULL
+
+#估计的标准差
+sd_non <- sd(exp(x_bar_boot_non))
+
+#输出结果
+knitr::kable(data.frame("非参数方法的θ的估计值" = theta_est_boot_non, 
+  "非参数方法的置信下限" = L_non, 
+  "非参数方法的置信上限" = U_non,
+  "非参数方法的估计标准差" = sd_non),
+  format = "html")
+```
+
+参数和非参数Bootstrap方法结果的比较：
+
+两者的结果较为接近。
+
+通常在相同的样本量和抽样次数下，参数Bootstrap方法的估计标准误比参数Bootstrap方法更小，置信区间也更短。
+
+这是由于已知总体分布（此题中已知总体为正态分布），参数Bootstrap方法从已知的分布类型中抽样，得到的估计的的方差更小。
+
+但是，如果已知的总体分布是错误的，则参数Bootstrap方法得到的估计虽然方差小，但是会有较大的偏差。
+
+因此，在正确地已知总体分布时，采用参数Bootstrap方法将得到标准差更小的估计；
+
+否则非参数Bootstrap方法更好。
+
+
+##(4)观测的直方图
+
+```{r warning=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+#构建包含参数和非参数Bootstrap观测的数据框
+#第一列为因子类型，表示改观测来自参数或者非参数Bootstrap方法
+#第二列为观测值
+samp_df <- data.frame(
+  method = as.factor(c(rep("参数Bootstrap", nsims), rep("非参数Bootstrap", nsims))),
+  value = c(exp(x_bar_boot_para), exp(x_bar_boot_non))
+)
+
+#画出参数和非参数Bootstrap观测的直方图
+ggplot(samp_df, aes(x=value, fill=method)) +
+  geom_histogram( color="#e9ecef", alpha=0.5, position = 'identity') +
+#标出非参数Bootstrap观测的均值，颜色为红色
+  geom_vline(xintercept = mean(exp(x_bar_boot_non)), col = "red", alpha = 0.7) +
+#标出非参数Bootstrap观测的中位数，颜色为黄色
+  geom_vline(xintercept = median(exp(x_bar_boot_non)), col = "orange", alpha = 0.7) +
+#标出参数Bootstrap观测的均值，颜色为粉色
+  geom_vline(xintercept = mean(exp(x_bar_boot_para)), col = "pink", alpha = 0.7) +
+#标出非参数Bootstrap观测的均值，颜色为黄色
+  geom_vline(xintercept = median(exp(x_bar_boot_para)), col = "yellow", alpha = 0.7) + 
+  theme_ipsum() +
+#设置图例位置
+  theme(legend.position = "bottom") +
+#设置图例标签
+  scale_fill_manual(name = "估计方法", labels = c("参数Bootstrap", "非参数Bootstrap"), values=c("#69b3a2", "#404080")) +
+  labs(fill="", x = "观测", y = "", title = "参数和非参数Bootstrap观测的直方图")
+
+```
+
+（由于非参数和参数Bootstrap观测的均值非常接近，所以图中的两条均值线（红色和粉色）重叠了）
+
+从图中可以看出，非参数和参数Bootstrap观测的均值均大于对应的中位数。
+
+$\hat{\theta}$的分布是右偏的。
+
+
+补充：
+
+参数bootstrap方法的一个参考资料<https://wenku.baidu.com/view/9f302d94941ea76e59fa0430.html>
+
+非参数bootstrap方法的一个参考资料<https://www.baidu.com/link?url=-5l8HKMSpUkrUCTNype_S5VwxzCgWii8goVhD-F39v4WslPNuYz8ZlzKvhqTsd0AGbDLfyBYqTzsXfmnF6aXSMYpgj7rxNBECLZMV8ztpSctO_h14zFhmUlRx8hXBNf-&wd=&eqid=bc3b75f300018d97000000025f9d1f1c>
