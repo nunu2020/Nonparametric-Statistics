@@ -1,0 +1,417 @@
+---
+title: "第七周作业"
+author: "***"
+date: "11/13/2020"
+output:
+  rmdformats::readthedown:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    toc_depth: 4
+    gallery: false
+    highlight: tango
+    df_print: kable
+    
+---
+
+<style>
+#main .nav-pills > li.active > a,
+#main .nav-pills > li.active > a:hover,
+#main .nav-pills > li.active > a:focus {
+    background-color: #4a47a3;
+}
+#main .nav-pills > li > a:hover {
+color: #FFFFFF !important;
+background-color: #4a47a3;
+}
+#main .nav-pills > li.active > a,
+#main .nav-pills > li.active > a:hover,
+#main .nav-pills > li.active > a:focus {
+color: #FFFFFF !important;
+background-color: #4a47a3;
+}
+
+#main .nav-pills > li > a:hover {
+    background-color: #4a47a3;
+}
+
+h1, h2, h3, h4, h5, h6, legend {
+    color: #4a47a3;
+}
+
+#nav-top span.glyphicon {
+    color: #4a47a3;
+}
+
+#table-of-contents header {
+    color: #4a47a3;
+}
+
+#table-of-contents h2 {
+    background-color: #4a47a3;
+}
+
+#main a {
+    background-image: linear-gradient(180deg,#d64a70,#d64a70);
+    color: #c7254e;
+}
+
+a:hover {
+    color: #3d1308;
+}
+
+a:visited {
+    color: #3d1308;
+}
+#postamble .date {
+font-size: 100%;
+margin-bottom: 0px;
+color: #dcd6f7;
+}
+#sidebar h2{
+z-index:200;
+background-color:#4a47a3;
+text-align:center;
+padding:0.809em;
+display:block;
+color:#fcfcfc;
+font-size: 100%;
+margin-top: 0px;
+margin-bottom:0.809em;
+}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  "HTML-CSS": { linebreaks: { automatic: true } },
+         SVG: { linebreaks: { automatic: true } }
+});
+</script>
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# 一、新教材4.1 对A、B、C三个灯泡厂生成的灯泡进行寿命测试，每品牌随机试验不等量灯泡，结果得到如下列寿命数据，试比较三个品牌灯泡寿命是否相同。
+
+| | | | | | |
+|---|----|----|----|----|----|
+| A | 83 | 64 | 67 | 62 | 70 | 
+| B | 85 | 81 | 80 | 78 |    |
+| C | 88 | 89 | 79 | 90 | 95 |
+
+
+## 使用单因素方差分析法
+
+本问题的假设为：$H_0:\mu_1=\mu_2=\mu_3\ v.s.\quad H_1:\exists \mu_i\neq\mu_j$。数据属于完全随机设计，因此适合使用单因素方差分析法：
+$$SST=\sum(x_{ij}-\bar x_{\cdot\cdot})=1353.2$$
+$$SSE=\sum(x_{ij}-\bar x_{i\cdot})=435.6 \quad SSt=SST-SSE=917.6$$
+
+那么本题的方差分析表如下：
+
+| 变异来源 |  自由度 |  平方和     |  均方      | $F$   |  $p$      |
+|---------:|---------|-------------|------------|-------|-----------|
+|  处理    | $k-1=2$ |$SSt=917.6$  |$MSt=458.8$ | 11.59 | 0.00196** |
+|  误差    | $n-k=11$|$SSE=435.6$  |$MSE=39.6$  | | |
+| | | | | | |
+|  合计    | $n-1=13$|$SST=1353.2$ | | | |
+
+检验统计量$$F=\frac{MSt}{MSE}\sim F(k-1,n-k)$$
+计算得检验p值$p=0.00196<\alpha$，因此拒绝H0，三个灯泡厂的灯泡寿命存在显著差异。
+
+```{r,warning = FALSE}
+#输入数据
+A=c(83, 64, 67 ,62 ,70)
+B=c(85, 81, 80 ,78)
+C=c(88, 89, 79 ,90 ,95)
+
+#单因素方差分析法
+k=3
+x_..=mean(c(A,B,C))
+x_1.=mean(A);x_2.=mean(B);x_3.=mean(C)
+n_1=length(A);n_2=length(B);n_3=length(C)
+n=n_1+n_2+n_3
+SST=sum((c(A,B,C)-x_..)^2)
+SSE=sum((A-x_1.)^2)+sum((B-x_2.)^2)+sum((C-x_3.)^2)
+SSt=n_1*(x_1.-x_..)^2+n_2*(x_2.-x_..)^2+n_3*(x_3.-x_..)^2
+
+#单侧检验p值
+F=SSt/SSE*(n-k)/(k-1)
+1-pf(F,k-1,n-k)
+```
+
+
+使用R的`aov`函数可以直接生成方差分析表并进行$F$检验，输入的参数是一个formula（$y\sim x$），$y$是向量形式的数据，$x$是数据的标签，检验结果与手动计算相同。
+
+```{r}
+#`aov`函数直接生成方差分析表并进行$F$检验
+x=c(rep('A',n_1),rep('B',n_2),rep('C',n_3))
+y=c(A,B,C)
+summary(aov(y~x))
+```
+
+
+
+## Kruskal-Wallis检验
+
+完全随机设计下也可以使用Kruskal-Wallis方法，假设问题：$H_0:\mu_1=\mu_2=\mu_3\ v.s.\quad H_1:\exists \mu_i\neq\mu_j$。首先对于数据求混合秩，并且求每一个处理（行）之下的秩和，如下表所示：
+
+| | | | | | |  秩和$R_{\cdot j}$ |
+|---|--------|--------|-------|--------|--------|:-----|
+| A | 83(9)  | 64(2)  | 67(3) | 62(1)  | 70(4)  |  19  |
+| B | 85(10) | 81(8)  | 80(7) | 78(5)  |        |  7.5 |
+| C | 88(11) | 89(12) | 79(6) | 90(13) | 95(14) | 11.2 |
+
+Kruskal-Wallis检验统计量为$$H=\frac{SSt}{MST}=\frac{12}{n(n+1)}\sum R_{\cdot j}^2/n_j-3(n+1)$$
+
+在零假设下，$H$近似服从自由度为$k-1$的卡方分布，求得检验的p值为$p=0.020<\alpha$，故结论是拒绝原假设，三组数据存在显著差异。这一结论与单因素方差分析法相同。
+
+```{r}
+#求全部数据的混合秩
+r=rank(c(A,B,C))
+r1=r[1:n_1]
+r2=r[(n_1+1):(n_1+n_2)]
+r3=r[(n_1+n_2+1):n]
+
+#Kruskal-Wallis检验统计量
+H=12/(n+1)/n*(sum(r1)^2/n_1+sum(r2)^2/n_2+sum(r3)^2/n_3)-3*(n+1)
+
+#检验p值
+1-pchisq(H,k-1)
+```
+
+Kruskal-Wallis检验可以使用函数`kruskal.test`进行检验，可以将向量$y$与$x$分别属于或者以formula的形式输入（$y\sim x$），检验结果相同。
+
+
+```{r}
+kruskal.test(y,x)
+```
+
+
+# 二、新教材4.2 完成Dunn检验
+
+|      | A      |        B | C         |
+|-----:|--------|----------|-----------|
+|      |2.6(9)  | 3.1(14)  | 2.5(7.5)  |
+|      |2.4(5.5)|2.9(11.5) | 2.2(4)    |
+|      |2.9(11.5)| 3.2(16) | 1.5(3)    |
+|      |3.1(14) | 2.5(7.5) | 1.2(1)    |
+|      |2.4(5.5)| 2.8(10)  | 1.4(2)    |
+|      |        |3.1(14)   |           |
+| | | |
+|秩和$R_{\cdot j}$| 45.5| 73| 17.5      |
+|重复  |5       | 6        |           |
+|秩平均$\bar R_{\cdot j}$|9.10| 12.17| 3.50|
+  
+  
+  
+对于有结数据，进行Dunn检验的差异公式为：$$d_{i,j}=\frac{|\bar R_{\cdot i}-\bar R_{\cdot j}|}{SE}$$
+$$SE=\sqrt{(\frac{n(n+1)}{12}-\frac{\sum\limits^g(\tau_i^3-\tau_i)}{12(n-1)})(\frac 1 {n_i} +\frac 1 {n_j})}$$
+
+如果$|d_{i,j}|\geq Z_{1-\alpha*}$则拒绝零假设，这里的显著性水平$\displaystyle \alpha*=\frac{\alpha}{k(k-1)}$，$k$为数据组数，$\alpha=0.05$。检验结果如下表所示，分析得出，**只有B与C之间的差异在Dunn检验下是显著的，其余差异均不显著（$\alpha=0.05$）。**
+
+
+<table>
+<thead>
+<tr class="header">
+<th>比较式</th>
+<th><span class="math inline">\(|\bar R_{\cdot i}-\bar R_{\cdot j}|\)</span></th>
+<th><span class="math inline">\(SE\)</span></th>
+<th><span class="math inline">\(d_{i,j}\)</span></th>
+<th>p值</th>
+<th>$\alpha*$</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A VS B</td>
+<td>3.066667</td>
+<td>2.868023</td>
+<td>1.069262</td>
+<td>0.1424759</td>
+<td rowspan="9">0.0083</td>
+</tr>
+<tr class="even">
+<td>A VS C</td>
+<td>5.6</td>
+<td>2.995552</td>
+<td>1.869438</td>
+<td>0.03078093</td>
+</tr>
+</tr>
+<tr class="even">
+<td>B VS C</td>
+<td>8.666667</td>
+<td>2.868023</td>
+<td>3.021826</td>
+<td>**0.001256274**</td>
+</tr>
+</tbody>
+</table>
+
+求解的R代码如下，这部分代码首先求混合秩，再利用循环计算出混合样本秩的个数以及长度，最后在两两计算$d_{i,j}进行检验$：
+
+
+```{r}
+#存入数据
+A<-c(2.6,2.4,2.9,3.1,2.4)
+B<-c(3.1,2.9,3.2,2.5,2.8,3.1)
+C<-c(2.5,2.2,1.5,1.2,1.4)
+
+n1=5;n2=6;n3=5
+n=n1+n2+n3
+k=3
+
+#计算混合秩
+r=rank(c(A,B,C),ties.method="average")
+r_sorted=sort(rank(c(A,B,C),ties.method="average"))
+
+#计算结的个数以及每个结的长度
+ties<-c(1)
+num_of_ties=1
+for( i in 2:n)
+{
+  #如果当前秩和上一个秩相同，则结的长度数加一
+  if(r_sorted[i]==r_sorted[i-1])
+  {
+    ties[num_of_ties]=ties[num_of_ties]+1
+  }
+  else
+  {
+    #否则结的个数加一
+    num_of_ties=num_of_ties+1
+    ties[num_of_ties]=1
+  }
+}
+
+#每一番茄品种的秩平均
+R1_avg=mean(r[1:n1]);R2_avg=mean(r[(n1+1):(n1+n2)]);R3_avg=mean(r[(n1+n2+1):n])
+
+#显著性水平
+alpha=0.05
+alpha_asteroid=alpha/(k*(k-1))
+alpha_asteroid
+
+#A与B差异的Dunn检验
+R_diff12=abs(R1_avg-R2_avg)
+SE12=sqrt((n*(n+1)/12-sum(ties^3-ties)/12/(n-1))*(1/n1+1/n2))
+d12=R_diff12/SE12
+1-pnorm(d12)
+
+#A与C差异的Dunn检验
+R_diff13=abs(R1_avg-R3_avg)
+SE13=sqrt((n*(n+1)/12-sum(ties^3-ties)/12/(n-1))*(1/n1+1/n3))
+d13=R_diff13/SE13
+1-pnorm(d13)
+
+#B与C差异的Dunn检验
+R_diff23=abs(R2_avg-R3_avg)
+SE23=sqrt((n*(n+1)/12-sum(ties^3-ties)/12/(n-1))*(1/n2+1/n3))
+d23=R_diff23/SE23
+1-pnorm(d23)
+```
+
+
+加载`dunn.test`包可以直接进行Dunn test，检验p值与上述结果一致。
+
+
+
+```{r,warning=FALSE}
+library(dunn.test)#加载dunn.test包
+dunn.test(x=list(A,B,C))
+```
+
+
+值得注意的是，`dunn.test`的显著水平设定与上述略有不同：无论数据组数$k$取几，`dunn.test`均在给定的置信水平$\alpha/2$（单侧，相当于$\alpha$双侧）之下对每个$d_{i,j}$检验，与我们的设定略有差异。因此重新设置显著性水平为$2\alpha *$就得到我们想要的检验了，结果如下所示：
+```{r,warning=FALSE}   
+dunn.test(x=list(A,B,C),alpha=2*alpha_asteroid)
+```
+
+
+
+# 三、新教材4.4 下面是每个三大汽车公司的五种不同的车型某年产品的油耗，试分析不同公司的油耗是否存在差异。
+
+$$H_0:三大汽车公司某年产品的油耗不存在显著差异\ v.s.\quad H_1:三大汽车公司某年产品的油耗存在显著差异$$
+
+
+
+|   | I  | II  |  III |  IV  |  V  |
+|--:|----|-----|------|------|-----|
+| A |20.3|21.2 |18.2  | 18.6 | 18.5|
+| B |25.6|24.7 |  19.3| 19.3 | 20.7|
+| C |24.0| 23.1| 20.6 | 19.8 | 21.4|
+
+
+观测上表，三个公司的汽车油耗分别是在五种不同的车型上观测的，因此属于随机区组设计，因此适用于Friedman秩方差分析法。首先将数据以矩阵的形式输入，并按每一行（处理）求秩以及秩和，如下表所示
+
+|   |   I   |   II  |  III  |   IV  |   V   | 秩和$R_{\cdot j}$ |
+|--:|-------|-------|-------|-------|-------|-------------------|
+| A |20.3(1)|21.2(1)|18.2(1)|18.6(1)|18.5(1)|  5                |
+| B |25.6(3)|24.7(3)|19.3(2)|19.3(2)|20.7(2)|  12               |
+| C |24.0(2)|23.1(2)|20.6(3)|19.8(3)|21.4(3)|  13               |
+| | | | | | | $R_{\cdot\cdot}=30$|
+
+
+Friedman的$Q'$公式为$\displaystyle Q'=\frac{SSt}{var(R_{ij})}=\frac {12}{(k+1)(k-1)}(\sum\frac{R_{\cdot j}^2}{b}-\frac{bk(k+1)^2}{4})$
+
+Friedman建议用$(k-1)/k$乘$Q'$得校正式$$Q=\frac{12}{bk(k+1)}\sum R_{\cdot j}^2-3b(k+1)$$
+
+观测上表，每一个列的秩不存在打结的情况，因此$Q$不需要校正。取$\alpha=0.05$，若$Q\geq \chi^2_{\alpha,k-1}$便拒绝H0。使用R语言计算得p值$p=0.02237077<\alpha$，故拒绝原假设，认为三大汽车公司某年产品的油耗存在显著差异。
+
+
+```{r}
+#以矩阵的形式输入数据
+k=3;b=5;n=3*5
+table<-matrix(c(20.3,21.2,18.2,18.6,18.5,
+                25.6,24.7,19.3,19.3,20.7,
+                24.0,23.1,20.6,19.8,21.4),nrow=k,
+                byrow=T,dimnames=list(c('A','B','C'),1:b))
+
+#每个区组（列）求秩
+r<-matrix(rep(0,k*b),nrow=k,byrow=T,dimnames=list(c('A','B','C'),1:b))
+for(i in 1:b)
+{ 
+  #计算每个区组的秩存入矩阵r
+  r[,i]=rank(table[,i],ties.method = 'average')
+}
+
+#求每组秩和
+r_sum<-rep(0,k)
+for(i in 1:k)
+    r_sum[i]=sum(r[i,])
+
+#Friedman统计量Q
+Q=12/b/k/(k+1)*sum(r_sum^2)-3*b*(k+1)
+
+#单侧p值
+1-pchisq(Q,k-1)
+```
+
+R内置了函数`friedman.test`，可以进行Friedman检验。`friedman.test`的参数可以为矩阵，但矩阵要求行是区块，列为组，因此需要将table矩阵转置后输入，结果如下所示：
+
+
+```{r}
+
+
+#friedman.test的行是区块，列为组，因此需要将table转置
+friedman.test(t(table))
+```
+
+
+另一种输入的方法是分别将数据、处理和区块以向量的形式输入：
+```{r}
+#数据
+y=c(table)
+
+#处理
+groups=rep(c('A','B','C'),b)
+
+#区块
+blocks=c(rep(1,k),rep(2,k),rep(3,k),rep(4,k),rep(5,k))
+
+#Friedman检验
+friedman.test(y, groups, blocks)
+```
+
