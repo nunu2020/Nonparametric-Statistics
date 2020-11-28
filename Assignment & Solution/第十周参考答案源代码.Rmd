@@ -1,0 +1,1276 @@
+---
+title: "第十周作业参考答案"
+author: ""
+date: ""
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+    toc_float: true
+    number_sections: false
+    theme: lumen
+
+---
+<style type="text/css">
+body{
+    margin: 0 auto;
+    font-family: "Microsoft YaHei", arial,sans-serif;
+    color: #444444;
+    line-height: 1;
+    padding: 30px;
+}
+@media screen and (min-width: 768px) {
+    body {
+        width: 748px;
+        margin: 10px auto;
+    }
+}
+h1, h2, h3, h4 {
+    color: #111111;
+    font-weight: 400;
+    margin-top: 1em;
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: Georgia, Palatino, serif;
+}
+h1, h2, h3, h4, h5, p , dl{
+    margin-bottom: 16px;
+    padding: 0;
+}
+h1 {
+    font-size: 52px;
+    line-height: 55px;
+}
+h2 {
+    font-size: 37px;
+    line-height: 42px;
+}
+h1, h2 {
+    border-bottom: 1px solid #EFEAEA;
+    padding-bottom: 10px;
+}
+h3 {
+    font-size: 30px;
+    line-height: 31px;
+}
+h4 {
+    font-size: 25px;
+    line-height: 26px;
+}
+h5 {
+    font-size: 18px;
+    list-style: 23px;
+}
+a {
+    color: #0099ff;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+}
+a:hover {
+    text-decoration: none;
+    color: #ff6600;
+}
+a:visited {
+    /*color: purple;*/
+}
+ul, ol {
+    padding: 0;
+    padding-left: 24px;
+    margin: 0;
+}
+li {
+    line-height: 24px;
+}
+p, ul, ol {
+    font-size: 16px;
+    line-height: 24px;
+}
+
+ol ol, ul ol {
+    list-style-type: lower-roman;
+}
+
+/*pre {
+    padding: 0px 24px;
+    max-width: 800px;
+    white-space: pre-wrap;
+}
+code {
+    font-family: Consolas, Monaco, Andale Mono, monospace;
+    line-height: 1.5;
+    font-size: 13px;
+}*/
+
+code, pre {
+    border-radius: 3px;
+    background-color:#f7f7f7;
+    color: inherit;
+}
+
+code {
+    font-family: Consolas, Monaco, Andale Mono, monospace;
+    margin: 0 2px;
+}
+
+pre {
+    line-height: 1.7em;
+    overflow: auto;
+    padding: 6px 10px;
+    border-left: 4px solid #6CE26C;
+}
+
+pre > code {
+    border: 0;
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    font-size: .85em;
+    white-space: pre;
+    background: 0 0;
+
+}
+
+code {
+    color: #666555;
+}
+
+
+/** markdown preview plus 对于代码块的处理有些问题, 所以使用统一的颜色 */
+/*code .keyword {
+  color: #8959a8;
+}
+
+code .number {
+  color: #f5871f;
+}
+
+code .comment {
+  color: #998
+}*/
+
+aside {
+    display: block;
+    float: right;
+    width: 390px;
+}
+blockquote {
+    border-left:.5em solid #eee;
+    padding: 0 0 0 2em;
+    margin-left:0;
+}
+blockquote  cite {
+    font-size:14px;
+    line-height:20px;
+    color:#bfbfbf;
+}
+blockquote cite:before {
+    content: '\2014 \00A0';
+}
+
+blockquote p {
+    color: #666;
+}
+
+pre, code, tt {
+
+  font-size: 16px;
+
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+
+}
+
+ 
+
+code, tt {
+
+  margin: 0 0px;
+
+  padding: 0px 0px;
+
+  white-space: nowrap;
+
+  border: 1px solid #eaeaea;
+
+  background-color: #f8f8f8;
+
+  border-radius: 3px;
+
+}
+
+ 
+
+pre>code {
+
+  margin: 0;
+
+  padding: 0;
+
+  white-space: pre;
+
+  color: #338000;
+
+  border: none;
+
+  background: transparent;
+
+ 
+
+}
+
+ 
+
+pre {
+
+  background-color: #f8f8f8;
+
+  border: 1px solid #ccc;
+
+  font-size: 16px;
+
+  line-height: 19px;
+
+  overflow: auto;
+
+  padding: 6px 10px;
+
+  border-radius: 3px;
+
+}
+
+ 
+
+pre code, pre tt {
+
+  background-color: transparent;
+
+  border: none;
+
+}
+
+/* QUOTES
+
+=============================================================================*/
+
+ 
+
+blockquote {
+
+  border-left: 4px solid #DDD;
+
+  padding: 0 15px;
+
+  color: #777;
+
+}
+
+ 
+
+blockquote>:first-child {
+
+  margin-top: 0px;
+
+}
+
+ 
+
+blockquote>:last-child {
+
+  margin-bottom: 0px;
+
+}
+
+ 
+
+/* HORIZONTAL RULES
+
+=============================================================================*/
+
+ 
+
+hr {
+
+  clear: both;
+
+  margin: 15px 0;
+
+  height: 0px;
+
+  overflow: hidden;
+
+  border: none;
+
+  background: transparent;
+
+  border-bottom: 4px solid #ddd;
+
+  padding: 0;
+
+}
+
+ 
+
+
+hr {
+    text-align: left;
+    color: #999;
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+}
+
+dl {
+    padding: 0;
+}
+
+dl dt {
+    padding: 10px 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold;
+}
+
+dl dd {
+    padding: 0 16px;
+    margin-bottom: 16px;
+}
+
+dd {
+    margin-left: 0;
+}
+
+/* Code below this line is copyright Twitter Inc. */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%;
+    margin: 0;
+    vertical-align: baseline;
+    *vertical-align: middle;
+}
+button, input {
+    line-height: normal;
+    *overflow: visible;
+}
+button::-moz-focus-inner, input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+    cursor: pointer;
+    -webkit-appearance: button;
+}
+input[type=checkbox], input[type=radio] {
+    cursor: pointer;
+}
+/* override default chrome & firefox settings */
+input:not([type="image"]), textarea {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+input[type="search"] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+label,
+input,
+select,
+textarea {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: normal;
+    margin-bottom: 18px;
+}
+input[type=checkbox], input[type=radio] {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+input[type=text],
+input[type=password],
+textarea,
+select {
+    display: inline-block;
+    width: 210px;
+    padding: 4px;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 18px;
+    height: 18px;
+    color: #808080;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+select, input[type=file] {
+    height: 27px;
+    line-height: 27px;
+}
+textarea {
+    height: auto;
+}
+/* grey out placeholders */
+:-moz-placeholder {
+    color: #bfbfbf;
+}
+::-webkit-input-placeholder {
+    color: #bfbfbf;
+}
+input[type=text],
+input[type=password],
+select,
+textarea {
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+input[type=text]:focus, input[type=password]:focus, textarea:focus {
+    outline: none;
+    border-color: rgba(82, 168, 236, 0.8);
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+    -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+/* buttons */
+button {
+    display: inline-block;
+    padding: 4px 14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    background-color: #0064cd;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));
+    background-image: -moz-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -ms-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));
+    background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+    background-image: linear-gradient(top, #049cdb, #0064cd);
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    border: 1px solid #004b9a;
+    border-bottom-color: #003f81;
+    -webkit-transition: 0.1s linear all;
+    -moz-transition: 0.1s linear all;
+    transition: 0.1s linear all;
+    border-color: #0064cd #0064cd #003f81;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+button:hover {
+    color: #fff;
+    background-position: 0 -15px;
+    text-decoration: none;
+}
+button:active {
+    -webkit-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+table {
+    *border-collapse: collapse; /* IE7 and lower */
+    border-spacing: 0;
+    width: 100%;
+}
+table {
+    border: solid #ccc 1px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    /*-webkit-box-shadow: 0 1px 1px #ccc;
+    -moz-box-shadow: 0 1px 1px #ccc;
+    box-shadow: 0 1px 1px #ccc;   */
+}
+table tr:hover {
+    background: #fbf8e9;
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
+}
+table td, .table th {
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+table th {
+    background-color: #dce9f9;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:    -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:     -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:      -o-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:         linear-gradient(top, #ebf3fc, #dce9f9);
+    /*-webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+    -moz-box-shadow:0 1px 0 rgba(255,255,255,.8) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;*/
+    border-top: none;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+    padding: 5px;
+}
+
+table td:first-child, table th:first-child {
+    border-left: none;
+}
+
+table th:first-child {
+    -moz-border-radius: 4px 0 0 0;
+    -webkit-border-radius: 4px 0 0 0;
+    border-radius: 4px 0 0 0;
+}
+table th:last-child {
+    -moz-border-radius: 0 4px 0 0;
+    -webkit-border-radius: 0 4px 0 0;
+    border-radius: 0 4px 0 0;
+}
+table th:only-child{
+    -moz-border-radius: 4px 4px 0 0;
+    -webkit-border-radius: 4px 4px 0 0;
+    border-radius: 4px 4px 0 0;
+}
+table tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 4px;
+    -webkit-border-radius: 0 0 0 4px;
+    border-radius: 0 0 0 4px;
+}
+table tr:last-child td:last-child {
+    -moz-border-radius: 0 0 4px 0;
+    -webkit-border-radius: 0 0 4px 0;
+    border-radius: 0 0 4px 0;
+}
+
+#TOC {
+  left: 60px;
+  margin: 20px 0px 10px 0px;
+}
+
+.main-container {
+  max-width: 1800px;
+  margin-left: -220px;
+  margin-right: -205px;
+}
+
+options(width = 600px)
+
+</style>
+
+新旧教材的题目说明：
+
+旧教材4.1与新教材4.1相同；
+
+旧教材4.3包含在新教材4.6中；
+
+旧教材4.5与新教材4.1相同；
+
+旧教材4.6包含在新教材4.8中；
+
+旧教材4.7与新教材4.9相同。
+
+所以以下按新教材的题目顺序。
+
+
+
+#新4.2
+
+首先读入数据，然后分别采用自己编写的函数数和dunn.test包中的dunn.test()函数进行Dunn检验，得到的结果一致。
+
+```{r warning=FALSE, message=FALSE}
+#读入数据
+A <- c(80, 203, 236, 252, 284, 368, 457, 393)
+B <- c(133, 180, 100, 160)
+C <- c(156, 295, 320, 448, 465, 481, 279)
+D <- c(194, 214, 272, 330, 386, 475)
+ABCD <- c(A,B,C,D)
+```
+
+数据中没有结。
+
+##方法一：编写函数
+
+```{r warning=FALSE, message=FALSE}
+
+#每组样本的样本量
+leng <- sapply(list(A, B, C, D), length)
+n <- sum(leng)
+
+#计算混合秩
+Rank <- rank(ABCD, ties.method = "average")
+
+#将混合秩根据每组样本的长度拆分，得到每组样本的秩
+#结果为列表类型
+R_cond <- split(Rank, rep(1:4, leng))
+
+#求出四组药物的样本的秩平均
+R_cond_avg <- sapply(R_cond, mean)
+
+#共有4组样本
+k <- 4
+alpha_star <- 0.05/(k*(k-1))
+
+#进行两两之间的Dunn检验，返回p值
+dunn_pair_func <- function(Ri_mean, Rj_mean, ni, nj, namei, namej){
+  R_mean_diff <- abs(Ri_mean - Rj_mean)
+#计算两平均秩差的标准误差
+  SE <- sqrt((n*(n+1))*(1/ni+1/nj)/12)
+  d_ij <- R_mean_diff/SE
+  p <- 1 - pnorm(d_ij)
+#输出p值
+  print(paste("第", namei, "组和第", namej, "组进行Dunn检验，得到p=", round(p,5), sep = ""))
+#sig表示是否显著，显著则为1
+  sig <- 0
+  if(p < alpha_star){
+    sig <- 1
+#第i与第j处理之间有显著差异
+    print(paste("第", namei, "组和第", namej, "组之间有显著差异", sep = ""))
+  }else{
+    sig <- 0
+#第i与第j处理之间没有显著差异
+    print(paste("第", namei, "组和第", namej, "组之间没有显著差异", sep = ""))
+  }
+#返回p值和是否显著
+  return(list(p = p, sig = sig)) 
+}
+
+#依次进行A、B、C、D四组中，两两之间的Dunn检验
+k <- 4
+#共有(4*3)/2=6组
+p_dunn_pair <- rep(0, 6)
+sig_dunn_pair <- rep(0, 6)
+name_drug <- c("A", "B", "C", "D")
+
+group_order <- 0
+
+#依次进行两两之间的Dunn检验
+for(i in 1:3){
+  for(j in (i+1):4){
+    group_order <- group_order+1
+    dunn_pair_res <- 
+      dunn_pair_func(R_cond_avg[i], R_cond_avg[j], 
+                     leng[i], leng[j], 
+                     name_drug[i], name_drug[j])
+#保存Dunn检验的p值
+    p_dunn_pair[group_order] <- dunn_pair_res[[1]]
+#保存检验结果是否显著，显著则为1
+    sig_dunn_pair[group_order] <- dunn_pair_res[[2]]
+
+  }
+}
+
+sig_dunn_pair <- ifelse(sig_dunn_pair == 1, "显著", "不显著")
+
+#以表格形式输出Dunn检验的结果
+df_dunn_res <- data.frame(p_dunn_pair, sig_dunn_pair)
+rownames(df_dunn_res) <- paste(c("A", "A", "A", "B", "B", "C"), "VS", c("B", "C", "D", "C", "D", "D"))
+colnames(df_dunn_res) <- c("p值", "是否有显著差异")
+knitr::kable(df_dunn_res, format = "html")
+```
+
+##方法二：使用dunn.test包中的dunn.test()函数
+
+```{r warning=FALSE, message=FALSE}
+library(dunn.test)
+#共有4种处理
+k <- 4
+alpha_star <- 0.05/(k*(k-1))
+#将函数中的alpha参数调整为2*alpha_star
+dunn.test(x = list(A, B, C, D), alpha = 2*alpha_star)
+```
+
+只有B与C有显著性差别。
+
+#新4.3
+
+##Bonferroni检验
+
+###方法一：根据定义计算
+
+有10个假设检验
+
+$$
+H_{0j}:\mu_{j}=0 \ vs\ H_{1j}:\mu_{j}≠0,\ j = 1,2,...,m
+$$
+
+令$p_1,p_2,...,p_m$是这$m$个检验的$p$值。
+
+如果$p_j<\alpha/{m}$，则拒绝原假设。
+
+```{r warning=FALSE, message=FALSE}
+p <- c(0.00017, 0.00448, 0.00671, 0.00907, 0.01220, 0.33626, 0.39341, 0.53882, 0.58125, 0.98617)
+#一共有m个检验
+m <- length(p)
+#Bonferroni检验，当pj<alpha/m时拒绝原假设
+alpha <- 0.05
+alpha_Bon <- 0.05/m
+#当pj<alpha/m时拒绝原假设，得到Bonferroni检验拒绝的原假设的个数
+sig_Bon <- sum(p < alpha_Bon)
+sig_Bon
+```
+
+###方法二：使用p.adjust()函数
+
+使用`p.adjust()`函数，设置参数`method="bonferroni"`，计算Bonferroni检验的调整后的p值。
+
+调整后的p值小于0.05时拒绝原假设。
+
+```{r warning=FALSE, message=FALSE}
+p_Bon <- p.adjust(p, method="bonferroni")
+sum(p_Bon<0.05)
+```
+
+###方法三：使用gMAP包中的bonferroni.test()函数。
+
+`bonferroni.test()`函数设置参数`adjPValues = FALSE`，函数输出每一个p值是否被拒绝，拒绝则输出`TRUE`。
+
+```{r warning=FALSE, message=FALSE}
+library(gMCP)
+sig_Bon <- 0
+for(i in 1:m){
+  sig_Bon <- sig_Bon +
+    bonferroni.test(p[i], weight = rep(0.1, m), adjPValues = FALSE)
+  }
+sig_Bon
+```
+
+Bonferroni检验拒绝的原假设的个数是2个。
+
+##BH检验
+
+###方法一：根据定义计算
+
+(1)$p_{(1)} \leqslant p_{(2)} \leqslant \cdots \leqslant p_{(m)}$ 表示排序后的 $p$值;
+
+(2)$H_{(i)}$ 是对应于 $p_{(i)}$ 的原假设，定义Bonferroni-型多重检验过程:
+
+(3) 令 $k=\max \left\{i: p_{(i)} \leqslant \frac{i}{m} \alpha\right\}$.
+
+(4) 拒绝所有的 $H_{(i)}, i=1,2, \cdots, k$.
+
+```{r warning=FALSE, message=FALSE}
+#从小到大排序
+p_sort <- sort(p)
+k <- NULL
+alpha <- 0.05
+for(i in 1:m){
+  if(p_sort[i] <= i*alpha/m){
+    k <- c(k, i)
+  }
+}
+k <- max(k)
+#拒绝第一个至第k个假设检验的原假设
+sig_BH <- k
+sig_BH
+```
+
+
+###方法二：使用p.adjust()函数
+
+使用`p.adjust()`函数，设置参数`method="BH"`，计算BH检验的调整后的p值。
+
+调整后的p值小于0.05时拒绝原假设。
+
+```{r warning=FALSE, message=FALSE}
+p_BH <- p.adjust(p,method="BH")
+sum(p_BH<0.05)
+```
+
+###方法三：使用sgof包中的BH()函数
+
+函数返回值中的Rejections是拒绝的个数。
+
+```{r warning=FALSE, message=FALSE}
+library(sgof)
+BH(p, alpha = 0.05)$Rejections
+```
+
+BH检验拒绝的原假设的个数是5个。
+
+
+
+
+#新4.6(旧4.3)
+
+本题是完全随机区组的数据，首先进行Fridman检验。
+
+##Fridman检验
+
+```{r warning=FALSE, message=FALSE}
+#读入数据，每一行是一个处理组，每一列是一个区组
+oil <- matrix(c(20.3,21.2,18.2,18.6,18.5,
+                25.6,24.7,19.3,19.3,20.7,
+                24.0,23.1,20.6,19.8,21.4),
+              nrow = 3, ncol = 5, byrow=T, 
+              dimnames=list(LETTERS[1:3], 1:5))
+
+#函数friedman.test()要求数据的每一行是一个区组，每一列是一个处理组
+#所以将oil矩阵转置
+friedman.test(t(oil))
+p_fri <- friedman.test(t(oil))$p.value
+```
+
+Friedman检验的p=0.02237，拒绝原假设，认为三大公司（三种处理）的友好存在差异。
+
+##HL调整秩和检验
+
+由于本题中共有5个区组，3种处理。区组数较大，处理组数较小，此时可以采用HL检验。
+
+这里自己编写函数进行HL检验。
+
+```{r warning=FALSE, message=FALSE}
+#HL检验的函数
+
+#函数参数为matrix类型，每行是一个处理组，每列是一个区组
+#tie=TRUE表示数据中有结，默认数据中没有结
+HL_test_func <- function(value, tie = FALSE){
+#区组数
+  b <- ncol(value)
+#处理组数
+  k <- nrow(value)
+#对每个区组来说，以均值作为其位置估计值
+#对每个区组（每一列）求均值
+  mean_block <- apply(value, 2, mean)
+#每一个区组中的每个观测值减去均值，得到调整后的观测值
+#对每一行都减去区组均值的向量mean_block，将得到的结果转置
+  value_adj <- t(apply(value, 1, function(x) x-mean_block))
+#对全部调整后的观测值计算混合后的秩，得到调整秩
+#由于as.vector()函数将矩阵按列展开为向量，而我们需要按行（处理）展开，所以转置后再转化为向量
+  Rank_adj <- rank(as.vector(t(value_adj)), ties.method = "average")
+#将混合秩根据每个处理组的样本的长度拆分，得到每个处理组的样本的秩
+#结果为列表类型
+  R_cond_adj <- split(Rank_adj, rep(1:k, rep(b, k)))
+#计算每个处理组的平均秩
+  R_cond_adj_avg <- sapply(R_cond_adj, mean)
+#计算每个处理组的秩和R.j
+  R.j <- sapply(R_cond_adj, sum)
+
+#将混合秩根据每个区组的样本的长度拆分，得到每个区组的样本的秩
+#结果为列表类型
+  R_block_adj <- split(Rank_adj, rep(1:b, k))
+#计算每个区组的平均秩
+  R_block_adj_avg <- sapply(R_block_adj, mean)
+#计算每个区组的秩和Ri.
+  Ri. <- sapply(R_block_adj, sum)
+  
+#计算数据中没有结时的检验统计量Q
+  if(!tie){
+#Q的分子
+  Q_nume <- (k-1)*(sum((R.j)^2) - k*b*b*(k*b+1)*(k*b+1)/4)
+#Q的分母
+  Q_deno <- k*b*(k*b+1)*(2*k*b+1)/6 - sum((Ri.)^2)/k
+#检验统计量Q
+  Q <- Q_nume/Q_deno
+
+#在零假设下，检验统计量Q近似服从自由度为k-1的卡方分布
+  p <- 1 - pchisq(Q, df = k-1)
+  
+#函数返回检验统计量Q的值和p值
+  return(list("无结数据的检验统计量Q" = Q,"p值" = p))
+  }
+
+#计算数据中有结时的检验统计量Q
+  if(tie){
+#Q的分子
+  Q_nume_tie<- (k-1)*(sum((R.j)^2) - k*b*b*(k*b+1)*(k*b+1)/4)
+#Q的分母
+  Q_deno_tie <- sum((Rank_adj)^2) - sum((Ri.)^2)/k
+#检验统计量Q
+  Q_tie <- Q_nume_tie/Q_deno_tie
+
+#在零假设下，检验统计量Q近似服从自由度为k-1的卡方分布
+  p_tie <- 1 - pchisq(Q_tie, df = k-1)
+  
+#函数返回检验统计量Q的值和p值
+  return(list("有结数据的检验统计量Q" = Q_tie,"p值" = p_tie))
+  }
+}
+
+```
+
+下面用编写的`HL_test_func()`函数进行HL检验。
+
+```{r warning=FALSE, message=FALSE}
+HL_test_func(oil, tie = TRUE)
+#保存HL检验的p值
+p_HL <- HL_test_func(oil, tie = TRUE)[[2]]
+```
+
+得到HL检验的p=0.03266969。
+
+将Fridman检验和HL检验的p值进行对比。
+
+```{r warning=FALSE, message=FALSE}
+df_pvalue <- data.frame("p值" = c(p_fri, p_HL))
+rownames(df_pvalue) <- c("Fridman检验","HL检验")
+knitr::kable(df_pvalue, format = "html")
+```
+
+HL检验得到的p值大于Fridman检验的p值。在本题中，两种检验都可以拒绝原假设。
+
+由于本题中共有5个区组，3种处理。区组数相对较大，处理组数相对较小。但是两者之间的差距不是特别大，HL检验和Fridman检验都可以采用，在此题中两种检验得到的结果没有太大差异。
+
+
+#新4.7(旧4.5)
+
+```{r warning=FALSE, message=FALSE}
+#读入数据
+meth1 <- c(3.7, 3.7, 3.0, 3.9, 2.7);n1 <- length(meth1)
+meth2 <- c(7.3, 5.2, 5.3, 5.7, 6.5);n2 <- length(meth2)
+meth3 <- c(9.0, 4.9, 7.1, 8.7);n3 <- length(meth3)
+meth_value <- c(meth1, meth2, meth3)
+#因子类型
+meth_fac <- as.factor(c(rep("1",length(meth1)), rep("2",length(meth2)), rep("3", length(meth3))))
+```
+
+数据取自完全随机设计。
+
+首先画出箱线图。
+
+##箱线图
+
+```{r warning=FALSE, message=FALSE}
+#构建数据框，包含数据和该来自的处理组
+df_meth <- data.frame(meth_value, meth_fac)
+library(ggplot2)
+#画箱线图
+ggplot(df_meth, aes(x = meth_fac, y = meth_value)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(x = "生活方式", y = "一个月后减少的重量(单位500g)", title = "")
+```
+
+
+
+
+##检验位置参数是否相同
+
+下面采用单因素方差分析法和Kruskal-Wallis检验，来检验位置参数是否相同。
+
+###检验方法一：单因素方差分析法
+
+```{r warning=FALSE, message=FALSE}
+summary(aov(meth_value ~ meth_fac))
+```
+
+p=0.000912<0.05，拒绝原假设，认为位置参数不同。
+
+###检验方法二：Kruskal-Wallis 单因素方差分析
+
+```{r warning=FALSE, message=FALSE}
+#进行Kruskal-Wallis检验
+kruskal.test(meth_value, meth_fac)
+```
+
+p=0.00895<0.05，拒绝原假设，认为位置参数不同。
+
+因此，
+
+两种检验都拒绝了原假设，认为三种生活方式的减肥效果（位置参数）不同。
+
+##检验哪种生活方式的效果最好，哪种最差
+
+由于Dunn检验只能进行双边检验，即只能检验两两之间是否有差异，而不能检验两两之间哪一组的位置参数更大。
+
+所以选择Jonckheere-Terpstra检验，来检验哪种生活方式的减肥效果最好，哪种最差。
+
+###Jonckheere-Terpstra检验
+
+根据箱线图可以直观地看到，生活方式1的减肥效果最差，生活方式三最好。
+
+下面通过Jonckheere-Terpstra检验进行严格的检验。
+
+原假设和备择假设是：
+
+$H_0:\theta_1=\theta_2=\theta_3 \ vs \ H_1:\theta_1≤\theta_2≤\theta_3$
+
+即原假设是三种生活方式的减肥效果没有差别，备择假设是生活方式1的减肥效果最差，生活方式三最好。
+
+但是，考虑到对位置参数的检验时，在备择假设是“三种生活方式的减肥效果有差别”时，已经拒绝了“三种生活方式的减肥效果没有差别”的原假设，
+
+所以严谨起见，以下对所有$\theta_1,\theta_2,\theta_3$的6种排列分别进行作为备择假设中$\theta$的排列进行检验，即进行六次Jonckheere-Terpstra检验。
+
+也就是
+
+$$
+H_0:\theta_1=\theta_2=\theta_3 \ vs \ H_1:\theta_1≤\theta_2≤\theta_3 \\
+H_0:\theta_1=\theta_3=\theta_2 \ vs \ H_1:\theta_1≤\theta_3≤\theta_2
+\\
+H_0:\theta_2=\theta_1=\theta_3 \ vs \ H_1:\theta_2≤\theta_1≤\theta_3
+\\
+H_0:\theta_2=\theta_3=\theta_1 \ vs \ H_1:\theta_2≤\theta_3≤\theta_1
+\\
+H_0:\theta_3=\theta_1=\theta_2 \ vs \ H_1:\theta_3≤\theta_1≤\theta_2
+\\
+H_0:\theta_3=\theta_2=\theta_1 \ vs \ H_1:\theta_3≤\theta_2≤\theta_1
+$$
+
+R中有`SAGx`包中的`JT.test()`函数，`clinfun`包中的`jonckheere.test()`函数，`PMCMR`包中的`jonckheere.test()`函数都可以进行Jonckheere-Terpstra检验，仅输入的参数的类型略有差异，得到的p值是相同的。
+
+####(1)首先进行备择假设是θ1≤θ2≤θ3的假设检验
+
+用以上函数分别进行$H_0:\theta_1=\theta_2=\theta_3 \ vs \ H_1:\theta_1≤\theta_2≤\theta_3$的假设检验，得到的p值相同。
+
+```{r warning=FALSE, message=FALSE}
+library(SAGx)
+#输入数据为矩阵类型，处理组的名称为因子类型
+JT.test(data = t(c(meth1, meth2, meth3)), class = meth_fac, alternative = "increasing")
+```
+
+得到p=0.0009567
+
+```{r warning=FALSE, message=FALSE}
+library(clinfun)
+meth_label <- c(rep(1,length(meth1)), rep(2,length(meth2)), rep(3, length(meth3)))
+#输入数据为向量类型，处理组的名称为数字
+clinfun::jonckheere.test(c(meth1, meth2, meth3), meth_label,
+                alternative="increasing")
+```
+
+得到p=0.0009567
+
+```{r warning=FALSE, message=FALSE}
+library(PMCMR)
+#输入数据为向量类型，处理组的名称为因子类型
+PMCMR::jonckheere.test(c(meth1, meth2, meth3), meth_fac,
+                alternative="increasing")
+```
+
+得到p=0.0009567
+
+可以看到，三个函数进行Jonckheere-Terpstra检验得到的p值相同，都拒绝了原假设
+
+####(2)三个函数的区别
+
+**但是**，
+
+`SAGx`包中的`JT.test()`函数，`clinfun`包中的`jonckheere.test()`函数在进行检验时，不管输入数据的处理组的顺序是什么，备择假设都是$H_1:\theta_1≤\theta_2≤\theta_3$。
+
+以下改变输入数据的处理组的顺序为$\theta_3,\theta_2,\theta_1$，也就是试图进行原假设和备择假设为
+$$
+H_0:\theta_3=\theta_2=\theta_1 \ vs\ H_1:\theta_3≤\theta_2≤\theta_1
+$$
+的假设检验。可以通过箱线图直观地看到，这个备择假设是不正确的。我们期待得到的检验结果是无法拒绝原假设。
+
+我们分别使用`SAGx`包中的`JT.test()`函数，`clinfun`包中的`jonckheere.test()`函数，`PMCMR`包中的`jonckheere.test()`函数进行检验。
+
+下面这段代码仅用于说明这三个函数在备择假设上的区别，从而选择符合要求的函数进行后续的检验。
+
+```{r warning=FALSE, message=FALSE}
+values_temp <- c(meth3, meth2, meth1)
+label_temp <- c(rep(3,length(meth3)), rep(2,length(meth2)), rep(1, length(meth1)))
+fac_temp <- as.factor(c(rep(3,length(meth3)), rep(2,length(meth2)), rep(1, length(meth1))))
+
+SAGx::JT.test(t(values_temp), fac_temp,
+                alternative="increasing")$p.value
+
+clinfun::jonckheere.test(values_temp, label_temp,
+                alternative="increasing")$p.value
+
+PMCMR::jonckheere.test(values_temp, fac_temp,
+                alternative="increasing")$p.value
+```
+
+可以看到，`SAGx`包中的`JT.test()`函数和`clinfun`包中的`jonckheere.test()`函数输出的p值均为p=0.0009567，和
+$$
+H_0:\theta_1=\theta_2=\theta_3 \ vs\ H_1:\theta_1≤\theta_2≤\theta_3
+$$
+情形下的p值相同，不符合预期。
+
+只有`PMCMR`包中的`jonckheere.test()`函数进行了
+$$
+H_0:\theta_3=\theta_2=\theta_1 \ vs\ H_1:\theta_3≤\theta_2≤\theta_1
+$$
+的假设检验。
+
+####(3)进行θ1,θ2,θ3的6中排列的6个假设检验
+
+因此，下面选择`PMCMR`包中的`jonckheere.test()`函数对来进行$\theta_1,\theta_2,\theta_3$的6种排列的6个假设检验。
+
+```{r warning=FALSE, message=FALSE}
+#6种排列
+meth_value_perm <- list(c(meth1, meth2, meth3),
+                        c(meth1, meth3, meth2),
+                        c(meth2, meth1, meth3),
+                        c(meth2, meth3, meth1),
+                        c(meth3, meth1, meth2),
+                        c(meth3, meth2, meth1)
+                        )
+meth_fac_perm <- list(as.factor(c(rep(1,n1), rep(2,n2), rep(3, n3))),
+                      as.factor(c(rep(1,n1), rep(3,n3), rep(2, n2))),
+                      as.factor(c(rep(2,n2), rep(1,n1), rep(3, n3))),
+                      as.factor(c(rep(2,n2), rep(3,n3), rep(1, n1))),
+                      as.factor(c(rep(3,n3), rep(1,n1), rep(2, n2))),
+                      as.factor(c(rep(3,n3), rep(2,n2), rep(1, n1)))
+                      )
+#用PMCMR包中的jonckheere.test()函数进行假设检验，返回p值
+JT_permu_func <- function(dat, fac){
+  PMCMR::jonckheere.test(dat, fac,
+                alternative="increasing")$p.value
+}
+#进行检验
+p_perm <- mapply(JT_permu_func, meth_value_perm, meth_fac_perm)
+p_perm <- data.frame(p_perm)
+rownames(p_perm) <- c("θ1≤θ2≤θ3", "θ1≤θ3≤θ2", "θ2≤θ1≤θ3", "θ2≤θ3≤θ1", "θ3≤θ1≤θ2", "θ3≤θ2≤θ1")
+colnames(p_perm) <- c("不同备择假设下对应的p值")
+#输出结果
+knitr::kable(p_perm, format = "html")
+```
+
+可以从表中明显看到，只有备择假设为$H_1:\theta_1≤\theta_2≤\theta_3$时得到的p值小于0.05，可以拒绝原假设，接受备择假设。
+
+说明第三种生活方式的减肥效果最好，第一种生活方式效果最差。
+
+这与箱线图的直观结果是一致的。
+
+#新4.8(旧4.6)
+
+分别进行Cochran检验和卡方检验。
+
+##Cochran检验
+
+```{r warning=FALSE, message=FALSE}
+sale1 <- c(rep(1, 6), rep(0, 2), rep(1, 3), 0)
+sale2 <- c(rep(c(0, 1), 2), rep(0, 3), 1, rep(0, 4))
+sale3 <- c(rep(c(1, 0), 2), rep(c(0, 1), 2), rep(0, 3), 1)
+
+#sale_matr是题给矩阵的转置
+#每一列为一个推销员，每一行为一个客户
+sale_matr <- matrix(c(sale1, sale2, sale3), nrow = 12, ncol = 3)
+ni. <- apply(sale_matr, 1, sum)
+n.j <- apply(sale_matr, 2, sum)
+k <- ncol(sale_matr)
+#检验统计量
+Q <- (k-1)*((k*sum(n.j^2) - (sum(n.j))^2))/(k*sum(ni.) - sum(ni.^2))
+#p值
+p <- pchisq(Q, k-1, lower.tail = FALSE)
+p
+```
+
+##卡方检验
+
+```{r warning=FALSE, message=FALSE}
+obsfreq <- apply(sale_matr, 2, sum)
+#原假设是三位推销员的推销能力相同，即顾客对三位推销员的推销服务的满意程度相同
+nullprobs <- c(.333,.333,.334)
+chisq.test(obsfreq, p = nullprobs)
+```
+
+卡方检验得到的p=0.1147，不能拒绝原假设。
+
+但是，从数据直观来看，三位推销员的推销能力是有差异的。
+
+Cochran检验检测出了三位推销员之间的差异，而卡方检验没有检测出来。
+
+另一方面，这里使用卡方检验是不合适的。因为卡方检验要求每位顾客满意的推销员有且仅有一个，本题中的数据不符合该要求。
+
+所以，本题应该采用Cochran检验，不可以采用卡方检验。
+
+#新4.9(旧4.7)
+
+数据是均衡不完全区组BIB设计，且有
+
+$$
+k = 4, \ b = 4, \ t = 3, \ r = 3, \ \lambda = 2
+$$
+
+均衡不完全区组BIB设计满足以下条件：
+
+(1)每个处理在同一区组中最多出现一次；
+
+(2)区组样本量为$t=3$，$t$为每个区组设计的样本量，$t=3$小于处理个数$k=4$；
+
+(3)每个处理出现在相同多的$r=3$个区组中；
+
+(4)每两个处理在一个区组中相遇的次数一样，均为$\lambda = 2$次。
+
+采用Durbin不完全区组分析法进行检验。
+
+方法一按照公式计算检验统计量并求p值，方法二使用PMCMR包中的durbin.test()函数进行检验。
+
+得到的p值一致。
+
+##方法一：按照公式计算检验统计量并求p值
+
+```{r warning=FALSE, message=FALSE}
+#读入数据
+#每行是一种处理，每列是一个区组
+death_mosq <- matrix(c(
+  356, 320, 359, NA, 
+  338, 340, NA, 385,
+  372, NA, 380, 390,
+  NA, 308, 332, 348), 
+  ncol = 4, nrow = 4, byrow = TRUE,
+  dimnames = list(LETTERS[1:4], 1:4))
+
+k <- 4
+b <- 4
+t <- 3
+r <- 3
+lambda <- 2
+
+#计算Rij，即在第i个区组中第j个处理的秩
+#空值NA不参与求秩，保持为NA不变
+Rij <- apply(death_mosq, 2, function(x) rank(x, na.last = "keep"))
+
+#计算每个区组的秩和Ri.
+#求和时去掉NA
+Ri._mosq <- apply(Rij, 1, function(x) sum(x, na.rm = TRUE))
+  
+#计算检验统计量D
+D_mosq <- 12*(k-1)*(sum((Ri._mosq-0.5*r*(t+1))^2))/(r*k*(t^2-1))
+
+#在零假设下，检验统计量D近似服从自由度为(k-1)的卡方分布
+#p值
+p_mosq <- 1 - pchisq(D_mosq, df = k-1)
+p_mosq
+```
+
+得到p=0.08030773>0.05
+
+##方法二：使用PMCMR包中的durbin.test()函数进行检验
+
+```{r warning=FALSE, message=FALSE}
+library(PMCMR)
+#参数中的矩阵要求每行是一个区组，每列是一种处理
+durbin.test(t(death_mosq))
+```
+
+得到p=0.08031>0.05但是小于0.1
+
+
+两种方法得到的p值相等，均为p=0.08031<0.1。因此可以在10%的显著性水平下拒绝原假设，认为四种驱蚊药剂的药效不同。
+
