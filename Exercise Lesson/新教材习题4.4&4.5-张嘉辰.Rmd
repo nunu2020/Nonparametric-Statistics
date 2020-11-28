@@ -1,0 +1,1273 @@
+---
+title: "4.4_4.5_1"
+author: "张嘉辰"
+date: "2020年11月25日"
+output: 
+  html_document:
+    toc: true 
+    toc_depth: 4
+    toc_float: true
+    number_sections: false
+    theme: lumen
+editor_options: 
+  chunk_output_type: console
+---
+<style type="text/css">
+body{
+    margin: 0 auto;
+    font-family: "Microsoft YaHei", arial,sans-serif;
+    color: #444444;
+    line-height: 1;
+    padding: 30px;
+}
+@media screen and (min-width: 768px) {
+    body {
+        width: 748px;
+        margin: 10px auto;
+    }
+}
+h1, h2, h3, h4 {
+    color: #111111;
+    font-weight: 400;
+    margin-top: 1em;
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: Georgia, Palatino, serif;
+}
+h1, h2, h3, h4, h5, p , dl{
+    margin-bottom: 16px;
+    padding: 0;
+}
+h1 {
+    font-size: 52px;
+    line-height: 55px;
+}
+h2 {
+    font-size: 37px;
+    line-height: 42px;
+}
+h1, h2 {
+    border-bottom: 1px solid #EFEAEA;
+    padding-bottom: 10px;
+}
+h3 {
+    font-size: 30px;
+    line-height: 31px;
+}
+h4 {
+    font-size: 25px;
+    line-height: 26px;
+}
+h5 {
+    font-size: 18px;
+    list-style: 23px;
+}
+a {
+    color: #0099ff;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+}
+a:hover {
+    text-decoration: none;
+    color: #ff6600;
+}
+a:visited {
+    /*color: purple;*/
+}
+ul, ol {
+    padding: 0;
+    padding-left: 24px;
+    margin: 0;
+}
+li {
+    line-height: 24px;
+}
+p, ul, ol {
+    font-size: 16px;
+    line-height: 24px;
+}
+
+ol ol, ul ol {
+    list-style-type: lower-roman;
+}
+
+/*pre {
+    padding: 0px 24px;
+    max-width: 800px;
+    white-space: pre-wrap;
+}
+code {
+    font-family: Consolas, Monaco, Andale Mono, monospace;
+    line-height: 1.5;
+    font-size: 13px;
+}*/
+
+code, pre {
+    border-radius: 3px;
+    background-color:#f7f7f7;
+    color: inherit;
+}
+
+code {
+    font-family: Consolas, Monaco, Andale Mono, monospace;
+    margin: 0 2px;
+}
+
+pre {
+    line-height: 1.7em;
+    overflow: auto;
+    padding: 6px 10px;
+    border-left: 4px solid #6CE26C;
+}
+
+pre > code {
+    border: 0;
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    font-size: .85em;
+    white-space: pre;
+    background: 0 0;
+
+}
+
+code {
+    color: #666555;
+}
+
+
+/** markdown preview plus 对于代码块的处理有些问题, 所以使用统一的颜色 */
+/*code .keyword {
+  color: #8959a8;
+}
+
+code .number {
+  color: #f5871f;
+}
+
+code .comment {
+  color: #998
+}*/
+
+aside {
+    display: block;
+    float: right;
+    width: 390px;
+}
+blockquote {
+    border-left:.5em solid #eee;
+    padding: 0 0 0 2em;
+    margin-left:0;
+}
+blockquote  cite {
+    font-size:14px;
+    line-height:20px;
+    color:#bfbfbf;
+}
+blockquote cite:before {
+    content: '\2014 \00A0';
+}
+
+blockquote p {
+    color: #666;
+}
+
+pre, code, tt {
+
+  font-size: 16px;
+
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+
+}
+
+ 
+
+code, tt {
+
+  margin: 0 0px;
+
+  padding: 0px 0px;
+
+  white-space: nowrap;
+
+  border: 1px solid #eaeaea;
+
+  background-color: #f8f8f8;
+
+  border-radius: 3px;
+
+}
+
+ 
+
+pre>code {
+
+  margin: 0;
+
+  padding: 0;
+
+  white-space: pre;
+
+  color: #338000;
+
+  border: none;
+
+  background: transparent;
+
+ 
+
+}
+
+ 
+
+pre {
+
+  background-color: #f8f8f8;
+
+  border: 1px solid #ccc;
+
+  font-size: 16px;
+
+  line-height: 19px;
+
+  overflow: auto;
+
+  padding: 6px 10px;
+
+  border-radius: 3px;
+
+}
+
+ 
+
+pre code, pre tt {
+
+  background-color: transparent;
+
+  border: none;
+
+}
+
+/* QUOTES
+
+=============================================================================*/
+
+ 
+
+blockquote {
+
+  border-left: 4px solid #DDD;
+
+  padding: 0 15px;
+
+  color: #777;
+
+}
+
+ 
+
+blockquote>:first-child {
+
+  margin-top: 0px;
+
+}
+
+ 
+
+blockquote>:last-child {
+
+  margin-bottom: 0px;
+
+}
+
+ 
+
+/* HORIZONTAL RULES
+
+=============================================================================*/
+
+ 
+
+hr {
+
+  clear: both;
+
+  margin: 15px 0;
+
+  height: 0px;
+
+  overflow: hidden;
+
+  border: none;
+
+  background: transparent;
+
+  border-bottom: 4px solid #ddd;
+
+  padding: 0;
+
+}
+
+ 
+
+
+hr {
+    text-align: left;
+    color: #999;
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+}
+
+dl {
+    padding: 0;
+}
+
+dl dt {
+    padding: 10px 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold;
+}
+
+dl dd {
+    padding: 0 16px;
+    margin-bottom: 16px;
+}
+
+dd {
+    margin-left: 0;
+}
+
+/* Code below this line is copyright Twitter Inc. */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%;
+    margin: 0;
+    vertical-align: baseline;
+    *vertical-align: middle;
+}
+button, input {
+    line-height: normal;
+    *overflow: visible;
+}
+button::-moz-focus-inner, input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+    cursor: pointer;
+    -webkit-appearance: button;
+}
+input[type=checkbox], input[type=radio] {
+    cursor: pointer;
+}
+/* override default chrome & firefox settings */
+input:not([type="image"]), textarea {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+input[type="search"] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+label,
+input,
+select,
+textarea {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: normal;
+    margin-bottom: 18px;
+}
+input[type=checkbox], input[type=radio] {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+input[type=text],
+input[type=password],
+textarea,
+select {
+    display: inline-block;
+    width: 210px;
+    padding: 4px;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 18px;
+    height: 18px;
+    color: #808080;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+select, input[type=file] {
+    height: 27px;
+    line-height: 27px;
+}
+textarea {
+    height: auto;
+}
+/* grey out placeholders */
+:-moz-placeholder {
+    color: #bfbfbf;
+}
+::-webkit-input-placeholder {
+    color: #bfbfbf;
+}
+input[type=text],
+input[type=password],
+select,
+textarea {
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+input[type=text]:focus, input[type=password]:focus, textarea:focus {
+    outline: none;
+    border-color: rgba(82, 168, 236, 0.8);
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+    -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+/* buttons */
+button {
+    display: inline-block;
+    padding: 4px 14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    background-color: #0064cd;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));
+    background-image: -moz-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -ms-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));
+    background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
+    background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+    background-image: linear-gradient(top, #049cdb, #0064cd);
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    border: 1px solid #004b9a;
+    border-bottom-color: #003f81;
+    -webkit-transition: 0.1s linear all;
+    -moz-transition: 0.1s linear all;
+    transition: 0.1s linear all;
+    border-color: #0064cd #0064cd #003f81;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+button:hover {
+    color: #fff;
+    background-position: 0 -15px;
+    text-decoration: none;
+}
+button:active {
+    -webkit-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+table {
+    *border-collapse: collapse; /* IE7 and lower */
+    border-spacing: 0;
+    width: 100%;
+}
+table {
+    border: solid #ccc 1px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    /*-webkit-box-shadow: 0 1px 1px #ccc;
+    -moz-box-shadow: 0 1px 1px #ccc;
+    box-shadow: 0 1px 1px #ccc;   */
+}
+table tr:hover {
+    background: #fbf8e9;
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
+}
+table td, .table th {
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+table th {
+    background-color: #dce9f9;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:    -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:     -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:      -o-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image:         linear-gradient(top, #ebf3fc, #dce9f9);
+    /*-webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+    -moz-box-shadow:0 1px 0 rgba(255,255,255,.8) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;*/
+    border-top: none;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+    padding: 5px;
+}
+
+table td:first-child, table th:first-child {
+    border-left: none;
+}
+
+table th:first-child {
+    -moz-border-radius: 4px 0 0 0;
+    -webkit-border-radius: 4px 0 0 0;
+    border-radius: 4px 0 0 0;
+}
+table th:last-child {
+    -moz-border-radius: 0 4px 0 0;
+    -webkit-border-radius: 0 4px 0 0;
+    border-radius: 0 4px 0 0;
+}
+table th:only-child{
+    -moz-border-radius: 4px 4px 0 0;
+    -webkit-border-radius: 4px 4px 0 0;
+    border-radius: 4px 4px 0 0;
+}
+table tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 4px;
+    -webkit-border-radius: 0 0 0 4px;
+    border-radius: 0 0 0 4px;
+}
+table tr:last-child td:last-child {
+    -moz-border-radius: 0 0 4px 0;
+    -webkit-border-radius: 0 0 4px 0;
+    border-radius: 0 0 4px 0;
+}
+
+#TOC {
+  left: 60px;
+  margin: 20px 0px 10px 0px;
+}
+
+.main-container {
+  max-width: 1800px;
+  margin-left: -220px;
+  margin-right: -205px;
+}
+
+options(width = 600px)
+
+</style>
+
+
+
+#新4.4(detecting rare and weak signals)
+
+
+##经典算法计算HC值
+
+###公式一
+
+首先按照高阶鉴定法HC的经典算法计算。步骤如下：
+
+(1)对每个检验计算一个统计量得分，根据统计量得分计算 $p$ 值；
+
+(2)对p值进行排序 $\pi_{(1)}<\pi_{(2)}<\cdots \pi_{(p)}$
+
+(3)计算第 $k$ 个HC值，相当于算了一个二阶 $z$ -得分:
+$$
+H C_{p, k}=\sqrt{p}\left[\frac{k / p-\pi_{(k)}}{\sqrt{\pi_{(k)}\left(1-\pi_{(k)}\right)}}\right]
+$$
+(4)取最大值, 计算相应的 $H C_{p^{*}}=\max _{1 \leqslant k \leqslant p \alpha_{0}}\left\{H C_{p, k}\right\},$ 找到对应的 $\hat{k},$ 前 $k$
+可以认为是真显著的,拒绝所有的 $H_{(i)}, i=1,2, \cdots, k$.
+
+这一公式的名称是Orthodox Higher Criticism (OHC)
+
+```{r warning=FALSE, message=FALSE}
+#p值用Π表示
+pai <- c(0.0024, 0.0056, 0.0096, 0.0121, 0.0201, 0.0278, 0.0298, 0.0344, 0.0349, 0.3240, 0.4262, 0.5719, 0.6528, 0.7590, 1.0000)
+#对p值进行排序
+pai <- sort(pai)
+#p是p值的个数
+p <- length(pai)
+k <- 1:15
+#经典算法，计算HC值
+HC_clas <- sqrt(p)*(k/p - pai)/sqrt(pai*(1-pai))
+HC_clas
+#书上把NaN修正为0
+
+#阈值
+thre_clas <- max(HC_clas)
+k_hat_clas <- which.max(HC_clas)
+k_hat_clas
+#画图
+plot(HC_clas, type = "b", ylab = "HC值", main = "经典算法得到的HC值")
+#用红线标出阈值所在位置
+abline(v = k_hat_clas, col = "red")
+text(x = k_hat_clas, y = 2, label = c("拒绝9个"), pos = 2, col = "red")
+```
+
+得到的HC值与例题中的结果一致。
+
+HC得分先增后降，在9个检验上达到最大，因此HC值的阈值选在第9组的位置。同时，第9组和第10组之间也是两组HC值间隔最大的位置。
+
+所以，HC拒绝的检验数量是9。
+
+###公式二：另一种经典算法的公式
+
+另一种经典算法的公式
+
+(该公式与书上经典算法的公式中，仅分母略有差别)
+
+HC值是
+$$
+H C\left(i ; \pi_{(i)}\right)=\sqrt{N} \frac{i / N-\pi_{(i)}}{\sqrt{i / N(1-i / N)}}
+$$
+
+
+
+采用这一公式计算得到的HC值如下。
+
+```{r warning=FALSE, message=FALSE}
+HC_clas2 <- sqrt(p)*(k/p - pai)/sqrt((k/p)*(1-k/p))
+HC_clas2
+
+#阈值
+thre_clas2 <- max(HC_clas2)
+k_hat_clas2 <- which.max(HC_clas2)
+k_hat_clas2
+#画图
+plot(HC_clas2, type = "b", ylab = "HC值", main = "经典算法得到的HC值")
+#用红线标出阈值所在位置
+abline(v = k_hat_clas2, col = "red")
+text(x = k_hat_clas2, y = 2, label = c("拒绝9个"), pos = 2, col = "red")
+```
+
+###公式二：fdrtool包中的hc.score()和hc.thresh()函数
+
+经典算法的后一种公式与R中`fdrtool`包中的`hc.score()`和`hc.thresh()`函数计算是一致的。
+
+```{r warning=FALSE, message=FALSE}
+pai <- c(0.00020, 0.00096, 0.00190, 0.00950, 0.02010, 0.02780, 0.02980, 0.03440, 0.03490, 0.32400, 0.42620, 0.57190, 0.65280, 0.75900, 1.0000)
+library(fdrtool)
+#计算HC值
+hc.score(pai)
+#计算阈值
+max(hc.score(pai))
+#阈值所在位置
+which.max(hc.score(pai))
+#函数hc.thresh()计算阈值并画图
+hc.thresh(pai)
+```
+
+
+##IF-PCA方法计算HC值
+
+接下来采用IF-PCA方法计算HC值。
+
+公式为
+
+$$
+HC_{p, k}=\frac{\sqrt{p}\left(k / p-\pi_{(k)}\right)}{\sqrt{k / p+\max \left\{\sqrt{n}\left(k / p-\pi_{(k)}\right), 0\right\}}}
+$$
+
+
+```{r warning=FALSE, message=FALSE}
+#使用If-PCA方法计算HC值的函数
+#pai为检验的p值，n为每组检验的样本量
+PCA_func <- function(pai, n){
+#对p值从小到大排序
+  pai <- sort(pai)
+  p <- length(pai)
+  k <- 1:p
+#计算HC值
+  HC_PCA <- sqrt(p)*(k/p - pai)/sqrt(k/p + max(sqrt(n)*(k/p-pai), 0))
+  HC_PCA
+#阈值
+  thre_PCA <- max(HC_PCA)
+  k_hat_PCA <- which.max(HC_PCA)
+  k_hat_PCA
+#返回HC值，阈值，拒绝的检验的个数
+  return(list(HC_PCA, thre_PCA, k_hat_PCA))
+}
+#对题中的p值计算HC值
+PCA_res <- PCA_func(pai, 30)
+#HC值
+HC_PCA <- PCA_res[[1]]
+HC_PCA
+#阈值
+thre_PCA <- PCA_res[[2]]
+#拒绝的检验的个数
+k_hat_PCA <- PCA_res[[3]]
+k_hat_PCA
+
+#画图
+plot(HC_PCA, type = "b", ylab = "HC值", main = "IF-PCA方法得到的HC值")
+#添加标识阈值的红色线
+abline(v = k_hat_PCA, col = "red")
+text(x = k_hat_PCA, y = 0.1, label = c("拒绝9个"), pos = 2, col = "red")
+```
+
+从图中可以看到，用IF-PCA方法计算得到的HC得分先增后降，并且在第9个检验上达到最大。
+
+HC的阈值是第9组的HC值，选择拒绝的检验数量是9。
+
+与例题中采用经典算法拒绝的检验数量相同。
+
+#新4.5(clustering & classification)
+
+
+GitHub上给出的数据是：
+
+EX181.txt，是181个组织样本的数据，每个样本包括12533条基因；
+
+ADCA.txt，是肺癌样本(ADCA,Adenocarcinoma)的训练集。
+
+以下分别进行clustering和classification的计算。
+
+
+
+
+以下分别进行两个计算。
+
+
+
+由于给出了肺癌样本(ADCA,Adenocarcinoma)的训练集ADCA.txt数据，所以进行的第二个计算是将所有样本分为训练集和测试集，对测试集中每个样本的标签进行预测。可以求得错误判断的数量，来反映预测的精度。
+
+##1.用IF-PCA方法对每组样本计算HC值，进行基因有效性的检验(clustering)
+
+PCA是因子分析的一种。
+
+这里有两个cluster，分别是MPM和ADCA。
+
+读入EX181.txt数据后，去掉第一列的基因名称后，保存为数据框EX。
+
+将样本数据分为MPM和ADCA两组。MPM组是数据EX的第1至31列，ADCA组是数据EX的32至181列。
+
+对MPM和ADCA这两组样本进行KS检验，得到p值，然后计算HC值，判断无效基因的数量。
+
+###1.1直接计算KS值
+
+第一个是根据给出的数据EX181，对每一组样本进行KS检验等正态性检验后得到检验的p值，然后运用IF-PCA方法计算HC值，得到可以拒绝的原假设的个数，从而判断无效基因的数量。
+
+```{r warning=FALSE, message=FALSE}
+#读入数据，为数据框类型
+#12533行，182列
+#第一列是基因名称，第2-182列是181个组织样本
+#每一行是一条基因
+EX181 <- read.delim("D:/data/EX181.txt")
+#去掉第一列基因名称，保存为EX
+#EX有12533行，181列
+EX <- EX181[,-1]
+#ADCA数据有12533行，16列
+ADCA <- read.delim("D:/data/ADCA.txt",sep = " ", header = FALSE)
+
+library(dgof)
+EX_MPM <- EX[,1:31]
+EX_ADCA <- EX[,32:181]
+#EX有12533行
+
+#每条基因都有MPM和ADCA两个病
+#检测出p值比较小的，是一条MPM和ADCA两组分布差异比较大的基因，因为要检测的是识别对其中一种疾病有效的
+#因为对两种疾病都无效的话，这条基因MPM和ADCA两组分布接近
+
+#对每个基因进行KS检验，得到p值
+pai_KS <- apply(EX, 1, function(x) ks.test(x[1:31], x[32:181])$p.value)
+#每组检验的样本量
+n_gene <- 181
+
+#用IF-PCA方法计算HC值
+psort_gene <- sort(pai_KS)
+p_gene <- 12533
+n_gene <- 181
+kk_gene <- c(1:p_gene)/(1 + p_gene)
+HCsort_gene <- (sqrt(p_gene)*((kk_gene - psort_gene)))/sqrt(kk_gene)
+psort_max_sqrt_gene <- sqrt(n_gene)*(kk_gene - psort_gene)/kk_gene
+psort_max_gene <- rep(0, p_gene)
+for(i in 1:p_gene){
+psort_max_gene[i] <- ifelse(psort_max_sqrt_gene[i]>0, yes = psort_max_sqrt_gene[i], no = 0)}
+HCsort_gene <- HCsort_gene/(sqrt(psort_max_gene + 1))
+
+  
+#计算阈值时要注意限制条件
+pvalcut_gene <- (log(p_gene))/p_gene
+Ind_gene <- which(pai_KS>pvalcut_gene)[1]
+ratio_gene <- HCsort_gene
+ratio_gene[1:(Ind_gene-1)] = -Inf
+#ratio[((6267)+1):(length(ratio))]=-Inf
+ratio_gene[(6267):(length(ratio_gene))]=-Inf
+maxratio_gene <- which(ratio_gene == max(ratio_gene))
+L_gene <- maxratio_gene[length(maxratio_gene)]
+numselect_gene <- L_gene
+numselect_gene
+
+```
+
+
+
+###1.2 参考原matlab代码的clustering
+
+(1)函数功能
+
+函数`ifpca()`对每个样本都得出其标签label（取值为0或1），用于下一步的classification
+
+(2)输入的参数
+
+
+Data，这里是12533行，181列的矩阵，p=12533是feature（基因）的个数，n=181是样本的个数；每一列是一个样本
+
+K，cluster的个数，这里为2，因为有MPM和ADCA两个cluster
+
+(3)返回的值
+
+label，长度为181的向量，是每个样本的标签label，取值为0或1
+
+stats.KS，长度为12533的向量，是每个基因的KS值
+
+stats.HC，长度为12533的向量，是每个基因的HC值
+
+stats.pval，长度为12533的向量，是每个基因的p值
+
+stats.ranking，长度为12533的向量，根据p值，基因的秩
+
+numselect，显著的个数，这里是有效的基因数
+
+备注：ifpca()函数运行所需时间比较长
+
+```{r warning=FALSE, message=FALSE}
+ifpca <- function(Data, K){
+
+  Data <- t(read.csv("D:/data/lungCancer.csv", header = FALSE))
+
+#p=12533，n=181
+  p <- nrow(Data)
+  n <- ncol(Data)
+
+#标准化
+  #对每条基因的181个样本求均值和标准差
+  gm <- apply(Data, 1, mean)
+  gsd <- apply(Data, 1, sd)
+  #Data的每一行是一条基因
+  Data <- apply(Data, 2, function(x) (x - gm)/gsd)
+#计算KS值
+#rep: the number of Kolmogorov-Smirnov statistics to be simulated in the algorithm, defacult 100*p.
+#p=12533 n=181 
+rep_times <- 100*p
+
+#rep_times <- 50000
+KSvalue <- rep(0,rep_times)
+kk <- c(0:n)/n
+
+
+for(i in 1:rep_times){
+    #正态分布的随机数
+	x = rnorm(n) 
+	z = (x - mean(x))/sd(x)
+	z = z/sqrt(1 - 1/n)
+	pi = pnorm(z)
+	pi = sort(pi)
+#D统计量
+	KSvalue[i] = max(max(abs(kk[1:n] - pi)), max(abs(kk[2:(n+1)] - pi)))
+}
+#KS统计量得分
+KSvalue <- KSvalue*sqrt(n)
+#注意删除，释放内存；否则后面计算可能会出错
+rm(x, z, pi, kk)
+
+#重复得到的KSvalue求均值方差，后面用来标准化KS
+
+KSmean <- mean(KSvalue)
+KSstd <- sd(KSvalue)
+
+#per: a number with 0 < per <= 1, the percentage of Kolmogorov-Smirnov 
+#statistics that will be used in the normalization step, default to be 1. 
+#When the data is highly skewed, this parameter can be specified, such as
+#0.5.用来纠正偏态
+#在这里per=1
+
+#对每个基因算一个KS值
+#n=181 p=12533
+kk = (c(0:n))/n
+KS = rep(0, p)
+for(j in 1:p){
+    pi <- pnorm(Data[j,]/sqrt(1 - 1/n))
+    pi <- sort(pi)
+    KS[j] <- (sqrt(n))*(max(max(abs(kk[1:n] - pi)), max(abs(kk[2:(n+1)] - pi))))
+    #删除pi
+    rm(pi)
+}
+
+
+#每个基因有一个KS值
+#对KS值进行标准化(Efron)
+  KS <- ((KS - mean(KS))/(sd(KS)))*KSstd + KSmean
+#n=181 p=12533
+#用KS算p值，每个基因有一个p值
+
+pval <- rep(0, p)
+for(i in 1:p){
+    pval[i] = (sum(KSvalue> KS[i]))/(length(KSvalue))
+    }
+#从小到大排序
+  psort <- sort(pval)
+  ranking <- rank(pval)
+#用p值算HC
+kk <- c(1:p)/(1 + p)
+HCsort <- (sqrt(p)*((kk - psort)))/sqrt(kk)
+psort_max_sqrt <- sqrt(n)*(kk - psort)/kk
+psort_max <- rep(0, p)
+for(i in 1:p){
+psort_max[i] <- ifelse(psort_max_sqrt[i]>0, yes = psort_max_sqrt[i], no = 0)}
+HCsort <- HCsort/(sqrt(psort_max + 1))
+HC <- rep(0, p)
+HC[ranking] <- HCsort
+
+#阈值
+#pvalcut，为了消除异常值的影响
+pvalcut <- (log(p))/p
+
+Ind <- which(psort>pvalcut)[1]
+ratio <- HCsort
+ratio[1:(Ind-1)] = -Inf
+#ratio[((6267)+1):(length(ratio))]=-Inf
+ratio[(6267):(length(ratio))]=-Inf
+maxratio <- which(ratio == max(ratio))
+L <- maxratio[length(maxratio)]
+numselect <- L
+
+#每个基因的HC，选出有效和无效的基因
+stats.KS = KS
+stats.HC = HC
+stats.pval = pval
+stats.ranking = ranking
+stats.HCsort = HCsort
+
+
+#IF-PCA
+data_select <- Data[which(pval <= psort[L]), ]
+
+return(list(numselect, stats.KS, stats.HC, stats.pval, stats.HCsort, stats.ranking))
+}
+
+Data <- t(read.csv("D:/data/lungCancer.csv", header = FALSE))
+
+
+ifpca_res <- ifpca(Data, 2)
+st.num <- ifpca_res[[1]]
+st.KS <- ifpca_res[[2]]
+st.HC <- ifpca_res[[3]]
+st.pval <- ifpca_res[[4]]
+st.HCsort <- ifpca_res[[5]]
+#选出的个数，251
+st.num
+
+#画图
+p <- 12533
+library(ggplot2)
+kk <- c(1:p)/p
+df <- data.frame(kk, pvalue=sort(st.pval), KS=sort(st.KS, decreasing = TRUE), HC=st.HCsort)
+ggplot(df, aes(x = kk, y = pvalue)) + geom_line() + theme_minimal() + scale_x_continuous(limits = c(0, 0.1)) + 
+  scale_y_continuous(limits = c(0, 0.1)) + labs(x = "k/p")
+
+ggplot(df, aes(x = kk, y = KS)) + geom_line() + theme_minimal() +
+scale_x_continuous(limits = c(0, 0.1)) + 
+  scale_y_continuous(limits = c(0, 5)) + labs(x = "k/p")
+
+ggplot(df, aes(x = kk, y = HC)) + geom_line() + theme_minimal() +
+  #scale_x_continuous(limits = c(0, 0.1)) + 
+  #scale_y_continuous(limits = c(0, 10)) + 
+  geom_vline(xintercept = 251/12533, col = "red") + labs(x = "k/p")
+```
+
+
+
+
+##2.将样本分为训练集和测试集，对测试集进行预测(classification)(参考原matlab代码)
+
+参考论文2015，Jin做过很多数据集（参考PPT_HC和Github上的论文），主要是leukemia and the lung cancer data，这里只做了lung cancer。
+
+目的就是预测。关于label，还有一些模型假定，参考论文2015
+
+###1.数据来源和代码参考
+
+
+1.1 数据来源
+
+这里采用的训练集和测试集的数据为附件中的lungCancertrain.csv和lungCancer_test.csv。训练集和测试集的数据均包括标签label信息，标签取值为0或1。
+
+这两个数据来源于lungCancer.mat文件，它包含了lungCancertrain和lungCancer_test两个数据。这里转为了同名的.csv文件。
+
+1.2 代码参考
+
+这部分代码参考了原文代码，进行了简化。
+
+原文代码见附件HCclassification.m和HCclassification_fit.m。
+
+1.3 网址
+
+以上附件中的HCclassification.m文件，HCclassification_fit.m文件，lungCancer.mat文件均来源于<http://www.stat.cmu.edu/~jiashun/Research/software/>
+
+
+
+###2.数据说明
+
+训练集为lungCancertrain.csv，测试集为lungCancer_test.csv。
+
+一共有12533条基因。
+
+训练集和测试集的最后一列均为标签label，值为0或1。
+
+训练的目的是准确预测测试集中的样本的标签。
+
+训练集有32个样本。
+
+测试集有151个样本，但是最后两行的两组样本没有标签信息，所以不可用。
+
+测试集有149个可用的样本。
+
+###3.计算过程
+
+将通过两个函数`HCclassification()`和`HCclassification_fit()`进行。
+
+####函数1 HCclassification()
+
+(1)函数功能
+
+函数`HCclassification()`的功能是，输入训练集的数据，返回权重等信息。
+
+(2)输入的参数
+
+TrainX，训练集的数据，在这里是12533行，32列的矩阵，每一行是一个样本，每一列是一条基因。
+
+TrainY，在这里是长度为32的向量，是与TrainX对应的标签，值为1或者0。
+
+(3)返回的值
+
+weight，长度为12533的向量，是每条基因的权重
+
+stats.HC，长度为12533的向量，是每条基因的HC值
+
+stats.HCT，HC值的阈值
+
+stats.xbar，长度为12533的向量，是训练集中，标签为1和为0的两组的平均值 
+
+stats.s，长度为12533的向量，是训练集中，标签为1和为0的两组的标准差
+
+```{r warning=FALSE, message=FALSE}
+HCclassification <- function(TrainX, TrainY){
+  
+  TrainX <- TrainData
+  TrainY <- lungCancertrain[, 12534]
+  
+  p <- nrow(TrainX)
+  p
+  n <- ncol(TrainX)
+  n
+#alpha=0.2是参考了原来的函数HCclassification.m中的默认值
+  alpha <- 0.2
+#将数据根据标签为0或1分为两组
+  Train0 <- TrainX[, which(TrainY == 0)]
+  Train1 <- TrainX[, which(TrainY == 1)]
+#计算zscore
+#两组的均值
+  mu1 <- apply(Train0, 1, mean)
+#mu1长度是12533，是标签为0的组Train0的每条基因的均值，一条基因一个均值
+  mu2 <- apply(Train1, 1, mean)
+#mu2长度是12533，是标签为1的组Train1的每条基因的均值，一条基因一个均值
+  
+  xbar <- (mu1+mu2)/2
+#这里有三种xbar的算法，见HCclassification.m文件
+  
+#两组的标准差
+#s1和s2的长度均为12533，一条基因得到一个方差
+  s1 <- apply(Train0, 1, sd) 
+  s2 <- apply(Train1, 1, sd)
+
+#n1=16，即标签为0的样本是16个
+  n1 <- ncol(Train0)
+#n2=16，即标签为1的样本是16个
+  n2 <- ncol(Train1)
+
+
+#计算两组的方差
+  s <- (n1-1)*(s1^2) + (n2-1)*(s2^2)
+  s <- sqrt(s/(n-2))
+  smed <- median(s)
+#这里也有三种算法，见HCclassification.m文件
+  s <- smed + s
+  length(s)
+ 
+#zscore <- (zscore - mean(zscore))/std(zscore)
+  zscore <- (mu1 - mu2)/(s*sqrt(1/n1 + 1/n2))
+#zscore长度为12533，计算得到12533个p值
+#相当于每条基因分为两组，一组是标签为1，一组是标签为0。对每条基因计算一个zscore，是两组之间的差别
+  
+#zscore服从正态分布，计算p值，计算HC
+#计算Z-score下，HC值的阈值
+  pval  = 2*(1 - pnorm(abs(zscore)))
+  kk    = (1:p)/(1 + p)
+  psort = sort(pval)
+  HC  = (kk - psort)/sqrt(kk - kk^2)
+  #alpha The proportion of features with small p-values to calculate HC threshold. 
+  HC  = HC[1:round(alpha*p)]
+  L   = which.max(HC)
+  
+#标签为0的组的均值大于标签为1的组的均值的index
+  ind1 = which(pval <= psort[L] & zscore >0)
+#标签为0的组的均值小于标签为1的组的均值的index
+  ind2 = which(pval <= psort[L] & zscore <= 0)
+  
+  thr_inx = (pval == psort[L])
+  absz    = abs(zscore)
+#HCT是最大的HC值对应的p值的zscore的绝对值
+  HCT     = max(absz[thr_inx])
+
+#计算权重
+  weight = 0*zscore
+#求阈值
+#这里有三种算法，见HCclassification.m文件
+#三种算法在论文Higher criticism thresholding: Optimal feature selection when useful features are rare and weak中有详细说明
+
+#这里用默认的算法("hard")
+  weight[ind1] =  abs(zscore[ind1])
+  weight[ind2] = -abs(zscore[ind2])
+
+#HC值
+  stats.HC = HC
+#HC值的阈值
+  stats.HCT = HCT
+#两组的均值
+  stats.xbar = xbar
+#两组的标准差
+  stats.s = s
+
+return(list(weight, stats.HC ,stats.HCT ,stats.xbar ,stats.s))
+}
+
+```
+
+####函数2 HCclassification_fit()
+
+(1)函数功能
+
+函数`HCclassification_fit()`的功能是，输入测试集的数据，以及通过训练集得到的权重等信息，对测试集的标签label进行预测。
+
+(2)输入的参数
+
+weight，xbar，s，是函数`HCclassification()`的返回的信息；
+
+Test，测试集的数据，在这里是在这里是12533行，149列的矩阵，每一行是一条基因，每一列是一个样本。
+
+(3)返回的值
+
+label，长度为149的向量，是预测的标签label
+
+score，长度为149的向量，是对测试集进行标签分类时的得分
+
+```{r warning=FALSE, message=FALSE}
+
+
+HCclassification_fit <- function(weight, xbar, s, Test){
+  
+
+  p <- nrow(Test)
+  m <- ncol(Test)
+  
+#对测试集数据进行标准化
+#每一列是一个样本，每个样本都有12533条基因。
+#对每个样本的每条基因，都减这个基因的xbar，除以这个基因的s
+#z是12533行，149列的矩阵
+  z = matrix(0, nrow =  p, ncol = m)
+  for (j in 1:m){
+    z[,j] = (Test[,j] - xbar)/s}
+  
+#对测试集的数据的标签进行预测
+#weight是长度12533的向量，一个基因有一个权重
+  score = t(z)%*%weight
+#score是149行，1列
+#每一行是一个样本的score，这个score是这个样本包含的12533条基因*每条基因的权重求和得到的
+  
+  label = (score <= 0)%*%1
+#这是因为前面权重的计算，标签为0的均值更大时权重为正，标签为1的均值更大时权重为负
+  
+  return(list(score, label))
+}
+```
+
+####运用以上两个函数，对测试集样本的标签进行预测，输出预测错误的个数
+
+```{r warning=FALSE, message=FALSE}
+lungCancertrain <- read.csv("D:/data/lungCancertrain.csv", header = FALSE)
+lungCancer_test <- read.csv("D:/data/lungCancer_test.csv", header = FALSE)
+
+TrainData = lungCancertrain[, 1:12533]
+TrainData = t(TrainData)
+Test = lungCancer_test[1:149, 1:12533]
+Test = t(Test)
+#最后两组样本没有标签为0或1的信息，所以去除最后两行
+
+HC_res <- HCclassification(TrainData, lungCancertrain[, 12534])
+
+#长度为12533的向量，是每条基因的权重
+wt <- HC_res[[1]]
+#长度为12533的向量，是每条基因的HC值
+st.HC <- HC_res[[2]]
+#HC值的阈值
+st.HCT <- HC_res[[3]]
+#长度为12533的向量，是训练集中，标签为1和为0的两组的平均值
+st.xbar <- HC_res[[4]]
+#长度为12533的向量，是训练集中，标签为1和为0的两组的标准差
+st.s <- HC_res[[5]]
+
+#对测试集的标签进行预测
+fit_res <- HCclassification_fit(wt, st.xbar, st.s, Test)
+score <- fit_res[[1]]
+#预测得到的标签
+label <- fit_res[[2]]
+
+#对测试集的标签判断错误的个数
+#测试集一共有149个样本
+#判断正确的个数
+sum(label == lungCancer_test[1:149,12534])
+#判断错误的个数
+sum(label != lungCancer_test[1:149,12534])
+```
+
+判断错误的个数仅有一个，说明准确率很高。
+
+
+
+
+
