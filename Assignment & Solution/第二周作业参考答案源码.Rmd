@@ -1,6 +1,6 @@
 ---
-title: "***-第一周作业"
-author: "***"
+title: "share"
+author: "Shuwen Chai"
 date: "`r Sys.Date()`"
 output:
   rmdformats::readthedown:
@@ -9,8 +9,18 @@ output:
     df_print: paged
 ---
 
+```{r warning=FALSE, include=FALSE}
+library(ggplot2)
+library(ggthemes)
+library(reshape2)
+library(lubridate)
+```
+
+# 第二次作业
+***
+
 # 正态分布的条件分布
-![Caption for the picture.](E:/大三上/Non-Parametric Statistics 王星/Week2 including R pre/pic1.png)
+![question.](E:/大三上/Non-Parametric Statistics 王星/1125share/pic1.png)
 
 ## 数值计算
 
@@ -23,11 +33,54 @@ $\hat\mu = ({\bar x}_1, {\bar x}_2, {\bar x}_3)$
 
 $\hat{\Sigma} = \frac{1}{N} * \sum\limits_{i=1}^N\{(x^i-\bar{x})(x^i-\bar{x})^T\}$
 
+求解可能需要一些矩阵求导的结论,这里列举一下$\hat \mu$d的求解,网上有很多资源。<https://iam8bits.blog.csdn.net/article/details/99753664>
 
-```{r,message=FALSE,warning=FALSE}
-data = read.csv('C:/Users/Lenovo/Desktop/数据盘/unempstates-30years.csv', header = TRUE)
-# colnames(data)
-# ncol(data);nrow(data)
+设n维相互独立的随机变量x服从多元正态分布$x\sim N_n(\mu ,\sigma^2)$,概率密度函数
+$$
+f(x)=(2\pi)^{-\frac{n}{2}}|\Sigma|^{\frac{1}{2}}exp(-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu))
+$$
+
+其似然函数与对数似然函数是
+
+$$
+\begin{aligned}
+L(\mu,\Sigma)&=\Pi_{i=1}^{m}f(x^{(i)};\mu,\Sigma) \\
+&=(2\pi)^{-\frac{nm}{2}}|\Sigma|^{\frac{m}{2}}exp(-\frac{1}{2}\sum_{i=1}^m(x^{(i)}-\mu)^T\Sigma^{-1}(x^{(i)}-\mu)) \\
+l(\mu,\Sigma)&=ln(2\pi)^{-\frac{mn}{2}}+ln|\Sigma|^{-\frac{m}{2}}-\frac{1}{2}\sum_{i=1}^m(x^{(i)}-\mu)^T\Sigma^{-1}(x^{(i)}-\mu) \\
+&=C-\frac{m}{2}ln|\Sigma|-\frac{1}{2}\sum_{i=1}^m(x^{(i)}-\mu)^T\Sigma^{-1}(x^{(i)}-\mu)
+\end{aligned}
+$$
+
+令偏导数$\frac{\partial l}{\partial \mu}=0,\frac{\partial l}{\partial \Sigma}=0$
+
+$$
+\begin{aligned}
+\because (x-\mu)^T\Sigma^{-1}(x-\mu) &= x^T\Sigma^{-1}x-x^T\Sigma^{-1}\mu-\mu^T\Sigma^{-1}x+\mu^T\Sigma^{-1}\mu\\
+&= x^T\Sigma^{-1}x-2x^T\Sigma^{-1}\mu+\mu^T\Sigma^{-1}\mu\\\\
+\therefore\frac{\partial l}{\partial \mu}&=\frac{\partial}{\partial \mu}(-\frac{1}{2}\sum_{i=1}^m(x^{(i)}-\mu)^T\Sigma^{-1}(x^{(i)}-\mu)) \\
+&=-\frac{1}{2}\frac{\partial}{\partial \mu}(\sum_{i=1}^m x^{(i)^T}\Sigma^{-1}x^{(i)}-2\sum_{i=1}^m x^{(i)^T}\Sigma^{-1}\mu + m\mu^T\Sigma^{-1}\mu) \\
+&=\frac{\partial}{\partial \mu}(\sum_{i=1}^m x^{(i)^T}\Sigma^{-1}\mu -\frac{1}{2}m\mu^T\Sigma^{-1}\mu) \\
+\end{aligned}
+$$
+
+根据矩阵求导法则
+$$
+\frac{d(A^TX)}{dX}=A\\
+\frac{d(X^TAX)}{dX}=AX+A^TX
+$$
+
+得到
+
+$$
+\begin{aligned}
+\frac{\partial}{\partial \mu}(\sum_{i=1}^m x^{(i)^T}\Sigma^{-1}\mu-\frac{1}{2}m\mu^T\Sigma^{-1}\mu) &=\sum_{i=1}^m \Sigma^{-1}x^{(i)}-m\Sigma^{-1}\mu \\
+&=\Sigma^{-1}\sum_{i=1}^mx^{(i)}-m\Sigma^{-1}\mu=0 \\
+\therefore \mu&=\bar x
+\end{aligned}
+$$
+
+```{r}
+data = read.csv('E:\\大三上\\Non-Parametric Statistics 王星\\1125share\\unempstates-30years.csv', header = TRUE)
 
 # 提取数据集中的CA,PA,OR三列做一个multidata
 multidata = cbind(matrix(data$CA), matrix(data$PA), matrix(data$OR))
@@ -46,19 +99,17 @@ sigma_mle = t(multidata[,] - mu_mle) %*% (multidata[,] - mu_mle) / N; sigma_mle
 
 求解$E((X_2, X_3)|X_1), Var((X_2, X_3)|X_1)$
 
-```{r,message=FALSE,warning=FALSE}
+```{r}
 EVar = function(multidata, x1, x2){
   # example1: x1 = c(1,2); x2 = c(3)
   # example2: x1 = c(2), x2 = c(1, 3)
   
   # 计算三元正态分布的极大似然估计
   mu_mle = apply(multidata, 2, mean); mu_mle
-  mu_mle = matrix(mu_mle, ncol = 1)
-  
-  # multidata - mu_mle不可以直接做，因为R默认按照列来走，而这个减法我们想要按行来走
-  # apply(sweep(multidata, 2, mu_mle), 2, mean) 检验sweep是正确的
+  mu_mle = matrix(mu_mle, ncol = 1) # 做成列向量
   
   sigma_mle = t(sweep(multidata, 2, mu_mle)) %*% (sweep(multidata, 2, mu_mle)) / nrow(multidata)
+  # 可以用没转matrix的mu_mle 直接multidata-mu_mle 快很多
   sigma_mle = matrix(sigma_mle, ncol = 3)
   
   print('----------sigma_11/12/21/22----------')
@@ -76,11 +127,12 @@ EVar = function(multidata, x1, x2){
   # 切分mu_1 mu_2
   mu_1 = matrix(mu_mle[x1], ncol = 1); print(mu_1)
   mu_2 = matrix(mu_mle[x2], ncol = 1); print(mu_2)
-
-  # 根据条件期望满足正态分布的公式计算期望  
+  
+  # 根据条件期望满足正态分布的公示计算期望  
   e_cond = mu_1 + sigma_12 %*% solve(sigma_22) %*% (multidata[sample(1:nrow(multidata), 1), x2] - mu_2) 
-  # 根据条件期望满足正态分布的公式计算方差
+  # 根据条件期望满足正态分布的公示计算方差
   var_cond = sigma_11 - sigma_12 %*% solve(sigma_22) %*% sigma_21
+  
   print(paste0('系数', sigma_12 %*% solve(sigma_22)))
   
   return (list(e_cond, var_cond))
@@ -92,6 +144,7 @@ ans1 = EVar(multidata, c(1), c(2, 3))
 # (V2, V3)->x1, V1->x2
 ans2 = EVar(multidata, c(2, 3), c(1))
 ```
+
 首先，计算了三元正态分布的期望以及协方差矩阵的极大似然估计，这之中使用到了`apply()`, `t()`等函数，前者对multidata每一列作用，求出$\bar x$。后者在计算协方差矩阵极大似然估计的时候计算了$x^i - \bar x$的转置。另外，矩阵乘法%*%也被使用，目的是计算$x^i - \bar x$和$(x^i - \bar x)^T$的积。
 
 接下来在计算条件期望时，根据结论$E(X_1|X_2) = \mu_1 + \Sigma_{12}\Sigma^{-1}_{22}(X_2-\mu_2)$ 除了`t()`和`apply()`，我们还需要使用`solve()`计算一个矩阵的逆，特别地，这里我们需要计算\Sigma_{22}的逆。
@@ -106,7 +159,7 @@ print(paste0("----------第一问----------", ans1))
 print(paste0("----------第二问----------", ans2))
 ```
 
-### 公式表达
+### 公示表达
 为了方便阅读，用LaTeX重新打一遍计算出来的结果，下面将在X2上留空。
 $$E(V_1|(V_2, V_3)) = 7.20 + (0.62 \quad 0.16) * (X2 - \left(
 \begin{array} {4}
@@ -137,20 +190,74 @@ Var((V_2, V_3)|V_1) = \left(
 \right)
 $$
 
+**sweep** and **apply**
+```{r}
+# apply对于每一行求中位数 用sweep做减法
+t(apply(multidata,1,function(x){x - median(x)}))[21:27,]
+# apply函数有一个问题是会把计算结果按照列摆放,是我哪儿参数的问题么
+
+# apply对于每一列求中位数 用sweep做减法
+apply(multidata,2,function(x){x - median(x)})[21:27,]
+
+
+# sweep也可以做
+sweep(multidata,1,apply(multidata,1,median))[21:27,]
+sweep(multidata,2,apply(multidata,2,median))[21:27,]
+```
+
 
 ## 数据绘图题
+
+几个常用的函数
+`geom_segment`(mapping = NULL, data = NULL, ...)
+`geom_text`(mapping = NULL, data = NULL, label = , nudge_x = 0, nudge_y = 0, hjust = 0...)
+`geom_ribbon`(mapping = NULL, data = NULL, alpha = )
+
+`alpha`透明度;`nudge_x`控制标签的相对左右位置;`nudge_y`控制标签的相对上下位置
+
+```{r}
+td <- expand.grid(
+    hjust=c(0, 0.5, 1),
+    vjust=c(0, 0.5, 1),
+    angle=c(0, 45, 90),
+    nudge_x=c(0, 0.5, 1),
+    nudge_y=c(0, 0.5, 1),
+    text="text"
+)
+
+# hjust、vjust：文本的水平和垂直调整距离，取值范围是0-1，0代表right/bottom，1代表left/top。
+ggplot(td, aes(x=hjust, y=vjust)) + 
+    geom_point() +
+    geom_text(aes(label=text, angle=angle, hjust=hjust, vjust=vjust)) + 
+    facet_grid(~angle) + # 按照角度分面
+    scale_x_continuous(breaks=c(0, 0.5, 1), expand=c(0, 0.2)) +
+    scale_y_continuous(breaks=c(0, 0.5, 1), expand=c(0, 0.2))
+
+ggplot(td, aes(x=nudge_x, y=nudge_y)) + 
+    geom_point() +
+    geom_text(aes(label=text, angle=angle, nudge_x=nudge_x, nudge_y=nudge_y)) + 
+    facet_grid(~angle) + # 按照角度分面
+    scale_x_continuous(breaks=c(0, 0.5, 1), expand=c(0, 0.2)) +
+    scale_y_continuous(breaks=c(0, 0.5, 1), expand=c(0, 0.2))
+```
+
+`text`(x, y, labels,) 坐标取图上的数值即可
+`segments`(x0, y0, x1=x0, y1=y0, ...) 从(x0,y0)画到(x1,y1)
+
 ### 子题一
 50个洲的各月份平均失业率提取出来，按月绘制曲线图，分析失业率的变点年份，进行标注（或输出累积平均失业率2D变化曲线图）
 
-```{r,message=FALSE,warning=FALSE}
-library(ggplot2)
-library(ggthemes)
-library(lubridate)
+```{r}
 # 日期转换方法 dmy(paste0("01 ", gsub("-", " 19", data$Month)))
 
-aver_permon = apply(data[,2:51],1,mean)
-plot(dmy(paste0("01 ", gsub("-", " 19", data$Month))), aver_permon, type = 'l', xlab = '月份', ylab = "平均失业率", main = '美国50州在1950-1984年间平均失业率变化图', ylim = c(0, 12))
+# 每月均值
+aver_permon = apply(data[,2:51], 1, mean)
 
+plot(dmy(paste0("01 ", gsub("-", " 19", data$Month))), aver_permon, 
+     type = 'l', xlab = '月份', ylab = "平均失业率", ylim = c(0, 12),
+     main = '美国50州在1950-1984年间平均失业率变化图')
+
+# 目测标注转折点
 turning_points = as.Date(c("1953-04-01", "1957-01-01", "1963-04-01", "1966-03-01", "1974-03-01", "1977-07-01", "1981-03-01", "1984-03-01"))
 turning_rates = c(5.344,10.096,5.056,6.926,3.774,5.718,4.174,9.030)
 
@@ -179,7 +286,8 @@ ggplot(temp, aes(x = Month, y = Mean))+
 
 将失业率的平均值和标准差放在一张图上，并将50个洲的失业率数据作为背景，加注legend，给出从图上观察到的分析结果。
 
-```{r,message=FALSE,warning=FALSE}
+```{r}
+# 每个月的标准差
 sd_permon = apply(data[, 2:51], 1, sd)
 plus_sd = aver_permon + sd_permon
 minus_sd = aver_permon - sd_permon
@@ -190,19 +298,17 @@ for(state_no in 2:51){
   lines(data[, state_no], lty = 4, col = 'grey')
 }
 
+# 加上均值线段以及上下一个标准差的
 lines(plus_sd, lty = 2, col = 'red', lwd = 4)
 lines(minus_sd, lty = 2, col = 'blue', lwd = 4)
-lines(aver_permon, lty = 1, type = 'l', lwd = 5)
+lines(aver_permon, lty = 1, lwd = 5)
 
-legend("topright", legend = c('mean', 'mean+sd', 'mean-sd', 'states'), lty = c(1, 2, 2, 4), col = c('black', 'red', 'blue', 'grey'), lwd = c(5, 4, 4, 1),cex = 0.7)
+legend("bottomright", legend = c('mean', 'mean+sd', 'mean-sd', 'states'), lty = c(1, 2, 2, 4), col = c('black', 'red', 'blue', 'grey'), lwd = c(5, 4, 4, 1))
 ```
 
 当然，用ggplot会更加方便一些
 
-```{r,message=FALSE,warning=FALSE}
-library(ggplot2)
-library(ggthemes)
-
+```{r}
 dat = data.frame(dmy(paste0("01 ", gsub("-", " 19", data$Month))), aver_permon)
 colnames(dat) = c("Month", "value")
 
@@ -216,7 +322,6 @@ ggplot(dat, aes(x=Month,y=value))+
   theme_tufte()
 
 
-library(reshape2)
 adj_data = data.frame(dmy(paste0("01 ", gsub("-", " 19", data$Month))), data[, 2:51])
 colnames(adj_data)[1] = "Month"
 adj_data = melt(adj_data, id.vars="Month")
@@ -226,13 +331,14 @@ ggplot(adj_data, aes(x = Month, y = value)) +
   geom_ribbon(aes(ymax = aver_permon + sd_permon, 
                   ymin = aver_permon - sd_permon),
                   data = dat,
-                  alpha = 0.6,
+                  alpha = 0.6, # 透明度
                   fill = "#FFC408",
                   colour = NA )+
   geom_line(data = dat, lwd = 3, lty = 1, col = 'blue')+
   labs(x = 'Month', y = '平均失业率', title = '平均失业率变化图')+
   theme_tufte()
 ```
+
 其中，蓝色线标注了平均失业率，黄色区域是$mean \pm std$，灰色区域则是五十个州的数据所占范围。
 
 从以上这些图像中我们发现
@@ -243,45 +349,57 @@ ggplot(adj_data, aes(x = Month, y = value)) +
 # 绘图思考
 
 ## The histogram of normalized std
-```{r,message=FALSE,warning=FALSE}
+
+```{r}
 set.seed(824)
 std_list = seq(-0.75, 1.00, 0.025)
 number_list = sort(rnorm(71, 5, 2))
+# 调整一下来模拟图上的数据
 adjust_list = 10^number_list + rexp(71, 0.001)
-# number_list = sort(runif(71, 1000, 10^8))
-# adjust_list = number_list + rnorm(71, 100, 1000)
 
 
-ShowPoint = function(x, col_, labels_, lx, ly){
+ShowPoint = function(x, col_, labels_, lx, ly, data){
+  # base包我不知道用segments或者text是否可以批量添加,geom_text geom_segments可以
+  # 从x的值反推回去x在data里面的下标,这是很不智能的,应该开一个搜索。但这里简单就这么凑合了。
   index = (x + 0.75) / 0.025 + 1
-  segments(x, 10, x, adjust_list[index], col = col_, lty = 4, lwd = 2)
-  segments(-1.25, adjust_list[index], x, adjust_list[index], col = col_, lty = 4, lwd = 2)
-  text(x, adjust_list[index]*2, labels = labels_)
+  
+  # 竖直线段
+  segments(x, 10, x, data[index], 
+           col = col_, lty = 4, lwd = 2)
+  
+  # 横线段  为什么是-1.25...试出来的让画的还看得凑合
+  segments(-1.25, data[index], x, data[index], 
+           col = col_, lty = 4, lwd = 2)
+  
+  # 加字母标记
+  text(x, data[index]*2, labels = labels_)
+  
+  # 加右下角注释
   text(lx, ly, paste0(labels_,"(norm_std=",as.character(x)," num=",as.character(as.integer(adjust_list[index])),")"))
 }
 
-plot(std_list, adjust_list, col = 'blue', type = 'l', xlim = c(-1,1), ylim = c(100, max(adjust_list)), log='y', xlab = 'normalized std', ylab = 'the number of samples', main = 'The histogram of normalized std')
+plot(std_list, adjust_list, col = 'blue', type = 'l', 
+     xlim = c(-1,1), ylim = c(100, max(adjust_list)), log='y', #对数坐标轴变换,1e-2 1e-4 1e-6 1e-8才会等距
+     xlab = 'normalized std', ylab = 'the number of samples', main = 'The histogram of normalized std')
 
-ShowPoint(-0.55, "green", "A", 0.6, 6400)
-ShowPoint(-0.25, "orange", "B", 0.6, 1600)
-ShowPoint(0.25, "red", "C", 0.6, 400)
-ShowPoint(0.95, "purple", "D", 0.6, 100)
+ShowPoint(-0.55, "green", "A", 0.6, 6400, adjust_list)
+ShowPoint(-0.25, "orange", "B", 0.6, 1600, adjust_list)
+ShowPoint(0.25, "red", "C", 0.6, 400, adjust_list)
+ShowPoint(0.95, "purple", "D", 0.6, 100, adjust_list)
 
 ```
 
 ## 2D histogram of normalized std and loss
-```{r,message=FALSE,warning=FALSE}
-library(ggplot2)
-library(ggthemes)
-
+```{r}
 y = runif(10^6,0,2)
 x = rep(0, 10^6)
 for(i in 1:10^6)
   x[i] = rnorm(1, 1 - cos(0 - y[i]) * 1.5, sqrt(y[i]/3))
 
-
+# 生成数据框
 data <- data.frame(x, y)
 
+# 需要标点的坐标
 loc = data.frame(tp = c(-2, 0, 1.8), tr = c(1, 1.4, 1.2))
 
 ggplot(data, aes(x = x, y = y)) +
@@ -309,7 +427,7 @@ ggplot(data, aes(x = x, y = y)) +
 ```
 
 ## Perceived Age v.s. Real Age
-```{r,message=FALSE,warning=FALSE}
+```{r}
 real_age = seq(0, 100, 2)
 perceived_age_asian = 
   c(25, 21, 20, 21, 22, 20, 19, 22, 23, 20, 25, 27, 25, 23, 29, 31, 32, 28, 34, 40, 38, 36, 39, 37, 43, 39, 42, 45, 46, 48, 53, 49, 50, 52, 54, 48, 49, 52, 53, 47, 56, 57, 59, 54, 61, 55, 56, 58, 62, 60, 57)
@@ -325,13 +443,10 @@ noise3 = data.frame(real_age, "value" = perceived_age_afro, "noise" = rnorm(leng
 
 mws = data.frame(real_age, "Asian" = perceived_age_asian, "Caucasian" = perceived_age_caucasian, "Afro-American" = perceived_age_afro)
 
-library(reshape2)
-mws = melt(mws, id.vars="real_age")
 
+# reshape2的宽表->长表 
+mws = melt(mws, id.vars="real_age")
   
-ggplot(mws, aes(x = real_age, y = value, colour = variable), lty = c(2, 1, 1, 1)) +
-  stat_smooth(method = "loess", span = 0.3, se=TRUE, aes(fill = variable), alpha = 0.3) +
-  theme_bw()
   
 ggplot(mws, aes(x = real_age, y = value, colour = variable)) + 
   geom_abline(slope = 1, intercept = 0, lty = 2, lwd = 2) +
@@ -358,13 +473,253 @@ ggplot(mws, aes(x = real_age, y = value, colour = variable)) +
   scale_y_continuous(limits = c(0,100)) + 
   labs(x = "Real Age", y = "Perceived Age") + 
   theme_foundation()
+```
 
-  ##补充利用basicTrendline
-  library(basicTrendline)
-  attach(mtcars)
-  trendline(mpg, wt, model="line2P", ePos.x = "topright",summary = FALSE, 
-            eDigit=5,yhat=TRUE,xname='X', yname='Y')
-  #这个包绘制出的图可以依然使用graphics基础包里的各种函数添加元素，
-  #比如legend等
+
+# 第三次作业
+***
+
+# 课后题
+## 1.10
+考虑一个从参数$\lambda = 1$的指数分布中抽取的容量为100的样本
+
+* (1)给出样本的`对数经验生存函数`$lnS_n(t)$的`标准差`。($lnS_n(t)$作为t的函数)
+* (2)从计算机中产生几个类似的`容量为100`的样本，画出他们的`对数经验生存函数图`，联系图补充对(1)的回答
+
+
+**生存函数定义**
+
+$$
+S(t)=P(T>t)=1-F(t)
+$$
+**生存函数的估计**
+$$
+S_n(t)=1-F_n(t)=1-\frac{1}{n}\sum_{i=1}^nI(t_i\leqslant t)
+$$
+
+根据
+
+$$
+\begin{aligned}
+\because var(g(x)) &\approx [g'(x)]^2var(x)\quad and \quad F_n(t) \approx F(t) \\
+\therefore var\{ln[1-F_n(t)]\} &\approx \frac{var[1-F_n(t)]}{[1-F(t)]^2}=\frac{1}{n}\frac{F(t)[1-F(t)]}{[1-F(t)]^2}=\frac{F(t)}{n[1-F(t)]}
+\end{aligned}
+$$
+
+而且样本取自$F(x)=\lambda e^{\lambda x}=e^x,x>0$
+
+```{r}
+size = 100
+# 根据计算公式，直接算出对数经验生存函数的方差
+var = pexp(seq(0, 6, 0.1), 1) / (1 - pexp(seq(0, 6, 0.1), 1)) / size
+# 计算标准差
+sd = sqrt(var)
+
+# 画图
+plot(seq(0, 6, 0.1), 
+     sd, 
+     type = 'l', 
+     col = 'blue', 
+     main = '指数分布随机样本对数经验生存函数的标准差')
+```
+
+![type of plot.](E:/大三上/Non-Parametric Statistics 王星/1125share/pic_type.png)
+
+其他重要参数`lty`线种类,'lwd'线宽度,'pch'点的类型
+
+
+下面是对经验分布、经验生存、对数经验生存的基本可视化。
+
+```{r}
+size = 100
+data = rexp(size, 1)
+data.sort = sort(data)
+data.rank = rank(data.sort)
+data.cdf = data.rank / length(data)
+
+# cdf cumulative distribution function 累积分布函数
+# pdf probability density function 概率密度函数
+# pmf probability mass function 概率质量函数,离散随机变量在各个特定取值上的概率
+```
+
+
+```{r}
+# 经验分布
+plot(data.sort, data.cdf, type = 's', main = '指数分布随机样本的经验分布函数图', xlab = 't', ylab = 'F_n(t)')
+
+#经验分布的另一种画法 plot.ecdf  do.points控制是否描点 verticals控制竖线 pch控制描点的类型
+plot.ecdf(data, do.points = FALSE, verticals = FALSE, main = '指数分布随机样本的经验分布函数图')
+plot.ecdf(data, do.points = FALSE, verticals = TRUE, main = '指数分布随机样本的经验分布函数图')
+plot.ecdf(data, do.points = TRUE, verticals = TRUE, main = '指数分布随机样本的经验分布函数图', pch = 19)
+
+# 经验生存
+plot(data.sort, 1 - data.cdf, type = 's', main = '指数分布随机样本的经验生存函数图', xlab = 't', ylab = 'S_n(t)')
+
+# 对数经验生存
+plot(data.sort, log(1 - data.cdf), type = 's', main = '指数分布随机样本的对数经验生存函数图', xlab = 't', ylab = 'ln(S_n(t))')
+
+# 负对数经验生存
+plot(data.sort, -log(1 - data.cdf), type = 's', main = '指数分布随机样本的负对数经验生存函数图', xlab = 't', ylab = '-ln(S_n(t))')
+
+# 编写函数simulate画groups条，样本量为size的对数经验生存函数
+simulate = function(groups, size){
+  set.seed(1024)
+  data = rexp(size, 1)
+  data.sort = sort(data)
+  data.rank = rank(data.sort)
+  data.cdf = data.rank / length(data)
+  plot(data.sort, log(1 - data.cdf), type = 'l', lty = 1, main = 'log empirical survival function', xlab = 't', ylab = 'ln(S_n(t))')
+  
+  for(i in 2:groups){
+    set.seed(7*i) # 固定随机数种子
+    data = rexp(size, 1)
+    data.sort = sort(data)
+    data.rank = rank(data.sort)
+    data.cdf = data.rank / length(data) 
+    lines(data.sort, log(1 - data.cdf), type = 'l', lty = 1)
+  }
+}
+
+# 样本量100，画100组实验
+simulate(100, 100)
+```
+
+很明显，经验生存函数的标准差，方差随着时间增加单调增大。这和(1)中直接计算得到的答案是吻合的。
+
+## 1.12
+
+考虑一个实验：对减轻皮肤瘙痒的药物进行疗效研究(Beecher,1959)。在10名20-30岁的男性志愿者身上做实验比较`五种药物`和`安慰剂`、`无药`的效果。
+
+```{r}
+# 数据加载
+skin_data = read.csv('E:\\大三上\\Non-Parametric Statistics 王星\\1125share\\skin.csv', header = TRUE)
+
+# 绘制各组的对数经验生存函数(瘙痒的生存)
+plot(sort(skin_data$无药), log(1 - rank(sort(skin_data$无药)) / nrow(skin_data)), 
+     type = 'l', lty = 1, lwd = 2, col = 'green', xlab = "Days elapsed", ylab = "对数生存函数ln(S_n(t))")
+
+lines(sort(skin_data$安慰剂), log(1 - rank(sort(skin_data$安慰剂)) / nrow(skin_data)), 
+      type = 'l', lty = 2, lwd = 2, col = 'gold')
+
+lines(sort(skin_data$Papaverine), log(1 - rank(sort(skin_data$Papaverine)) / nrow(skin_data)), 
+      type = 'l', lty = 3, lwd = 2, col = 'grey')
+
+lines(sort(skin_data$Aminophylline), log(1 - rank(sort(skin_data$Aminophylline)) / nrow(skin_data)), 
+      type = 'l', lty = 4, lwd = 2, col = 'pink')
+
+lines(sort(skin_data$Morphine), log(1 - rank(sort(skin_data$Morphine)) / nrow(skin_data)), 
+      type = 'l', lty = 5, lwd = 2, col = 'yellow')
+
+lines(sort(skin_data$Pentobarbital), log(1 - rank(sort(skin_data$Pentobarbital)) / nrow(skin_data)), 
+      type = 'l', lty = 6, lwd = 2, col = 'lightblue')
+
+lines(sort(skin_data$Tripelennamine), log(1 - rank(sort(skin_data$Tripelennamine)) / nrow(skin_data)), 
+      type = 'l', lty = 7, lwd = 2, col = 'black')
+
+legend("topright", lty = 1:7, lwd = rep(2, 7), 
+       legend = c("None", "安眠药", "Papaverine", "Aminophylline", "Morphine", "Pentobarbital", "Tripelennamine"), 
+       col = c('green', 'gold', 'grey', 'pink', 'yellow', 'lightblue', 'black'))
+
+
+
+# 调整一下画图的先后顺序可以让所有线的开头都画出来
+plot(sort(skin_data$Papaverine), log(1 - rank(sort(skin_data$Papaverine)) / nrow(skin_data)), 
+     type = 'l', lty = 3, lwd = 2, col = 'grey', xlab = "Days eclapsed", ylab = "对数生存函数ln(S_n(t))")
+
+lines(sort(skin_data$无药), log(1 - rank(sort(skin_data$无药)) / nrow(skin_data)), 
+      type = 'l', lty = 1, lwd = 2, col = 'green', xlab = "days", ylab = "ln(S_n(t))")
+
+lines(sort(skin_data$安慰剂), log(1 - rank(sort(skin_data$安慰剂)) / nrow(skin_data)), 
+      type = 'l', lty = 2, lwd = 2, col = 'gold')
+
+lines(sort(skin_data$Aminophylline), log(1 - rank(sort(skin_data$Aminophylline)) / nrow(skin_data)), 
+      type = 'l', lty = 4, lwd = 2, col = 'pink')
+
+lines(sort(skin_data$Morphine), log(1 - rank(sort(skin_data$Morphine)) / nrow(skin_data)), 
+      type = 'l', lty = 5, lwd = 2, col = 'yellow')
+
+lines(sort(skin_data$Pentobarbital), log(1 - rank(sort(skin_data$Pentobarbital)) / nrow(skin_data)), 
+      type = 'l', lty = 6, lwd = 2, col = 'lightblue')
+
+lines(sort(skin_data$Tripelennamine), log(1 - rank(sort(skin_data$Tripelennamine)) / nrow(skin_data)), 
+      type = 'l', lty = 7, lwd = 2, col = 'black')
+
+legend("bottomleft", lty = 1:7, lwd = rep(2, 7), 
+       legend = c("None", "安眠药", "Papaverine", "Aminophylline", "Morphine", "Pentobarbital", "Tripelennamine"), 
+       col = c('green', 'gold', 'grey', 'pink', 'yellow', 'lightblue', 'black'))
+
+
+
+
+## 经验生存函数
+plot(sort(skin_data$无药), (1 - rank(sort(skin_data$无药)) / nrow(skin_data)), 
+     type = 'l', lty = 1, lwd = 2, col = 'green', 
+     xlim = c(35, 435), ylim = c(0,1), 
+     xlab = "Days elapsed", ylab = "生存函数S_n(t)")
+
+lines(sort(skin_data$安慰剂), (1 - rank(sort(skin_data$安慰剂)) / nrow(skin_data)), 
+      type = 'l', lty = 2, lwd = 2, col = 'gold')
+
+lines(sort(skin_data$Papaverine), (1 - rank(sort(skin_data$Papaverine)) / nrow(skin_data)), 
+      type = 'l', lty = 3, lwd = 2, col = 'grey')
+
+lines(sort(skin_data$Aminophylline), (1 - rank(sort(skin_data$Aminophylline)) / nrow(skin_data)), 
+      type = 'l', lty = 4, lwd = 2, col = 'pink')
+
+lines(sort(skin_data$Morphine), (1 - rank(sort(skin_data$Morphine)) / nrow(skin_data)), 
+      type = 'l', lty = 5, lwd = 2, col = 'yellow')
+
+lines(sort(skin_data$Pentobarbital), (1 - rank(sort(skin_data$Pentobarbital)) / nrow(skin_data)), 
+      type = 'l', lty = 6, lwd = 2, col = 'lightblue')
+
+lines(sort(skin_data$Tripelennamine), (1 - rank(sort(skin_data$Tripelennamine)) / nrow(skin_data)), 
+      type = 'l', lty = 7, lwd = 2, col = 'black')
+
+legend("topright", lty = 1:7, lwd = rep(2, 7), 
+       legend = c("None", "安眠药", "Papaverine", "Aminophylline", "Morphine", "Pentobarbital", "Tripelennamine"), 
+       col = c('green', 'gold', 'grey', 'pink', 'yellow', 'lightblue', 'black'))
+
 
 ```
+
+可以看出`Papaverine`治疗皮肤瘙痒的效果最好，`Aminophylline`与`Morphine`,`Pentobarbital`,`Tripelennamine`效果差不多。接下来十作为参照的`None`,在安眠药的作用下,皮肤瘙痒似乎持续得更久,皮肤瘙痒缓解跟新陈代谢应该有关系,这几种药物可能是促进新陈代谢的。
+
+**备注** 旧书P15例1.5画的图取了负号
+
+# 思考题
+## 一、分布函数
+
+思考什么变量的分布函数满足经验分布
+$$
+\hat F_n(x) = \frac{1}{n}\sum_{i=1}^n I(x_i \leqslant x)
+$$
+设离散型随机变量y, $y \in\{x_1,x_2,...x_n\}$ 且 $P\{y=x_i\}=\frac{1}{n},i=1,2,...,n$
+其有分布函数
+$$
+F(x)=\left\{ 
+\begin{array}{1}
+\begin{aligned}
+1 &,& x\geqslant x_{(n)} \\ 
+\frac{i}{n} &,& x_{(i)} \leqslant x < x_{(i+1)}\\
+0 &,& x < x_{(1)}
+\end{aligned}
+\end{array}
+\right.
+$$
+与$\hat F_n(x)$的一致。
+
+
+## 二、Neyman-Pearson
+
+讨论引理中$f=f_0$的情况
+
+根据定义，两个拒绝域$W_\alpha, W'\in X$一个尺度为$\alpha$，另一个水平为$\alpha$，即满足$P\{x\in W_\alpha\}=\alpha, P\{x\in W'\}\leqslant\alpha,$
+
+事实上，$\int_{W_\alpha} f_0(x)dx=P\{x\in W_\alpha | \theta \in \theta_0\}=\alpha$
+
+并且，$\int_{W'} f_0(x)dx=P\{x\in W' | \theta \in \theta_0\}\leqslant \alpha$ 
+
+自然得到了 $\int_{W_\alpha} f_0(x)dx \geqslant \int_{W'} f_0(x)dx$
+
+
+
