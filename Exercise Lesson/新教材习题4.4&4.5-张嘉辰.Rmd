@@ -600,7 +600,9 @@ options(width = 600px)
 
 ###公式一
 
-首先按照高阶鉴定法HC的经典算法计算。步骤如下：
+首先按照高阶鉴定法HC的经典算法计算。
+
+1.步骤
 
 (1)对每个检验计算一个统计量得分，根据统计量得分计算 $p$ 值；
 
@@ -613,25 +615,65 @@ $$
 (4)取最大值, 计算相应的 $H C_{p^{*}}=\max _{1 \leqslant k \leqslant p \alpha_{0}}\left\{H C_{p, k}\right\},$ 找到对应的 $\hat{k},$ 前 $k$
 可以认为是真显著的,拒绝所有的 $H_{(i)}, i=1,2, \cdots, k$.
 
-这一公式的名称是Orthodox Higher Criticism (OHC)
+这一公式的名称是Orthodox Higher Criticism (OHC)(见论文*Higher Criticism for Large-Scale Inference, Especially for Rare and Weak Effects*)
+
+2.函数说明
+
+(1)函数功能
+
+函数`HCdetection()`的功能是，输入p值，检测其中稀疏且微弱的信号。
+
+(2)输入的参数
+
+pai，也就是p值，在这里是长度为15的向量。
+
+(3)返回的值
+
+HC_clas，长度为15的向量，是每个p值对应的HC值。
+
+k_hat_clas，是拒绝的检验的个数。
+
+(4)限制条件$\alpha_0$
+
+这里取$\alpha_0=1$
+
+函数如下：
+
+```{r warning=FALSE, message=FALSE}
+#函数
+HCdetection <- function(pai){
+#对p值进行排序
+  pai <- sort(pai)
+#p是p值的个数
+  p <- length(pai)
+  kk <- c(1:p)/p
+#经典算法，计算HC值
+  HC_clas <- sqrt(p)*(kk - pai)/sqrt(pai*(1-pai))
+#把NaN修正为0
+  HC_clas[is.nan(HC_clas)] <- 0
+
+#阈值，注意限制条件
+#由于取alpha0=1，所以阈值所在位置是HC的最大值的位置
+  L <- which.max(HC_clas)
+#k_hat_clas是拒绝的检验的个数
+  k_hat_clas <- L
+  k_hat_clas
+
+  return(list(HC_clas, k_hat_clas))
+}
+```
+
+运行函数。
 
 ```{r warning=FALSE, message=FALSE}
 #p值用Π表示
 pai <- c(0.0024, 0.0056, 0.0096, 0.0121, 0.0201, 0.0278, 0.0298, 0.0344, 0.0349, 0.3240, 0.4262, 0.5719, 0.6528, 0.7590, 1.0000)
-#对p值进行排序
-pai <- sort(pai)
-#p是p值的个数
-p <- length(pai)
-k <- 1:15
-#经典算法，计算HC值
-HC_clas <- sqrt(p)*(k/p - pai)/sqrt(pai*(1-pai))
-HC_clas
-#书上把NaN修正为0
+#alpha <- 1， pvalcut <- 0
+HC_clas_res <- HCdetection(pai)
+HC_clas <- HC_clas_res[[1]]
+#拒绝检验的个数
+k_hat_clas <- HC_clas_res[[2]]
 
-#阈值
-thre_clas <- max(HC_clas)
-k_hat_clas <- which.max(HC_clas)
-k_hat_clas
 #画图
 plot(HC_clas, type = "b", ylab = "HC值", main = "经典算法得到的HC值")
 #用红线标出阈值所在位置
@@ -641,35 +683,51 @@ text(x = k_hat_clas, y = 2, label = c("拒绝9个"), pos = 2, col = "red")
 
 得到的HC值与例题中的结果一致。
 
-HC得分先增后降，在9个检验上达到最大，因此HC值的阈值选在第9组的位置。同时，第9组和第10组之间也是两组HC值间隔最大的位置。
+HC得分先增后降，在9个检验上达到最大。
 
-所以，HC拒绝的检验数量是9。
+HC拒绝的检验数量是9。
 
 ###公式二：另一种经典算法的公式
+
+见论文 *Higher criticism thresholding: Optimal feature selection when useful features are rare and weak*
 
 另一种经典算法的公式
 
 (该公式与书上经典算法的公式中，仅分母略有差别)
 
 HC值是
+
 $$
 H C\left(i ; \pi_{(i)}\right)=\sqrt{N} \frac{i / N-\pi_{(i)}}{\sqrt{i / N(1-i / N)}}
 $$
 
 
+$\mathrm{HC}$ 检验统计量是 
+
+$$
+H C^{*}=\max _{1\leq i \leq \alpha_{0} N}  H C\left(i ; \pi_{(i)}\right)
+$$
+
+这里取$\alpha_0=1$
 
 采用这一公式计算得到的HC值如下。
 
 ```{r warning=FALSE, message=FALSE}
+pai <- c(0.0024, 0.0056, 0.0096, 0.0121, 0.0201, 0.0278, 0.0298, 0.0344, 0.0349, 0.3240, 0.4262, 0.5719, 0.6528, 0.7590, 1.0000)
+p <- length(pai)
+k <- 1:p
 HC_clas2 <- sqrt(p)*(k/p - pai)/sqrt((k/p)*(1-k/p))
+#把NaN修正为0
+HC_clas2[is.nan(HC_clas2)] <- 0
 HC_clas2
 
+#由于alpha0=1，所以阈值是HC的最大值处
 #阈值
 thre_clas2 <- max(HC_clas2)
 k_hat_clas2 <- which.max(HC_clas2)
 k_hat_clas2
 #画图
-plot(HC_clas2, type = "b", ylab = "HC值", main = "经典算法得到的HC值")
+plot(HC_clas2, type = "b", ylab = "HC值", main = "经典算法公式二得到的HC值")
 #用红线标出阈值所在位置
 abline(v = k_hat_clas2, col = "red")
 text(x = k_hat_clas2, y = 2, label = c("拒绝9个"), pos = 2, col = "red")
@@ -684,12 +742,6 @@ pai <- c(0.00020, 0.00096, 0.00190, 0.00950, 0.02010, 0.02780, 0.02980, 0.03440,
 library(fdrtool)
 #计算HC值
 hc.score(pai)
-#计算阈值
-max(hc.score(pai))
-#阈值所在位置
-which.max(hc.score(pai))
-#函数hc.thresh()计算阈值并画图
-hc.thresh(pai)
 ```
 
 
@@ -702,52 +754,72 @@ hc.thresh(pai)
 $$
 HC_{p, k}=\frac{\sqrt{p}\left(k / p-\pi_{(k)}\right)}{\sqrt{k / p+\max \left\{\sqrt{n}\left(k / p-\pi_{(k)}\right), 0\right\}}}
 $$
+且
 
-
+$$
+H C_{p^{*}}=\max _{1 \leqslant k \leqslant p / 2, \pi_{(k)} \leqslant\log p / p}\left\{H C_{p, k}\right\}
+$$
 ```{r warning=FALSE, message=FALSE}
 #使用If-PCA方法计算HC值的函数
 #pai为检验的p值，n为每组检验的样本量
-PCA_func <- function(pai, n){
-#对p值从小到大排序
-  pai <- sort(pai)
-  p <- length(pai)
-  k <- 1:p
-#计算HC值
-  HC_PCA <- sqrt(p)*(k/p - pai)/sqrt(k/p + max(sqrt(n)*(k/p-pai), 0))
-  HC_PCA
-#阈值
-  thre_PCA <- max(HC_PCA)
-  k_hat_PCA <- which.max(HC_PCA)
-  k_hat_PCA
+PCA_func <- function(pval, n){
+  #pval <- pai
+  #从小到大排序
+  psort <- sort(pval)
+  ranking <- rank(pval)
+  p <- length(pval)
+#用p值算HC
+  kk <- c(1:p)/p
+  HCsort <- (sqrt(p)*((kk - psort)))/sqrt(kk)
+  psort_max_sqrt <- sqrt(n)*(kk - psort)/kk
+  psort_max <- rep(0, p)
+  for(i in 1:p){
+    psort_max[i] <- ifelse(psort_max_sqrt[i]>0, 
+                           yes = psort_max_sqrt[i], 
+                           no = 0)}
+  HCsort <- HCsort/(sqrt(psort_max + 1))
+#阈值，注意限制条件
+#pvalcut，为了消除异常值的影响
+  pvalcut <- (log(p))/p
+  #Ind <- which(psort>pvalcut)[1]
+  ratio <- HCsort
+  Ind <- which(psort<=pvalcut)[length(which(psort<=pvalcut))]
+  #ratio[1:(Ind-1)] = -Inf
+  ratio[(Ind+1):length(ratio)] = -Inf
+  ratio[(floor(p/2)+1):(length(ratio))]=-Inf
+  maxratio <- which(ratio == max(ratio))
+  L <- maxratio[length(maxratio)]
+#numselect是拒绝的检验的个数
+  numselect <- L
+
 #返回HC值，阈值，拒绝的检验的个数
-  return(list(HC_PCA, thre_PCA, k_hat_PCA))
+  return(list(HCsort, numselect))
 }
+
 #对题中的p值计算HC值
+pai <- c(0.00020, 0.00096, 0.00190, 0.00950, 0.02010, 0.02780, 0.02980, 0.03440, 0.03490, 0.32400, 0.42620, 0.57190, 0.65280, 0.75900, 1.0000)
 PCA_res <- PCA_func(pai, 30)
 #HC值
 HC_PCA <- PCA_res[[1]]
 HC_PCA
-#阈值
-thre_PCA <- PCA_res[[2]]
 #拒绝的检验的个数
-k_hat_PCA <- PCA_res[[3]]
+k_hat_PCA <- PCA_res[[2]]
 k_hat_PCA
 
 #画图
 plot(HC_PCA, type = "b", ylab = "HC值", main = "IF-PCA方法得到的HC值")
 #添加标识阈值的红色线
 abline(v = k_hat_PCA, col = "red")
-text(x = k_hat_PCA, y = 0.1, label = c("拒绝9个"), pos = 2, col = "red")
+text(x = k_hat_PCA, y = 0.1, label = c("拒绝7个"), pos = 2, col = "red")
 ```
 
 从图中可以看到，用IF-PCA方法计算得到的HC得分先增后降，并且在第9个检验上达到最大。
 
-HC的阈值是第9组的HC值，选择拒绝的检验数量是9。
+但是，受条件$1 \leqslant k \leqslant p / 2, \pi_{(k)} \leqslant \log p / p$的限制，选择拒绝的检验数量是7。
 
-与例题中采用经典算法拒绝的检验数量相同。
+与例题中采用经典算法拒绝的检验数量不同。
 
 #新4.5(clustering & classification)
-
 
 GitHub上给出的数据是：
 
@@ -756,15 +828,6 @@ EX181.txt，是181个组织样本的数据，每个样本包括12533条基因；
 ADCA.txt，是肺癌样本(ADCA,Adenocarcinoma)的训练集。
 
 以下分别进行clustering和classification的计算。
-
-
-
-
-以下分别进行两个计算。
-
-
-
-由于给出了肺癌样本(ADCA,Adenocarcinoma)的训练集ADCA.txt数据，所以进行的第二个计算是将所有样本分为训练集和测试集，对测试集中每个样本的标签进行预测。可以求得错误判断的数量，来反映预测的精度。
 
 ##1.用IF-PCA方法对每组样本计算HC值，进行基因有效性的检验(clustering)
 
@@ -812,7 +875,8 @@ n_gene <- 181
 psort_gene <- sort(pai_KS)
 p_gene <- 12533
 n_gene <- 181
-kk_gene <- c(1:p_gene)/(1 + p_gene)
+#kk_gene <- c(1:p_gene)/(1 + p_gene)
+kk_gene <- c(1:p_gene)/p_gene
 HCsort_gene <- (sqrt(p_gene)*((kk_gene - psort_gene)))/sqrt(kk_gene)
 psort_max_sqrt_gene <- sqrt(n_gene)*(kk_gene - psort_gene)/kk_gene
 psort_max_gene <- rep(0, p_gene)
@@ -820,56 +884,56 @@ for(i in 1:p_gene){
 psort_max_gene[i] <- ifelse(psort_max_sqrt_gene[i]>0, yes = psort_max_sqrt_gene[i], no = 0)}
 HCsort_gene <- HCsort_gene/(sqrt(psort_max_gene + 1))
 
-  
 #计算阈值时要注意限制条件
 pvalcut_gene <- (log(p_gene))/p_gene
-Ind_gene <- which(pai_KS>pvalcut_gene)[1]
+#Ind_gene <- which(pai_KS>pvalcut_gene)[1]
 ratio_gene <- HCsort_gene
-ratio_gene[1:(Ind_gene-1)] = -Inf
+#ratio_gene[1:(Ind_gene-1)] = -Inf
+Ind_gene <- which(psort_gene<=pvalcut_gene)[length(which(psort_gene<=pvalcut_gene))]
+ratio_gene[(Ind_gene+1):length(ratio_gene)] = -Inf
 #ratio[((6267)+1):(length(ratio))]=-Inf
 ratio_gene[(6267):(length(ratio_gene))]=-Inf
 maxratio_gene <- which(ratio_gene == max(ratio_gene))
 L_gene <- maxratio_gene[length(maxratio_gene)]
 numselect_gene <- L_gene
 numselect_gene
-
 ```
-
-
 
 ###1.2 参考原matlab代码的clustering
 
+####函数 ifpca()
+
 (1)函数功能
 
-函数`ifpca()`对每个样本都得出其标签label（取值为0或1），用于下一步的classification
+函数`ifpca()`对每个样本都得出其标签label（取值为0或1），用于下一步的classification。
 
 (2)输入的参数
 
+Data，这里是12533行，181列的矩阵，p=12533是feature（基因）的个数，n=181是样本的个数；每一列是一个样本。
 
-Data，这里是12533行，181列的矩阵，p=12533是feature（基因）的个数，n=181是样本的个数；每一列是一个样本
-
-K，cluster的个数，这里为2，因为有MPM和ADCA两个cluster
+K，cluster的个数，这里为2，因为有MPM和ADCA两个cluster。
 
 (3)返回的值
 
-label，长度为181的向量，是每个样本的标签label，取值为0或1
+label，长度为181的向量，是每个样本的标签label，取值为0或1。
 
-stats.KS，长度为12533的向量，是每个基因的KS值
+stats.KS，长度为12533的向量，是每个基因的KS值。
 
-stats.HC，长度为12533的向量，是每个基因的HC值
+stats.HC，长度为12533的向量，是每个基因的HC值。
 
-stats.pval，长度为12533的向量，是每个基因的p值
+stats.pval，长度为12533的向量，是每个基因的p值。
 
-stats.ranking，长度为12533的向量，根据p值，基因的秩
+stats.ranking，长度为12533的向量，根据p值，基因的秩。
 
-numselect，显著的个数，这里是有效的基因数
+numselect，显著的个数，这里是有效的基因数。
 
 备注：ifpca()函数运行所需时间比较长
+
 
 ```{r warning=FALSE, message=FALSE}
 ifpca <- function(Data, K){
 
-  Data <- t(read.csv("D:/data/lungCancer.csv", header = FALSE))
+  #Data <- t(read.csv("D:/data/lungCancer.csv", header = FALSE))
 
 #p=12533，n=181
   p <- nrow(Data)
@@ -884,106 +948,103 @@ ifpca <- function(Data, K){
 #计算KS值
 #rep: the number of Kolmogorov-Smirnov statistics to be simulated in the algorithm, defacult 100*p.
 #p=12533 n=181 
-rep_times <- 100*p
-
-#rep_times <- 50000
-KSvalue <- rep(0,rep_times)
-kk <- c(0:n)/n
-
-
-for(i in 1:rep_times){
+  rep_times <- 100*p
+#循环次数原为1253300次，但是实际上到循环100000次已经收敛
+#运行时考虑到运行时间可以适当减少循环次数
+  rep_times <- 100000
+  KSvalue <- rep(0,rep_times)
+  kk <- c(0:n)/n
+  
+  for(i in 1:rep_times){
     #正态分布的随机数
-	x = rnorm(n) 
-	z = (x - mean(x))/sd(x)
-	z = z/sqrt(1 - 1/n)
-	pi = pnorm(z)
-	pi = sort(pi)
+	  x <- rnorm(n) 
+	  z <- (x - mean(x))/sd(x)
+	  z <- z/sqrt(1 - 1/n)
+	  pi <- pnorm(z)
+	  pi <- sort(pi)
 #D统计量
-	KSvalue[i] = max(max(abs(kk[1:n] - pi)), max(abs(kk[2:(n+1)] - pi)))
+	  KSvalue[i] = max(max(abs(kk[1:n] - pi)), max(abs(kk[2:(n+1)] - pi)))
 }
 #KS统计量得分
-KSvalue <- KSvalue*sqrt(n)
+  KSvalue <- KSvalue*sqrt(n)
 #注意删除，释放内存；否则后面计算可能会出错
-rm(x, z, pi, kk)
+  rm(x, z, pi, kk)
 
 #重复得到的KSvalue求均值方差，后面用来标准化KS
-
-KSmean <- mean(KSvalue)
-KSstd <- sd(KSvalue)
-
-#per: a number with 0 < per <= 1, the percentage of Kolmogorov-Smirnov 
-#statistics that will be used in the normalization step, default to be 1. 
-#When the data is highly skewed, this parameter can be specified, such as
-#0.5.用来纠正偏态
-#在这里per=1
+  KSmean <- mean(KSvalue)
+  KSstd <- sd(KSvalue)
 
 #对每个基因算一个KS值
 #n=181 p=12533
-kk = (c(0:n))/n
-KS = rep(0, p)
-for(j in 1:p){
+  kk = (c(0:n))/n
+  KS = rep(0, p)
+  for(j in 1:p){
     pi <- pnorm(Data[j,]/sqrt(1 - 1/n))
     pi <- sort(pi)
     KS[j] <- (sqrt(n))*(max(max(abs(kk[1:n] - pi)), max(abs(kk[2:(n+1)] - pi))))
     #删除pi
     rm(pi)
 }
-
-
 #每个基因有一个KS值
 #对KS值进行标准化(Efron)
   KS <- ((KS - mean(KS))/(sd(KS)))*KSstd + KSmean
 #n=181 p=12533
 #用KS算p值，每个基因有一个p值
-
-pval <- rep(0, p)
-for(i in 1:p){
+  pval <- rep(0, p)
+  for(i in 1:p){
     pval[i] = (sum(KSvalue> KS[i]))/(length(KSvalue))
     }
-#从小到大排序
+#将p值从小到大排序
   psort <- sort(pval)
   ranking <- rank(pval)
 #用p值算HC
-kk <- c(1:p)/(1 + p)
-HCsort <- (sqrt(p)*((kk - psort)))/sqrt(kk)
-psort_max_sqrt <- sqrt(n)*(kk - psort)/kk
-psort_max <- rep(0, p)
-for(i in 1:p){
-psort_max[i] <- ifelse(psort_max_sqrt[i]>0, yes = psort_max_sqrt[i], no = 0)}
-HCsort <- HCsort/(sqrt(psort_max + 1))
-HC <- rep(0, p)
-HC[ranking] <- HCsort
+  #kk <- c(1:p)/(1 + p)
+  kk <- c(1:p)/p
+  HCsort <- (sqrt(p)*((kk - psort)))/sqrt(kk)
+  psort_max_sqrt <- sqrt(n)*(kk - psort)/kk
+  psort_max <- rep(0, p)
+  for(i in 1:p){
+    psort_max[i] <- ifelse(psort_max_sqrt[i]>0, 
+                           yes = psort_max_sqrt[i], 
+                           no = 0)}
+  HCsort <- HCsort/(sqrt(psort_max + 1))
+  HC <- rep(0, p)
+  HC[ranking] <- HCsort
 
-#阈值
+#阈值，注意限制条件
 #pvalcut，为了消除异常值的影响
-pvalcut <- (log(p))/p
-
-Ind <- which(psort>pvalcut)[1]
-ratio <- HCsort
-ratio[1:(Ind-1)] = -Inf
+  pvalcut <- (log(p))/p
+  Ind <- which(psort>pvalcut)[1]
+  ratio <- HCsort
+  ratio[1:(Ind-1)] = -Inf
+#这里是因为原来的代码是6258，但是取6257更符合公式
+#取6258或6257不影响结果
 #ratio[((6267)+1):(length(ratio))]=-Inf
-ratio[(6267):(length(ratio))]=-Inf
-maxratio <- which(ratio == max(ratio))
-L <- maxratio[length(maxratio)]
-numselect <- L
+  ratio[(6267):(length(ratio))]=-Inf
+  maxratio <- which(ratio == max(ratio))
+  L <- maxratio[length(maxratio)]
+#numselect是拒绝的检验的个数
+  numselect <- L
 
-#每个基因的HC，选出有效和无效的基因
-stats.KS = KS
-stats.HC = HC
-stats.pval = pval
-stats.ranking = ranking
-stats.HCsort = HCsort
-
-
-#IF-PCA
-data_select <- Data[which(pval <= psort[L]), ]
-
-return(list(numselect, stats.KS, stats.HC, stats.pval, stats.HCsort, stats.ranking))
+#每个基因的KS值，HC值，p值，p值的秩
+  stats.KS = KS
+  stats.HC = HC
+  stats.pval = pval
+  stats.ranking = ranking
+  stats.HCsort = HCsort
+#选出的显著的数据
+  data_select <- Data[which(pval <= psort[L]), ]
+  
+  return(list(numselect, stats.KS, stats.HC, stats.pval, stats.HCsort, stats.ranking))
 }
 
+```
+
+####运行函数，计算拒绝检验的个数
+
+```{r warning=FALSE, message=FALSE}
+#运行函数
 Data <- t(read.csv("D:/data/lungCancer.csv", header = FALSE))
-
-
 ifpca_res <- ifpca(Data, 2)
 st.num <- ifpca_res[[1]]
 st.KS <- ifpca_res[[2]]
@@ -992,54 +1053,47 @@ st.pval <- ifpca_res[[4]]
 st.HCsort <- ifpca_res[[5]]
 #选出的个数，251
 st.num
+```
 
+拒绝检验的个数是251个。
+
+####画图(p值，KS值，HC值)
+
+下面分别画出p值，KS值，和HC值的图。
+
+```{r warning=FALSE, message=FALSE}
 #画图
 p <- 12533
 library(ggplot2)
 kk <- c(1:p)/p
 df <- data.frame(kk, pvalue=sort(st.pval), KS=sort(st.KS, decreasing = TRUE), HC=st.HCsort)
+#p值
 ggplot(df, aes(x = kk, y = pvalue)) + geom_line() + theme_minimal() + scale_x_continuous(limits = c(0, 0.1)) + 
-  scale_y_continuous(limits = c(0, 0.1)) + labs(x = "k/p")
-
+  scale_y_continuous(limits = c(0, 0.1)) + labs(x = "k/p", title =  "p-value")
+#KS值
 ggplot(df, aes(x = kk, y = KS)) + geom_line() + theme_minimal() +
 scale_x_continuous(limits = c(0, 0.1)) + 
-  scale_y_continuous(limits = c(0, 5)) + labs(x = "k/p")
-
+  scale_y_continuous(limits = c(0, 5)) + labs(x = "k/p", title = "KS")
+#HC值
 ggplot(df, aes(x = kk, y = HC)) + geom_line() + theme_minimal() +
-  #scale_x_continuous(limits = c(0, 0.1)) + 
-  #scale_y_continuous(limits = c(0, 10)) + 
-  geom_vline(xintercept = 251/12533, col = "red") + labs(x = "k/p")
+  scale_x_continuous(limits = c(0, 0.1)) + 
+  scale_y_continuous(limits = c(0, 10)) + 
+#红线标出显著的位置
+  geom_vline(xintercept = 251/12533, col = "red") + labs(x = "k/p", title = "HC")
 ```
-
-
 
 
 ##2.将样本分为训练集和测试集，对测试集进行预测(classification)(参考原matlab代码)
 
-参考论文2015，Jin做过很多数据集（参考PPT_HC和Github上的论文），主要是leukemia and the lung cancer data，这里只做了lung cancer。
+将所有样本分为训练集和测试集，对测试集中每个样本的标签进行预测。可以求得错误判断的数量，来反映预测的精度。
 
-目的就是预测。关于label，还有一些模型假定，参考论文2015
+参考论文2015，Jin做过很多数据集（参考PPT_HC和Github上的论文），主要是leukemia and the lung cancer data，这里只做了lung cancer。
 
 ###1.数据来源和代码参考
 
+这里采用的训练集和测试集的数据来源于lungCancer.mat文件，这里转为了同名的.csv文件。
 
-1.1 数据来源
-
-这里采用的训练集和测试集的数据为附件中的lungCancertrain.csv和lungCancer_test.csv。训练集和测试集的数据均包括标签label信息，标签取值为0或1。
-
-这两个数据来源于lungCancer.mat文件，它包含了lungCancertrain和lungCancer_test两个数据。这里转为了同名的.csv文件。
-
-1.2 代码参考
-
-这部分代码参考了原文代码，进行了简化。
-
-原文代码见附件HCclassification.m和HCclassification_fit.m。
-
-1.3 网址
-
-以上附件中的HCclassification.m文件，HCclassification_fit.m文件，lungCancer.mat文件均来源于<http://www.stat.cmu.edu/~jiashun/Research/software/>
-
-
+训练集和测试集的数据均包括标签label信息，标签取值为0或1。
 
 ###2.数据说明
 
@@ -1075,15 +1129,15 @@ TrainY，在这里是长度为32的向量，是与TrainX对应的标签，值为
 
 (3)返回的值
 
-weight，长度为12533的向量，是每条基因的权重
+weight，长度为12533的向量，是每条基因的权重。
 
-stats.HC，长度为12533的向量，是每条基因的HC值
+stats.HC，长度为12533的向量，是每条基因的HC值。
 
-stats.HCT，HC值的阈值
+stats.HCT，HC值的阈值。
 
-stats.xbar，长度为12533的向量，是训练集中，标签为1和为0的两组的平均值 
+stats.xbar，长度为12533的向量，是训练集中，标签为1和为0的两组的平均值。
 
-stats.s，长度为12533的向量，是训练集中，标签为1和为0的两组的标准差
+stats.s，长度为12533的向量，是训练集中，标签为1和为0的两组的标准差。
 
 ```{r warning=FALSE, message=FALSE}
 HCclassification <- function(TrainX, TrainY){
@@ -1192,16 +1246,12 @@ Test，测试集的数据，在这里是在这里是12533行，149列的矩阵�
 
 (3)返回的值
 
-label，长度为149的向量，是预测的标签label
+label，长度为149的向量，是预测的标签label。
 
-score，长度为149的向量，是对测试集进行标签分类时的得分
+score，长度为149的向量，是对测试集进行标签分类时的得分。
 
 ```{r warning=FALSE, message=FALSE}
-
-
 HCclassification_fit <- function(weight, xbar, s, Test){
-  
-
   p <- nrow(Test)
   m <- ncol(Test)
   
