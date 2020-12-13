@@ -1,0 +1,1246 @@
+---
+title: "第十二周参考答案源代码"
+author: ""
+date: ""
+output:
+  rmdformats::readthedown:
+    self_contained: true
+    thumbnails: false
+    lightbox: true
+    toc_depth: 4
+    gallery: false
+    highlight: kate
+    code_folding: show
+    number_sections: false
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#5.1 卡方独立性检验
+
+$H_0:$不同年龄段人对各商场的购物倾向性不存在差异
+
+$H_1:$不同年龄段人对各商场的购物倾向性存在差异
+
+列联表的行数和列数均为3，单元格中的期望频数都大于5，满足$\chi^2$检验的假定条件，因此可以采用卡方独立性检验。
+
+进行卡方检验可以采用`chisq.test()`，`summary(xtabs(Freq~A+B))`，或者对数线性模型的独立性模型。
+
+##1.使用函数chisq.test()
+
+```{r warning=FALSE, message=FALSE}
+market <- data.frame(first = c(83, 91, 41), second = c(70, 86, 38), thrid = c(45, 15, 10))
+row.names(market) <- c("≤30", "31~50", ">50")
+#进行卡方独立性检验
+chisq.test(market)
+```
+
+p-value = 0.0009203<0.05，所以拒绝原假设，认为不同年龄段人对各商场的购物倾向性存在差异。
+
+##2.使用summary(xtabs(Freq~A+B))
+
+```{r warning=FALSE, message=FALSE}
+market_arr <- array(data = c(83, 91, 41, 70, 86, 38, 45, 15, 10), 
+                         dim = c(3,3), 
+                dimnames = list("age" = c("≤30", "31~50", ">50"), 
+                          "market"=c("first","second","third")
+                                         ))
+market_df <- as.data.frame(as.table(market_arr))
+summary(xtabs(Freq~age+market, market_df))
+```
+
+p-value = 0.0009203，与使用函数`chisq.test()`得到的结果相同。
+
+##3.建立对数线性模型的独立性模型
+
+对于两个变量，卡方检验的原假设是两个变量独立，
+
+所以可以基于两变量独立的原假设，建立对数线性模型（此时建立的是独立性模型）进行检验。
+
+如果原假设不成立，则建立的模型的残差会比较大，p值会比较小。
+
+```{r warning=FALSE, message=FALSE}
+market_glm <- glm(Freq~age+market, family = "poisson", data = market_df)
+summary(market_glm)
+#p值
+pchisq(deviance(market_glm), df = df.residual(market_glm), lower.tail = F)
+```
+
+可以看到，三种进行卡方检验方式得到的结果是一致的，都拒绝原假设，认为年龄段和对商场的购物倾向不独立。
+
+以下题目的卡方检验都采用`chisq.test()`进行。
+
+#5.2 卡方独立性检验
+
+$H_0:$不同种族与所支持的政党之间独立
+
+$H_1:$不同种族与所支持的政党之间不独立
+
+列联表的单元格中的期望频数都大于5，满足$\chi^2$检验的假定条件，因此可以采用卡方独立性检验；
+
+```{r warning=FALSE, message=FALSE}
+politic <- data.frame(民主党 = c(341, 103), 共和党 = c(405, 11))
+row.names(politic) <- c("白人", "黑人")
+#进行卡方独立性检验
+chisq.test(politic)
+```
+
+p-value < 2.2e-16，所以拒绝原假设，认为不同种族与所支持的政党之间不独立。
+
+#5.3 Fisher精确性检验,McNemar检验
+
+数据有超过20%的单元格中的期望频数都低于5，不满足$\chi^2$检验的假定条件，因此不可以采用卡方独立性检验；
+
+这里进行Fisher精确性检验和McNemar检验。
+
+##1.Fisher精确性检验
+
+```{r warning=FALSE, message=FALSE}
+lung <- data.frame(当前有过某类肺炎 = c(6, 1), 当前没有某类肺炎 = c(4, 19))
+row.names(lung) <- c("以前有过某类肺炎", "以前没有某类肺炎")
+#Fisher精确性检验
+fisher.test(lung)
+```
+
+p-value = 0.002122<0.05，因此拒绝原假设，认为某类肺炎患者和以前是否曾经患过这类肺炎有继承性关系。
+
+##2.McNemar检验
+
+“以前是否有过某类肺炎”和“当前是否有过某类肺炎”的观测对象是同一批，且样本量较小。
+
+所以这里也可以使用McNemar检验。
+
+```{r warning=FALSE, message=FALSE}
+mcnemar <- ((6-19)^2)/(6+19)
+#McNemar检验的p值
+p_mcnemar <- 1-pchisq(mcnemar, 1)
+p_mcnemar
+```
+
+p-value = 0.009322376<0.05，因此拒绝原假设，认为某类肺炎患者和以前是否曾经患过这类肺炎有继承性关系。
+
+#5.4 卡方独立性检验
+
+每人只能选出一个最喜欢的电视节目类型；
+
+列联表的行数和列数均为3，单元格中的期望频数都大于5，满足$\chi^2$检验的假定条件，因此可以采用卡方独立性检验。
+
+```{r warning=FALSE, message=FALSE}
+tv <- data.frame(体育类 = c(83, 91, 41), 电视剧类 = c(70, 86, 38), 综艺类 = c(45, 15, 10))
+row.names(tv) <- c("≤30", "31~50", ">50")
+chisq.test(tv)
+```
+
+p-value = 0.0009203<0.05，因此拒绝原假设，认为不同观众对三类节目的关注率不一样。
+
+#5.7 Mantel-Haenszel检验
+
+##1.是否条件独立-Mantel-Haenszel检验
+
+假设检验问题为：
+
+$H_0$:不同家庭经济状况的学生的高考成绩没有差异;
+
+$H_1$:不同家庭经济状况的学生的高考成绩存在差异。
+
+进行Mantel-Haenszel检验可以使用函数`mantelhaen.test()`，或者基于条件独立的原假设，建立相应的对数线性模型进行检验。
+
+###(1)使用mantelhaen.test()
+
+对于三维列联表，设行、列、层分别是变量A、B、C；
+
+Mantel-Haenszel检验用于检验变量A与变量B之间的条件独立。
+
+即，在假定每一层的变量A和B的odds ratio相等的条件下，检验A与B是否独立。
+
+因此，在进行Mantel-Haenszel检验之前首先检验“每一层的变量A和B的odds ratio相等”的假定是否成立，这可以通过Breslow-Day检验或者Woolf检验进行。
+
+```{r warning=FALSE, message=FALSE}
+#使用array()构建3维表
+exam <- array(data = c(43, 87, 65, 77, 9, 15, 73, 30, 7, 9, 18, 11), 
+              dim = c(2,2,3), 
+              dimnames = list("economy" = c("A","B"),
+                              "college" = c("first","second"),
+                              "school" = c("1","2","3")))
+
+#Breslow-Day检验和Woolf检验的原假设是
+#变量C的每一个水平下的变量A和B的odds ratio相等
+DescTools::BreslowDayTest(exam)
+#R中有两个Woolf检验的函数，结果是相同的
+#vcd::woolf_test(exam)
+DescTools::WoolfTest(exam)
+#Breslow-Day检验和Woolf检验得到的p值都较大，所以可以认为每一层的变量A和B的odds ratio相等
+#Mantel-Haenszel检验
+mantelhaen.test(exam)
+```
+
+p-value = 0.0006461<0.05，因此拒绝原假设，认为不同家庭经济状况的学生的高考成绩存在差异。
+
+###(2)基于条件独立的原假设，建立相应的对数线性模型
+
+原假设是"家庭经济状况(economy)和高考成绩(college)条件独立"，
+
+也就是给定高中学校(school)时，家庭经济状况(economy)和高考成绩(college)独立。
+
+因此建立的对数线性模型中，包括三个变量的主效应，变量economy和school的交互项，college和school的交互项，
+
+不包括economy和college的交互项，不包括三次项。
+
+```{r warning=FALSE, message=FALSE}
+exam_df <- as.data.frame(as.table(exam))
+#以第三种学校作为基准组
+exam_df$school <- factor(exam_df$school, levels = c("3", "1", "2"))
+#以经济状况一般作为基准组
+exam_df$economy <- factor(exam_df$economy, levels = c("B", "A"))
+#建立相应的对数线性模型
+log_mod_part <- glm(Freq ~ economy + college + school + economy * school + college * school, 
+            data = exam_df, family = poisson)
+summary(log_mod_part)
+#p值
+pchisq(deviance(log_mod_part), df = df.residual(log_mod_part), lower.tail = F)
+```
+
+p-value = 0.0006461<0.05，因此拒绝原假设，认为不同家庭经济状况的学生的高考成绩存在差异。
+
+##2.odds ratio的可视化与计算
+###2.1 odds ratios的可视化
+
+####(1)fourfold()
+
+每个2×2表的单元频率$n_{ij}$显示为四分之一圆，其半径与$\sqrt{n_{ij}}$成比例，因此其面积与单元频率成比例。
+
+可以通过odds ratio的置信区间的环，来直观上判断是否拒绝两变量条件独立的原假设。
+
+在odds ratio与1显著不同时，使用更深的颜色；此时相邻象限的环不重叠。
+
+```{r warning=FALSE, message=FALSE}
+library(vcd)
+fourfold(exam, mfrow=c(1,3))
+```
+
+在同种高中时，经济状况好的学生考上第二类大学的比例都更大。
+
+而且，在第二类高中下，不同经济状况时的考上第二类大学的比例的差别比较大（颜色比较深）。
+
+
+####(2)双层图
+
+```{r warning=FALSE, message=FALSE}
+doubledecker(college ~ school + economy, data=exam[2:1,,])
+```
+
+可以看到，在学校种类相同时，经济状况好的学生上二类大学的人数都比经济状况一般的更多。
+
+###2.2 计算odds ratio-建立对数线性模型
+
+####2.2.1 使用函数array()读入数据
+
+数据有2行（经济状况），2列（高考成绩），3层（高中学校）
+
+```{r warning=FALSE, message=FALSE}
+#使用array()构建3维表
+exam <- array(data = c(43, 87, 65, 77, 9, 15, 73, 30, 7, 9, 18, 11), 
+                         dim = c(2,2,3), 
+                         dimnames = list("economy" = c("A","B"),
+                                         "college" = c("first","second"),
+                                         "school" = c("1","2","3")))
+#exam
+exam_table <- ftable(exam, row.vars = c("school","economy"))
+exam_table
+```
+
+####2.2.2 探索数据
+
+#####(1)边际总和
+
+```{r warning=FALSE, message=FALSE}
+#得到边际总和
+addmargins(exam)
+```
+
+可以看到，一共有444名学生参与调查，第一种学校的学生最多，第三种学校的最少。
+
+#####(2)边缘概率
+
+```{r warning=FALSE, message=FALSE}
+prop.table(exam, margin = c(1,3))
+```
+
+对于第一种学校的学生，经济状况好（A）的有60%上了二类学校，经济状况一般（B）的有47%上了二类学校；
+
+对于第二种学校的学生，经济状况好（A）的有89%上了二类学校，经济状况一般（B）的有67%上了二类学校；
+
+对于第一种学校的学生，经济状况好（A）的有72%上了二类学校，经济状况一般（B）的有55%上了二类学校；
+
+因此，从数据直观来看，学生的家庭经济状况与其高考成绩之间有关系。
+
+#####(3)马赛克图
+
+```{r warning=FALSE, message=FALSE}
+library(vcd)
+mosaic(~ economy + college + school, shade=TRUE, data=exam, labeling = labeling_values)
+```
+
+蓝色填充表示Pearson标准化残差为正，红色填充表示为负。
+
+可以从图上看到，
+
+相同高中时，经济状况好（A）的同学考上第二类大学的比例大于经济状况一般（B）的；
+
+经济状况好和一般时，三种高中考上第二类大学的比例高低顺序不同。
+
+可以看到，学生的家庭经济状况与其高考成绩之间有关系；存在着三个变量两两之间的交互效应。
+
+#####(4)经济状况好和一般的高中学校与高考成绩之间的关系对比图
+
+以高中学校为横轴，高考考上第二类学校的学生人数为纵轴，对家庭经济状况好和经济状况一般分别画出两条折线图。
+
+```{r warning=FALSE, message=FALSE}
+library(ggplot2)
+exam_df <- as.data.frame(as.table(exam))
+exam_df <- exam_df[which(exam_df$college == "second"), ]
+ggplot(exam_df, aes(x = school, y = Freq, group = economy)) +
+  geom_line(aes(color = economy)) + 
+  theme_minimal() +
+  labs(x = "高中学校", y = "高考上二类学校的人数", title = "经济状况好和一般的高中学校与高考成绩之间的关系对比图") +
+  scale_color_manual(name = "", labels = c("经济状况好", "经济状况一般"), values = c("red", "orange")) +
+  theme(legend.position = "bottom")
+```
+
+从图上可以看到，对于第二种和第三种高中学校的学生而言，经济状况好的学生考上第二类大学的人数都比经济状况一般的更多。
+
+####2.2.3 建立对数线性模型
+
+函数`loglin(family = "poisson")`和`glm()`都可以建立对数线性模型，输入的参数形式略有差别，得到的结果相同。
+
+#####(1)使用函数glm()建立对数线性模型
+
+######<1>独立性模型
+
+```{r warning=FALSE, message=FALSE}
+exam_df <- as.data.frame(as.table(exam))
+#以第三种学校作为基准组
+exam_df$school <- factor(exam_df$school, levels = c("3", "1", "2"))
+#以经济状况一般作为基准组
+exam_df$economy <- factor(exam_df$economy, levels = c("B", "A"))
+#建立对数线性模型
+#(1)独立性模型
+log_mod_indep <- glm(Freq ~ economy + college + school, 
+            data = exam_df, family = poisson)
+summary(log_mod_indep)
+```
+
+下面进行原假设是"独立性模型对观测频数拟合程度较好"，即"独立性模型的模型拟合值和观测频数较为接近"的假设检验。
+
+```{r warning=FALSE, message=FALSE}
+pchisq(deviance(log_mod_indep), df = df.residual(log_mod_indep), lower.tail = F)
+```
+
+p-value = 1.204856e-12，说明该模型的拟合度较差
+
+```{r warning=FALSE, message=FALSE}
+#将观测频数与模型拟合值对比，可以看到该模型的拟合度较差
+cbind(log_mod_indep$data, fitted(log_mod_indep))
+```
+
+######<2>homogeneous模型
+
+不包含三次项，包含每个变量的主效应和两两之间的交互效应。
+
+```{r warning=FALSE, message=FALSE}
+#(2)homogeneous model
+log_mod_homo <- glm(Freq ~ (economy + college + school)^2, 
+            data = exam_df, family = poisson)
+summary(log_mod_homo)
+```
+
+从Residual deviance可以看到，这个模型的拟合要比独立性模型更好。
+
+类似地，进行原假设是"homogeneous模型对观测频数拟合程度较好"，即"homogeneous模型的模型拟合值和观测频数较为接近"的假设检验。
+
+```{r warning=FALSE, message=FALSE}
+pchisq(deviance(log_mod_homo), df = df.residual(log_mod_homo), lower.tail = F)
+```
+
+p-value = 0.265058，不能拒绝原假设。
+
+```{r warning=FALSE, message=FALSE}
+#将观测频数与模型拟合值对比，homogeneous模型的拟合程度相对较好
+cbind(log_mod_homo$data, fitted(log_mod_homo))
+```
+
+######<3>饱和模型
+
+```{r warning=FALSE, message=FALSE}
+#饱和模型
+log_mod_sat <- glm(Freq ~ economy * college * school,
+            data = exam_df, family = poisson)
+summary(log_mod_sat)
+```
+
+饱和模型的Residual deviance总是0，模型拟合值与观测频数总是相等。
+
+通常情况下，我们不使用饱和模型，而是选择一个尽可能简洁的模型。
+
+注意到饱和模型中，三次项的系数都是不显著的。
+
+在有三个变量情况下，homogeneous模型和饱和模型的差别仅在于是否有三次项。
+
+下面通过似然比检验，来检验"homogeneous模型和饱和模型的拟合长度一样好"的原假设是否成立。
+
+```{r warning=FALSE, message=FALSE}
+#比较饱和模型和homogeneous模型，以便进行选择
+#似然比检验
+anova(log_mod_homo, log_mod_sat)
+pchisq(2.6556, df = 2, lower.tail = F)
+```
+
+p-value = 0.2650598，我们不能拒绝"homogeneous模型和饱和模型的拟合长度一样好"的原假设。
+
+######<4>模型选择(Step-Down)
+
+使用Step-Down选择过程，选择合适的对数线性模型
+
+可以使用`drop1()`函数，每次从饱和模型中去掉一项，直到不能再去掉为止。
+
+```{r warning=FALSE, message=FALSE}
+#Step-Down Selection Procedure
+#从饱和模型中去掉一项
+drop1(log_mod_sat,test="Chi")
+#所以我们去掉了economy:college:school，得到了log_mod_homo(homogeneous模型)
+drop1(log_mod_homo,test="Chi")
+#都是显著的，所以不能去掉
+#所以我们最终选择了log_mod_homo，也就是homogeneous模型
+summary(log_mod_homo)
+```
+
+也可以直接使用`step()`函数进行模型选择，同样最终选择homogeneous模型。
+
+```{r warning=FALSE, message=FALSE}
+#默认是后退法
+step(log_mod_sat, trace = 0)
+```
+
+######<5>使用homogeneous模型计算odds ratio
+
+```{r warning=FALSE, message=FALSE}
+exp(coef(log_mod_homo)["economyA:collegesecond"])
+```
+
+（经济状况的基准组是经济状况一般）
+
+控制高中的学校种类相同时，经济状况好的学生考上第二类学校的估计的odds，是经济状况一般的学生的2.08倍。
+
+#####(2)使用loglin()函数
+
+```{r warning=FALSE, message=FALSE}
+#由于输出的结果比较长，这里只输出homogeneous模型的结果
+#独立性模型
+#loglin(exam, list(1,2,3), fit=TRUE, param=TRUE)
+
+#homogeneous模型
+loglin(exam, list(c(1,2),c(1,3),c(2,3)), fit=TRUE, param=TRUE)
+
+#饱和模型
+#loglin(exam, list(c(1,2,3)), fit=TRUE, param=TRUE)
+```
+
+使用`loglin()`函数与使用`glm()`函数得到的结果是相同的。下面的案例中使用`glm()`建立对数线性模型。
+
+#案例与讨论：影响婴儿体重的相关因素分析
+
+##1.未婚黑人母亲婴儿的体重
+
+```{r warning=FALSE, message=FALSE}
+data <- read.csv("D:/data/birth_weight.csv")
+#选出黑人未婚母亲
+weight.sort <- sort(data$weight[data$black==1 & data$married==0])
+weight.rank <- rank(weight.sort)
+n <- length(weight.sort)
+#经验分布函数
+weight.ecd <- weight.rank/n
+plot(weight.sort,weight.ecd,type = "o",xlab = "weight",ylab = "Fn(x)",
+main="未婚黑人母亲婴儿的体重的经验分布图及置信区间估计")
+band <- sqrt(log(2/0.1)/(2*n))
+#置信区间在各点处的上下界
+lower.9 <- weight.ecd-band
+upper.9 <- weight.ecd+band
+lower.9[which(lower.9<0)] <- 0
+upper.9[which(upper.9>1)] <- 1
+lines(weight.sort, lower.9, lty=2)
+lines(weight.sort, upper.9, lty=2)
+#标出低体重的界限2500g
+abline(v=2500,col="red")
+```
+
+在90%的置信度下，未婚黑人母亲的婴儿的低体重率的上限接近20%，与世界平均水平相比这个比率是偏高的；
+
+婴儿的体重主要分布在2500g-4000g之间，但依然存在一定数量的极小值：
+
+总之，未婚黑人母亲的婴儿低体重率较高，且整体方差较大。
+
+##2.泊松回归
+
+###(1)构建数据框
+
+在书上的代码的基础上进行了简化。
+
+```{r warning=FALSE, message=FALSE}
+labels_wtgain <- c("-50~-20","-19~-10", "-9~0", "1~10", "11~20", "21~55")
+data$classifywtgain <- cut(data$m.wtgain, breaks = c(-50, -20, -10, 0, 10, 20, 55), labels = labels_wtgain, include.lowest = FALSE, right = TRUE, ordered_result = TRUE)
+data$lowweight <- ifelse(data$weight<2500, 1, 0)
+#只选出是否为黑人、母亲怀孕期间增加的体重、是否为低体重三个变量
+data_black <- data[,c(1,10,11)]
+#求频数
+data_black_df <- as.data.frame(as.table(table(data_black)))
+#只取低体重婴儿的部分
+data_black_dflow <-
+  data_black_df[which(data_black_df$lowweight==1),]
+#求偏移量
+data_black_allwei <- 
+  as.data.frame(as.table(table(data[,c(1,10)])))
+data_black_dflow$total_number <- data_black_allwei$Fre
+```
+
+###(2)黑人母亲和白人母亲孕期体重增长量与婴儿出生体重之间的关系对比图
+
+以增加的体重为横轴，低体重婴儿率为纵轴，对黑人和白人母亲分别画出两条折线图。
+
+```{r warning=FALSE, message=FALSE}
+black_dfplot <- data_black_dflow
+#低体重率
+black_dfplot$lowratio <-
+  black_dfplot$Freq/black_dfplot$total_number
+#将变量"是否为黑人"的基准组设置为黑人
+black_dfplot$black <- 
+  factor(black_dfplot$black, levels = c("1", "0"))
+library(ggplot2)
+#画图
+ggplot(black_dfplot, aes(x = classifywtgain, y = lowratio, group = black)) +
+  geom_line(aes(color = black)) + 
+  theme_minimal() +
+  labs(x = "体重分类", y = "婴儿低体重率", title = "黑人母亲和白人母亲孕期体重增长量与婴儿出生体重之间的关系对比图") +
+  scale_color_manual(name = "", labels = c("黑人", "白人"), values = c("red", "orange")) +
+  theme(legend.position = "bottom")
+```
+
+从图上可以看到，相同体重增长量下，黑人母亲的婴儿低体重率都比白人母亲更高；
+
+体重增加为"1\~10"的母亲的婴儿低体重率最低；
+
+随着母亲体重增加量的增大，婴儿低体重率的变化趋势是先减小，后增加。
+
+###(3)泊松回归
+
+```{r warning=FALSE, message=FALSE}
+#泊松回归，加入偏移量
+res_black_pois <- glm(Freq ~classifywtgain + black + offset(log(total_number)),
+                    data = data_black_dflow, family = poisson)
+summary(res_black_pois)
+#计算odds ratio（去掉截距项）
+exp(coef(res_black_pois)[-1])
+```
+
+分析：
+
+(1)母亲怀孕期间增加的体重与婴儿低体重的关系
+
+变量"母亲怀孕期间增加的体重"(classifywtgain)的基准组是"-50\~-20"；
+
+从系数的估计可以看到，
+
+在母亲的种族相同时，增加的体重是"-50\~-20"的母亲的婴儿低体重的可能性(odds)最大；
+
+增加的体重是"1\~10"的母亲的婴儿低体重的odds最小，是增加体重"-50\~-20"的母亲的$e^{-1.4926}=0.2248$，因此建议母亲控制增加的体重在"1\~10"之间；
+
+婴儿低体重的odds从高到低依次是，"-50\~-20"，"-19\~-10"，"-9\~0"，"11\~20"，"21\~55"，"1\~10"，
+
+即母亲体重从增加-50至增加10，婴儿低体重的odds下降；
+
+而母亲体重从增加11至增加55，婴儿低体重的odds先上升后下降。
+
+(2)母亲的种族与婴儿低体重的关系
+
+变量"母亲是否为黑人"(black)的基准组是"白人"；
+
+在母亲增加的体重为同一水平时，黑人母亲的低体重婴儿的可能性(odds)是白人母亲的$e^{-0.5610}=1.7524$倍，且该系数在置信度0.1下显著。黑人母亲的婴儿的健康水平和卫生状况等有待提高。
+
+##3.泊松回归-加入母亲是否已婚和母亲的受教育程度
+
+数据中用ed.hs和ed.col两个哑变量来表示教育程度，建立泊松回归模型将其转化为因子类型的变量edu，取值为0、1、2，
+
+取值为0表示教育程度既不是高中，也不是大学（这里认为是低于高中）；
+
+取值为1表示教育程度是高中；
+
+取值为2表示教育程度是大学。
+
+建立泊松回归模型，解释变量有：
+
+母亲是否已婚，母亲的受教育程度，母亲是否为黑人，母亲怀孕期间增加的体重。
+
+```{r warning=FALSE, message=FALSE}
+#定义因子型变量edu
+data$edu <- as.factor(data$ed.hs + 2*data$ed.col)
+#只取母亲是否已婚，教育程度，是否为黑人，怀孕增加的体重，是否为低体重婴儿这5个变量
+data_edu <- data[,c(1,2,10,11,12)]
+#求频数
+data_edu_df <- as.data.frame(as.table(table(data_edu)))
+#只取低体重婴儿的部分
+data_edu_dflow <- data_edu_df[which(data_edu_df$lowweight==1),]
+#求偏移量
+data_edu_allwei <- as.data.frame(as.table(table(data[,c(1,2,10,12)])))
+data_edu_dflow$total_number <- data_edu_allwei$Freq
+#泊松回归，加入偏移量
+res_edu_pois <- glm(Freq ~married+edu+classifywtgain+black+offset(log(total_number+(1^(-10)))),
+                    data = data_edu_dflow, family = poisson)
+summary(res_edu_pois)
+#计算odds ratio（去掉截距项）
+exp(coef(res_edu_pois)[-1])
+```
+
+分析：
+
+(1)母亲的婚姻状况与婴儿低体重的关系
+
+变量"母亲是否为已婚"(married)的基准组是"未婚"；
+
+在控制其他变量，即母亲受教育程度相同、增加的体重为同一水平、为同一种族时，已婚母亲的低体重婴儿的可能性(odds)是未婚母亲的$e^{-0.04741}=0.95369$，略低于未婚母亲；
+
+(2)母亲的教育程度与婴儿低体重的关系
+
+变量"母亲的教育程度"(edu)的基准组是"教育程度低于高中"；
+
+在控制其他变量，即母亲婚姻状况相同、增加的体重为同一水平、为同一种族时，教育程度为高中的母亲的低体重婴儿的可能性(odds)是低于高中的母亲的$e^{-0.25849}=0.77222$，教育程度为大学的母亲的低体重婴儿的可能性(odds)是未婚母亲的$e^{-0.01565}=0.98447$。
+
+因此，教育程度为高中的母亲的低体重婴儿可能性最低，
+
+教育程度低于高中的母亲的低体重婴儿可能性最高，
+
+教育程度为大学的介于两者之间，略低于教育程度低于高中的母亲。
+
+(3)加入"母亲是否已婚"和"母亲的受教育程度"后，变量"怀孕期间增加的体重"和"是否为黑人"的系数变化不大。
+
+##4.对数线性模型与泊松回归的对比
+
+建立了包含母亲是否为黑人、母亲怀孕期间增加的体重、是否为低体重婴儿三个变量的对数线性模型，与第二问中建立的泊松回归模型进行对比。
+
+###4.1 对数线性模型和泊松回归在模型建立上的区别
+
+以第二问中建立的泊松回归为例。
+
+####(1)泊松回归
+
+解释变量有：
+
+母亲是否为黑人，母亲怀孕期间增加的体重；
+
+被解释变量是低体重的婴儿数。
+
+泊松回归需要加入偏移量。
+
+####(2)对数线性模型
+
+建立了三维的列表，有2行，5列，2层（行、列、层的变量可以互换），
+
+行是"母亲是否为黑人"，有黑人和白人两个水平；
+
+列是"母亲怀孕期间增加的体重"，有五个水平；
+
+层是"是否为低体重婴儿"，是低体重则取1，否则取0。
+
+被解释变量是列表中每个单元格的频数。
+
+###4.2 建立模型
+
+####(1)对数线性模型
+
+可以建立独立性模型、homogeneous模型、饱和模型等，并使用Step-Down方法选择最合适的模型。这里选择了homogeneous模型。
+
+```{r warning=FALSE, message=FALSE}
+#只取"母亲是否为黑人"、"母亲怀孕期间增加的体重"、"是否为低体重婴儿"三个变量
+data_log <- data[,c(1,10,11)]
+#求出频数，建立对数线性模型的数据框
+data_df_log <- as.data.frame(as.table(table(data_log)))
+#对数线性模型的饱和模型
+res_weight_sat <- glm(Freq ~lowweight * classifywtgain * black,data = data_df_log, family = poisson)
+#使用Step-Down过程进行模型选择，选择结果是homogeneous模型
+step(res_weight_sat, trace = 0)
+#对数线性模型的homogeneous模型
+res_weight_log <- glm(formula = Freq ~ (lowweight + classifywtgain + black)^2, family = poisson, data = data_df_log)
+summary(res_weight_log)
+```
+
+####(2)泊松回归
+
+```{r warning=FALSE, message=FALSE}
+#泊松回归的数据框，只取低体重的部分
+data_df_pois <- data_df_log[13:24,]
+#泊松回归，加偏移量
+res_weight_pois <- glm(Freq ~classifywtgain + black + offset(log(total_number)),
+                    data = data_black_dflow, family = poisson)
+summary(res_weight_pois)
+```
+
+###4.3 从模型结果看两者之间的联系
+
+####(1)因变量
+
+泊松回归的因变量部分只取低体重的婴儿数，而不包括正常体重的婴儿数。也就是说，泊松回归的因变量部分是对数线性模型的因变量中，变量"是否为低体重婴儿"取值为1（即低体重）对应的频数。
+
+####(2)odds ratio
+
+通过模型选择得到，这里对数线性模型最优的模型是homogeneous模型，也就是包含了三个变量的主效应和两两之间的交互效应的模型。
+
+而对数线性模型的主效应的系数（也就是log odds ratio）可以直接从数据中得到（主效应的odds ratio即为频率之比），有意义的是交互项的系数。
+
+可以从模型结果中看到，对数线性模型中变量"是否为低体重婴儿"lowweight与变量"是否为黑人"（black）、"母亲怀孕期间增加的体重"（classified）的交互项的系数，与泊松回归中对应的系数较为接近。
+
+以下以交互项lowweight1:classified-19\~-10为例说明系数的含义。
+
+变量"母亲怀孕期间增加的体重"的基准组是"-50\~-20"，所以该交互项的系数$-0.13917592$的含义是，在控制其余变量（这里是母亲的种族）时，增加的体重是"-19\~-10"的母亲，有低体重婴儿的可能性(odds)是增加的体重是"-50\~-20"的母亲的$e^{-0.13917592}=0.8700749$。也就是说，两者之间的odds ratio是$0.8700749$。
+
+在泊松回归的结果中，"loss_weight-19\~-10"前的系数为$-0.1238341$，类似得到两者之间的odds ratio是$e^{-0.1238341}=0.8835264$。
+
+下面计算两个模型的log odds ratio和odds ratio进行对比。
+
+```{r warning=FALSE, message=FALSE}
+#log odds ratio对比
+#泊松回归的log odds ratio
+coef(res_weight_pois)[-1]
+#对数线性模型的log odds ratio
+(coef(res_weight_log)[-1])[c(8:13)]
+
+#odds ratio对比
+#计算泊松回归的odds ratio
+exp(coef(res_weight_pois)[-1])
+#计算对数线性模型的odds ratio
+(exp(coef(res_weight_log)[-1]))[c(8:13)]
+```
+
+可以看到，两个模型得到的$log\ odds\ ratio$（系数）和$odds\ ratio$都比较接近。
+
+####(3)Residual deviance
+
+```{r warning=FALSE, message=FALSE}
+#泊松回归的Residual deviance
+deviance(res_weight_pois)
+#对数线性模型的Residual deviance
+deviance(res_weight_log)
+```
+
+泊松回归得到的Residual deviance是$0.6350838$（自由度为5），对数线性模型的Residual deviance是$0.6521538$（自由度为5），两者也比较接近。
+
+
+
+
+
+## (6)利用SAS运行对比结果
+
+**由于R中使用loglm函数无法输出参数估计的检验p值不便于直接比较，因此使用SAS(9.2)进行对数线性模型构建**
+
+### 代码
+![对数线性模型在SAS中的运行](G:/非参数统计/作业/第十一周/对数线性模型代码1.png)
+![avatar](G:/非参数统计/作业/第十一周/对数线性模型代码2.png)
+
+### 运行结果
+![avatar](G:/非参数统计/作业/第十一周/对数线性模型参数结果1.png)
+![avatar](G:/非参数统计/作业/第十一周/对数线性模型参数结果2.png)
+
+可以观察到sAS的运行结果中参数估计值于loglm函数一致，参数的显著性检验结果与使用glm函数的一致。
+
+
+## 后续讨论1
+## 案例分析
+
+**一研究机构获得一组研究数据，数据内容包含1000名婴儿的出生体重和5个相关变量。使用这份数据来探究低体重出生婴儿的影响变量**
+
+数据说明：
+
+|变量名     |        含义                        |
+|    :-:    |       :-:                          | 
+|weight     |婴儿出生体重(g)                     |
+|black      |母亲是否为黑人(1:是，0:否)          |
+|married    |母亲是否已婚(1:是，0:否)            |
+|ed.hs      |母亲的教育程度是否为高中(1:是，0:否)|
+|ed.col     |母亲的教育程度是否为大学(1:是，0:否)|
+|m.wtgain   |母亲怀孕期间增加的体重(磅)          |
+|mom.age    |母亲相对怀孕年龄（岁）              |
+|cigsper    |母亲怀孕期间平均每个月抽烟数量（根）|
+
+研讨问题
+
+1.定义低体重出生婴儿体重为2500g以下。请绘制未婚黑人母亲的婴儿出生体重经验分布的点估计和90%，95%，99%置信区间估计，并从图上观察判断婴儿低体重和母亲婚姻状况之间的关系。
+
+2.用泊松回归模型探究黑人母亲、母亲怀孕期间增加体重与低体重婴儿之间的关系。
+
+3.尝试对母亲的受教育程度进行分析，并将其与母亲是否已婚纳入回归模型，做进一步分析。
+
+4.尝试使用对数线性模型进行分析，分析比较泊松回归与对数线性模型所得结果的异同。
+
+1.
+问题1：根据第一章的Dvoretzky-Kiefer-Wolfowitz不等式，可以得到：
+
+令
+
+$$L(x) = max\{F_n(x) - \epsilon_n,0\},U(x) = min\{F_n(x) + \epsilon_n,1\}$$
+其中
+
+$$ \epsilon_n=\sqrt{\frac{1}{2n}ln\frac 2\alpha}$$
+那么
+$$P(L(x)\le F(x)\le U(x))\ge1-\alpha$$
+根据该公式绘制未婚黑人母亲的婴儿出生体重经验分布及其置信区间估计。
+
+```{r}
+birthw = read.csv("birth_weight.csv",stringsAsFactors = F)
+head(birthw)
+
+#观察变量之间的相关性
+corrplot(corr = cor(birthw))
+#结果显示为弱相关
+
+#黑人母亲&未婚母亲选取并排序
+weight.sort = sort(birthw$weight[birthw$black==1&birthw$married==0])
+plotecdf_confint = function(weight.sort,title){
+  weight.rank = rank(weight.sort)#求秩
+  n = length(weight.sort)
+  weight.ecd = weight.rank/n#求经验分布
+  #绘制经验分布函数图像
+  pictitle = paste(title,
+                   "母亲婴儿体重的经验分布图及置信区间估计",
+                   sep = "")
+  plot(weight.sort,weight.ecd,type = "o",xlab = "weight",ylab = "Fn(x)",main = pictitle)
+  band = sqrt(log(2/0.1)/(2*n))#计算得到90%置信区间在各点处的上下界
+  band2 = sqrt(log(2/0.05)/(2*n))#计算得到95%置信区间在各点处的上下界
+  band3 = sqrt(log(2/0.01)/(2*n))#计算得到99%置信区间在各点处的上下界
+  #绘制90%置信区间
+  lower.9 = weight.ecd-band
+  upper.9 = weight.ecd+band
+  lower.9[which(lower.9<0)] = 0
+  upper.9[which(upper.9>1)] = 1
+  lines(weight.sort,lower.9,lty = 2,col = "yellow")
+  lines(weight.sort,upper.9,lty = 2,col = "yellow")
+  #绘制95%置信区间
+  lower.95 = weight.ecd-band2
+  upper.95 = weight.ecd+band2
+  lower.95[which(lower.95<0)] = 0
+  upper.95[which(upper.95>1)] = 1
+  lines(weight.sort,lower.95,lty = 3,col = "green")
+  lines(weight.sort,upper.95,lty = 3,col = "green")
+  #绘制99%置信区间
+  lower.99 = weight.ecd-band3
+  upper.99 = weight.ecd+band3
+  lower.99[which(lower.99<0)] = 0
+  upper.99[which(upper.99>1)] = 1
+  lines(weight.sort,lower.99,lty = 4,col = "blue")
+  lines(weight.sort,upper.99,lty = 4,col = "blue")
+  abline(v = 2500,col = "red")#低体重界限
+  #图例添加
+  legend("topleft",legend = c("90%置信区间","95%置信区间","99%置信区间"),col = c("yellow","green","blue"),lty = c(2,3,4))
+}
+
+plotecdf_confint(weight.sort,"未婚黑人")
+
+
+
+```
+
+图中红色竖线为判定婴儿是否为低体重的界限（2500g），红线左边为低体重。可以看到在90%、95%、99%的置信度下，未婚黑人母亲的婴儿的低体重率的上限分别约为20%、22.5%、25%,与世界平均水平——2019年为14.3%（参考自<https://news.un.org/zh/story/2019/05/1034491>）——相比这个比率是偏高的；从整体上看，婴儿的体重主要分布在2500g到4000g之间，但仍然存在一定数量的极小值；从体重角度看，未婚黑人母亲的婴儿健康状况较为堪忧，且整体方差较大。
+
+接下来绘制已婚黑人母亲的婴儿出生体重经验分布及其置信区间估计。
+
+```{r}
+weight.sort = sort(birthw$weight[birthw$black==1&birthw$married==1])#已婚黑人母亲
+plotecdf_confint(weight.sort,"已婚黑人")
+```
+
+图中红色竖线为判定婴儿是否为低体重的界限（2500g），红线左边为低体重。可以看到在90%、95%、99%的置信度下，已婚黑人母亲的婴儿的低体重率的上限分别约为25%、27.5%、30%,与世界平均水平相比这个比率是偏高的；从整体上看，婴儿的体重主要分布在2500g到4000g之间，但仍然存在一定数量的极小值；从体重角度看，已婚黑人母亲的婴儿健康状况较为堪忧，且整体方差很大。
+
+接下来绘制已婚白人母亲的婴儿出生体重经验分布及其置信区间估计。
+
+```{r}
+weight.sort = sort(birthw$weight[birthw$black==0&birthw$married==1])#已婚白人母亲
+plotecdf_confint(weight.sort,"已婚白人")
+```
+
+图中红色竖线为判定婴儿是否为低体重的界限（2500g），红线左边为低体重。可以看到在90%、95%、99%的置信度下，已婚白人母亲的婴儿的低体重率的上限分别约为15%、16%、18%,略微高于世界平均水平；从整体上看，婴儿的体重主要分布在2500g到4000g之间，存在少量的极小值；从体重角度看，已婚白人母亲的婴儿健康状况较好，且整体方差很小。
+
+接下来绘制未婚白人母亲的婴儿出生体重经验分布及其置信区间估计。
+
+
+```{r}
+weight.sort = sort(birthw$weight[birthw$black==0&birthw$married==0])#未婚白人母亲
+plotecdf_confint(weight.sort,"未婚白人")
+```
+
+图中红色竖线为判定婴儿是否为低体重的界限（2500g），红线左边为低体重。可以看到在90%、95%、99%的置信度下，未婚白人母亲的婴儿的低体重率的上限均为10%左右,低于世界平均水平；从整体上看，婴儿的体重主要分布在2500g到4000g之间，存在少量的极小值；从体重角度看，未婚白人母亲的婴儿健康状况一般，且整体方差不大。
+
+问题2：
+
+记$Y$表示婴儿低体重事件发生的频数，$Y$服从泊松分布，$Y=y,y=0,1,2,...$发生的概率可以表示为
+$$f(y;\mu)=\frac{\mu^y e^{-\mu}}{y!},y=\{0,1,2,...\}.$$
+则$E(Y)=\mu,Var(Y)=\mu$,$\mu$是事件的平均发生数。
+
+令$Y_1,Y_2,...,Y_N$为iid的随机变量，$Y_i$表示在暴露$exposure_i$下事件发生次数。
+
+$$E(Y_i)=\mu_i=exposure_i\eta_i$$
+其中$\eta_i$为泊松回归模型的系统成分——即各个解释变量的线性组合，$\eta_i=e^{X_i\beta}$
+
+对这个等式取对数可以得到$log(\mu_i)=log(exposure_i)+log(\eta_i)=log(exposure_i)+X_i\beta$
+
+我们关心的是婴儿低体重率，即$\frac{\mu_i }{exposure_i}$（其中$exposure_i$暴露，为已知数据(offset项)，在本题中为婴儿总数）。
+
+由于$log(\frac{\mu_i }{exposure_i})=log(\mu_i)-log(exposure_i)=log(\eta_i)=X_i\beta$
+
+所以我们建立如下的泊松回归模型：$$log(\mu_i)=log(exposure_i)+X_i\beta$$
+
+```{r message=FALSE}
+#分组
+birthw$classified[birthw$m.wtgain>-50 & birthw$m.wtgain<=-20] <- "-50 - -20"
+birthw$classified[birthw$m.wtgain>=-19 & birthw$m.wtgain<=-10] <- "-19 - -10"
+birthw$classified[birthw$m.wtgain>=-9 & birthw$m.wtgain<=0] <- "-9 - 0"
+birthw$classified[birthw$m.wtgain>=1 & birthw$m.wtgain<=10] <- "1 - 10"
+birthw$classified[birthw$m.wtgain>=11 & birthw$m.wtgain<=20] <- "11 - 20"
+birthw$classified[birthw$m.wtgain>=21 & birthw$m.wtgain<=55] <- "21 - 55"
+#因子化
+birthw$classified <- factor(birthw$classified,levels =
+c("-50 - -20","-19 - -10", "-9 - 0","1 - 10","11 - 20","21 - 55"))
+birthw$LowAndBlack <- 0
+birthw$LowAndBlack[birthw$black==1&birthw$weight<2500] <- 1#黑人母亲&婴儿低体重
+birthw$LowAndWhite <- 0
+birthw$LowAndWhite[birthw$black==0&birthw$weight<2500] <- 1#白人母亲&婴儿低体重
+#分类汇总
+birthw_new <- group_by(birthw,classified)#按照怀孕期间母亲增重分组进行分类汇总
+#分类汇总为区组
+block <- summarise(birthw_new,black = sum(black),black_low =
+sum(LowAndBlack),white=n()-sum(black),white_low=sum(LowAndWhite))
+
+#block
+
+low_bw_ratio = data.frame(block)
+low_bw_ratio$lbwrw = low_bw_ratio$white_low/low_bw_ratio$white
+low_bw_ratio$lbwrb = low_bw_ratio$black_low/low_bw_ratio$black
+
+plot(low_bw_ratio$classified,rep(-1,length(low_bw_ratio$classified)),ylim = c(0,0.15),xlab = "体重分类",ylab = "婴儿低体重率")
+lines(low_bw_ratio$classified,low_bw_ratio$lbwrb,
+      type = "o",lty = 2, col = "red")
+lines(low_bw_ratio$classified,low_bw_ratio$lbwrw,
+      type = "o",col = "blue")
+legend("topright",legend = c("黑人母亲","白人母亲"),
+       col = c("red","blue"),lty = c(2,1))
+
+#数据框
+dat <- data.frame(loss_weight=rep(block$classified,2),
+                  black=c(rep(1,6),rep(0,6)),
+                  total_number =c(block$black,block$white),
+                  weight_low = c(block$black_low,block$white_low))
+
+dat$black <- as.factor(dat$black)#因子化
+
+#dat
+
+#泊松回归
+res.weight <- glm(weight_low ~loss_weight+black+offset(log(total_number)),
+                  data = dat,family = poisson)
+
+summary(res.weight)
+```
+
+从模型来看不存在过度拟合且整体系数较为显著，训练样本的拟合程度也较好。从回归系数分析得到：孕期母亲体重减少会增大婴儿出生低体重的可能性，但母亲的体重增加过多也婴儿的健康不利，孕期母亲的体重增幅控制在1-10磅之间是最为合适的；从母亲的肤色角度看，黑人母亲对较低体重婴儿的概率平均是白人母亲的低体重婴儿的$e^{0.561}$约为1.75倍，且系数在置信度0.1下是显著的，可见黑人孕妇的总体营养及卫生状况亟待改善。
+
+问题3：
+
+```{r message=FALSE}
+birthw$edu[birthw$ed.col==1] = "college"
+birthw$edu[birthw$ed.hs ==1] = "high-school"
+birthw$edu[birthw$ed.col==0&birthw$ed.hs==0] = "neither"
+birthw$edu = factor(birthw$edu,levels = c("college","high-school","neither"))
+birthw$low_weight = 0
+birthw$low_weight[birthw$weight<2500]=1
+
+birthw2 = group_by(birthw,classified,edu,married,black)
+block2 <- summarise(birthw2,totalnum = n(),LowWeightBaby = sum(low_weight))
+block2#分类汇总后的数据情况
+
+#dat2 = data.frame(loss_weight=rep(block2$classified,12),
+#                  black=c(rep(1,36),rep(0,36)),
+#                  edu=c(rep(block2$edu,24)),
+#                  marry=c(rep(c(1,0),36)),
+#                  total_number =c(block2$black,block2$white),
+#                  weight_low = c(block2$black_low,block2$white_low))
+#人种黑白2，教育程度大学、高中、均不3种，婚姻两种，相乘12种情况，所以loss_weight重复12次和他们匹配
+#lossweight6种情况，受教育程度三种，婚姻两种，相乘36种，所以black重复各36次
+#lossweight6种情况，人种2种，婚姻两种，共计24种，所以edu重复24次
+#lossweight6种情况，受教育程度三种，人种2种，共计36种，婚姻36次
+
+#这个方法不可行——不太智能，因为这个时候marry的情况并不是都有的，比如具有大学学历的里面只有已婚白人而没有其他情况，导致rep的想法无法实施
+
+res.weight2 <- glm(LowWeightBaby ~ classified+black+edu
+                   +married
+                   +offset(log(totalnum)),                    
+                   data = block2,family = poisson)
+summary(res.weight2)
+```
+
+加入教育程度和婚姻状况变量之后，模型的AIC变大了很多，而且通过检验我们发现，整体系数显著性不高。加入的教育程度、婚姻状况的显著性水平都很差。
+
+因此我们不考虑这两个分类变量，而将吸烟状况和怀孕年龄纳入模型。
+
+```{r}
+
+hist(birthw$mom.age,breaks = 40)
+
+birthw$momage[birthw$mom.age<=-5] = "young"
+birthw$momage[birthw$mom.age>-5&birthw$mom.age<5] = "right_age"
+birthw$momage[birthw$mom.age>=5] = "elderly"
+birthw$momage = factor(birthw$momage,levels = c("young","right_age","elderly"))
+
+#birthw$docig[birthw$cigsper==0] = "never"
+#birthw$docig[birthw$cigsper<=6&birthw$cigsper>0] = "seldom"  #一个月30天*20%
+#birthw$docig[birthw$cigsper<=12&birthw$cigsper>6] = "often"  #40%
+#birthw$docig[birthw$cigsper<=30&birthw$cigsper>12] = "usual"  #一个月30天*60%
+#birthw$docig[birthw$cigsper>30] = "always"
+#birthw$docig = factor(birthw$docig,
+#                      levels = c("never","seldom","often","usual","always"))
+
+## Coefficients:
+##                     Estimate Std. Error z value Pr(>|z|)  
+## docigseldom            0.76340    0.47245   1.616  0.10613    
+## docigoften            -0.95085    1.01242  -0.939  0.34763    
+## docigusual             0.88360    0.53486   1.652  0.09853 .  
+## docigalways          -15.38600 2719.98475  -0.006  0.99549    
+#AIC: 95.571
+
+
+
+#试了各种分类标准，选择整体显著性水平最高的这一组
+#没有什么科学依据，就是瞎分
+birthw$docig[birthw$cigsper==0] = "never"
+birthw$docig[birthw$cigsper<=6&birthw$cigsper>0] = "seldom"  #一个月30天*20%
+birthw$docig[birthw$cigsper<=12&birthw$cigsper>6] = "often"  #40%
+birthw$docig[birthw$cigsper>12] = "usual"  #一个月30天*60%
+birthw$docig = factor(birthw$docig,
+                      levels = c("never","seldom","often","usual"))
+
+## Coefficients:
+##                     Estimate Std. Error z value Pr(>|z|)  
+## docigseldom          0.76184    0.47244   1.613   0.1068    
+## docigoften          -0.95580    1.01230  -0.944   0.3451    
+## docigusual           0.74690    0.53299   1.401   0.1611    
+## AIC: 94.369
+
+
+
+#birthw$docig[birthw$cigsper==0] = "never"
+#birthw$docig[birthw$cigsper<=6&birthw$cigsper>0] = "seldom"  #一个月30天*20%
+#birthw$docig[birthw$cigsper>6] = "often"  #40%
+#birthw$docig = factor(birthw$docig,
+#                      levels = c("never","seldom","often"))
+
+## Coefficients:
+##                     Estimate Std. Error z value Pr(>|z|)  
+## docigseldom           0.7644     0.4724   1.618  0.10563    
+## docigoften            0.0989     0.4760   0.208  0.83541    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 36.818  on 31  degrees of freedom
+## Residual deviance: 18.341  on 23  degrees of freedom
+## AIC: 87.91
+
+
+#birthw$docig[birthw$cigsper==0] = "never"
+#birthw$docig[birthw$cigsper>0] = "do"
+#birthw$docig = factor(birthw$docig,
+#                      levels = c("never","do"))
+
+## Coefficients:
+##                     Estimate Std. Error z value Pr(>|z|)  
+## docigdo              0.38113    0.35244   1.081  0.27952    
+## AIC: 74.54
+
+block3 = summarise(group_by(birthw,classified,black,docig,momage),
+                   totalnum=n(),LowWeightBaby = sum(low_weight))
+#block3
+
+res.weight3 <- glm(LowWeightBaby ~ classified+black+docig+momage
+                   +offset(log(totalnum)),data = block3,family = poisson)
+summary(res.weight3)
+```
+
+模型整体系数较为显著。
+
+哑变量classified1 - 10的估计值为-1.41959,即相比于孕期减重20磅以上的母亲，孕期增重1-10磅的母亲的婴儿低体重率比率比的估计值为$e^{-1.41959}\approx  0.2418131$，且该估计值在5%的显著性水平下显著，也就是说孕期增重1~10磅的母亲生出低体重婴儿的可能性约为孕期减重20磅以上母亲生出低体重婴儿的可能性的1/5。另外，相比于其他孕期增重情况，该哑变量的回归系数估计值最小，表明在控制其他变量不变的情况下，平均意义上，孕期增重1-10磅的母亲婴儿低体重率最低。说明孕期母亲增重在1-10磅是减小婴儿低体重率的最优选择（假设能控制体重增长）。
+
+哑变量black的估计值为0.67847，即相比于白人母亲，黑人母亲婴儿低体重率的比率比的估计值为$e^(0.67847)\approx1.97086$，且该估计值在5%的显著性水平下显著，也就是说相比于白人母亲，黑人母亲有近两倍的概率生出低体重婴儿。
+
+哑变量docigseldom的估计值为0.84627，即相比于从不抽烟的母亲，偶尔抽烟的母亲婴儿低体重率的比率比的估计值为$e^{0.84627}\approx2.330936$，且该估计值在10%的显著性水平下显著，也就是说相比于从不抽烟的母亲，偶尔抽烟的母亲有超过2倍的概率生出低体重婴儿。
+
+哑变量momageright_age的估计值为0.74368，即相比于低龄母亲，适龄母亲的婴儿低体重率的比率比的估计值为$e^{0.74368}\approx 2.103663$，且该估计值在10%的显著性水平下显著，也就是说相比于低龄母亲，适龄母亲有约2倍的概率生出低体重婴儿。——这个结论可能是由于样本本身并不是来自随机抽样的，而是基于方便原则得到的一个有偏样本。
+
+```{r}
+plot(birthw$docig,main = "母亲抽烟频率分布")
+plot(birthw$momage,main = "母亲怀孕年龄分布")
+```
+
+由图中可以看出，绝大多数是从不抽烟的母亲——占比超过80%。这样的样本是不均匀的（左偏严重），而我们并没有对占比较少的吸烟群体进行很好的分类，也没有对整个样本进行加权处理，所以导致我们训练的模型可能存在对不吸烟母亲群体的过拟合；而母亲怀孕年龄分布是一个对称分布，而且峰不是很高，很妙。
+
+问题4：
+
+试试这个类泊松回归（quasipoisson）
+
+```{r}
+res.weight1 = glm(weight_low ~loss_weight+black+offset(log(total_number)),
+                  data = dat,family = quasipoisson(link = log))
+
+summary(res.weight1)
+res.weight4 = glm(LowWeightBaby ~ classified+black+docig+momage
+                   +offset(log(totalnum)),data = block3,
+                  family = quasipoisson(link = log))
+summary(res.weight4)
+```
+
+原模型改成了对数线性模型中的类泊松回归之后，结果模型整体的显著性大幅提高——除了哑变量loss_weight-19 - -10 外全部显著了。更有力地支持了，孕期增重1-10磅是防止婴儿低体重率的最好的孕妇体重管理方式。而且人种直接的低体重率差异也在1%的显著性水平下显著了。
+加入新变量的模型使用类泊松回归的结果和泊松回归差不多。
+总的来说效果确实比泊松回归要好一点。
+
+
+使用对数线性模型进行对比。（新教材191页，“单元格中的
+频数服从多项分布，此时拟合的就是对数线性模型。）
+及我们假定Y服从的分布不再是poisson而是多项分布，这个时候我们应该使用多分类logistic回归模型——一个方法是nnet里面的multinom函数，缺点是只输出系数，诊断需要手动进行；另一个方法是mlogit包里的mlogit函数，缺点是整不明白咋使用。
+
+```{r}
+res.weight5 = multinom(log(weight_low) ~loss_weight+black+log(total_number),
+                  data = dat)
+summary(res.weight5)#这个包的输出结果没有进行检验，然后一大坨系数完全看不懂
+```
+
+
+
+## 后续讨论2
+- 尝试使用对数线性模型进行分析，分析比较泊松回归于对数线性模型所得结果的异同
+- 考虑对数线性模型的联合分布频率表：
+<table border="1">
+<tr>
+<td></td>
+<td>已婚</td>
+<td>未婚</td>
+<td>总和</td>
+</tr>
+<tr>
+<td>not hs & not col</td>
+<td>0.263</td>
+<td>0.154</td>
+<td>0.417</td>
+</tr>
+<tr>
+<td>College</td>
+<td>0.220</td>
+<td>0.015</td>
+<td>0.235</td>
+</tr>
+<tr>
+<td>High School</td>
+<td>0.213</td>
+<td>0.135</td>
+<td>0.348</td>
+</tr>
+<tr>
+<td>总和</td>
+<td>0.696</td>
+<td>0.304</td>
+<td>1.000</td>
+</tr>
+</table>
+
+- 进而获得联合分布概率$\frac{p_{ij}}{p_{i.}p_{.j}}$
+<table border="1">
+<tr>
+<td></td>
+<td>已婚</td>
+<td>未婚</td>
+</tr>
+<tr>
+<td>not hs & not col</td>
+<td>0.906</td>
+<td>1.215</td>
+</tr>
+<tr>
+<td>College</td>
+<td>1.345</td>
+<td>0.210</td>
+</tr>
+<tr>
+<td>High School</td>
+<td>0.879</td>
+<td>1.276</td>
+</tr>
+</table>
+```{r}
+# 编制函数进行对数线性模型独立性检验
+f <- function(x){
+  df=x$df 
+  lrt=x$lrt
+  p.lrt=1-pchisq(x$lrt,x$df) 
+  Q=x$pear
+  p.pear=1-pchisq(x$pear,x$df)
+  if(p.lrt<0.05|p.pear<0.05) conclusion="不独立"
+  else conclusion="独立"
+  list(df,lrt,p.lrt,Q,p.pear,conclusion)
+}
+A <- matrix(c(248, 144, 210, 12, 203, 128), nrow = 3, byrow = TRUE)
+B <- matrix(c(15, 10, 10, 3, 10, 7), nrow = 3, byrow = TRUE)
+n <- array(c(A,B),dim=c(3,2,2))
+m1 <- loglin(n, list(1,2,3)) # 模型(x,y,z)
+f1 <- f(m1)
+```
+
+- 故而对数线性模型的模型拟合优度检验结果为：
+<table border="1">
+<tr>
+<td>模型</td>
+<td>$d.f.$</td>
+<td>$LRT\quad G^2$</td>
+<td>$p-value$</td>
+<td>$Pearson Q$</td>
+<td>$p-value$</td>
+<td>结论</td>
+</tr>
+<tr>
+<td>$(X,Y,Z)$</td>
+<td>2</td>
+<td>102.80572</td>
+<td>0</td>
+<td>84.05663</td>
+<td>0</td>
+<td>"不独立"</td>
+</tr>
+</table>
+
+- 可以发现，三者之间不独立，可以认为母亲是否结婚与其受教育程度存在一定的关联，即对数线性模型应该加入交互作用项。
+- 现加入交互项，进行对数线性回归如下：
+
+```{r}
+# 加入交互项进行回归
+res.education <- glm(low ~ education_ + 
+                       married + 
+                       education_*married + 
+                       offset(log(total_number)),
+                  data = data_new_2,
+                  family = poisson)
+summary(res.education)
+```
+
+- 由于交互项的自由度只有2，故而输出多了两行，可以通过系数的加减获得其他组合的情况
+- 注意到，加入交互项以后，受教育程度为大学，且婚姻状况为未婚的在$\alpha=0.1$的显著性水平下显著为正，即受教育程度为大学且未婚的母亲，他们的孩子可能更有可能出现低体重（为控制组的$e^{1.125}=3.08$倍）
+- 另外，受教育程度为大学，且婚姻状况为已婚的在$\alpha=0.1$的显著性水平下显著为负，即受教育程度为大学且已婚的母亲，他们的孩子可能更有可能不出现低体重（为控制组的$e^{-1.352}=0.26$倍）
+  - 这个解释符合常理，注意到受教育程度为大学，且未婚的人数非常少，说明教育程度越高，更倾向于形成一个稳定的家庭，而这些大学学历但未婚的女性，由于没有保护好自己，而且可能相对缺乏生活经验，所以婴儿出现低体重的概率更高
+  - 而对于那些已婚且受教育程度为大学的母亲，他们拥有稳定的家庭，足够的能力，使得她们婴儿的低体重率显著低于其他组别的母亲。
+
+</font>
+
