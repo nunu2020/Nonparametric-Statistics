@@ -1,0 +1,413 @@
+---
+title: "第十三周作业"
+date: "16/12/2020"
+output:
+  rmdformats::readthedown:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    toc_depth: 5
+    gallery: false
+    highlight: tango
+    df_print: kable
+    
+---
+
+<style>
+#main .nav-pills > li.active > a,
+#main .nav-pills > li.active > a:hover,
+#main .nav-pills > li.active > a:focus {
+background-color: #4a47a3;
+}
+#main .nav-pills > li > a:hover {
+color: #FFFFFF !important;
+background-color: #4a47a3;
+}
+#main .nav-pills > li.active > a,
+#main .nav-pills > li.active > a:hover,
+#main .nav-pills > li.active > a:focus {
+color: #FFFFFF !important;
+background-color: #4a47a3;
+}
+
+#main .nav-pills > li > a:hover {
+background-color: #4a47a3;
+}
+
+h1, h2, h3, h4, h5, h6, legend {
+color: #4a47a3;
+}
+
+#nav-top span.glyphicon {
+color: #4a47a3;
+}
+
+#table-of-contents header {
+color: #4a47a3;
+}
+
+#table-of-contents h2 {
+background-color: #4a47a3;
+}
+
+#main a {
+background-image: linear-gradient(180deg,#d64a70,#d64a70);
+color: #c7254e;
+}
+
+a:hover {
+color: #3d1308;
+}
+
+a:visited {
+color: #3d1308;
+}
+#postamble .date {
+font-size: 100%;
+margin-bottom: 0px;
+color: #dcd6f7;
+}
+#sidebar h2{
+z-index:200;
+background-color:#4a47a3;
+text-align:center;
+padding:0.809em;
+display:block;
+color:#fcfcfc;
+font-size: 100%;
+margin-top: 0px;
+margin-bottom:0.809em;
+}
+</style>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+"HTML-CSS": { linebreaks: { automatic: true } },
+SVG: { linebreaks: { automatic: true } }
+});
+</script>
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### 新教材6.1 从中国30个省区抽样的文盲率（单位：‰）和各省人均GDP（单位：元）的数据如下，运用Pearson, Spearman 和 Kendall 检验统计量检验文盲率和人均GDP之间是否相关，是正相关还是负相关。
+
+
+| 文盲率 |     7.33|    10.80|   15.60|    8.86|     9.70|   18.52|   17.71|   21.24|   23.20|   14.24|
+|-------:|--------:|--------:|-------:|-------:|--------:|-------:|-------:|-------:|-------:|-------:|
+|人均GDP | 15044.00| 12270.00| 5345.00| 7730.00| 22275.00| 8447.00| 9455.00| 8136.00| 6834.00| 9513.00|
+| 文盲率 |    13.82|    17.97|   10.00|   10.15|    17.05|   10.94|   20.97|   16.40|   16.59|   17.40|
+|人均GDP |  4081.00|  5500.00| 5163.00| 4220.00|  4259.00| 6468.00| 3881.00| 3715.00| 4032.00| 5122.00|
+| 文盲率 |    14.12|    18.99|   30.18|   28.48|    61.13|   21.00|   32.88|   42.14|   25.02|   14.65|
+|人均GDP |  4130.00|  3763.00| 2093.00| 3715.00|  2732.00| 3313.00| 2901.00| 3748.00| 3731.00| 5167.00|
+
+
+对于假设$H_0:文盲率和人均GDP之间不相关\quad v.s.\ H_1:文盲率和人均GDP之间相关$，下面分别使用Pearson, Spearman 和 Kendall 检验统计量进行检验。
+
+#### （1）Pearson
+
+Pearson相关系数的定义如下：
+$$r_{pear}=\dfrac{\sum\limits_i(X_i-\bar X)(Y_j-\bar Y)}{\sqrt{\sum\limits_i(X_i-\bar X)^2\sum\limits_j(Y_j-\bar Y)^2}}$$
+
+计算得$r_{pear}=-0.449$，检验统计量$t_{pear}=r_{pear}\sqrt{\dfrac{n-2}{1-r_{pear}^2}}\sim t(n-2)$，因此可以计算得到双侧检验p值$p=0.01287$，在0.05之下显著，因此在Pearson相关性检验下，文盲率和人均GDP之间具有相关性，且是负相关。
+```{r}
+illiteracy_gdp<-matrix(c(7.33,10.80,15.60,8.86,9.70, 18.52, 17.71, 21.24,23.20, 14.24,
+                         15044,12270,5345,7730,22275,8447,9455,8136,6834,9513,
+                         13.82,17.97,10.00,10.15,17.05,10.94,20.97,16.40,16.59,17.40,
+                         4081,5500,5163,4220,4259,6468,3881,3715,4032,5122,
+                         14.12,18.99,30.18,28.48,61.13,21.00, 32.88,42.14,25.02,14.65,
+                         4130,3763,2093,3715,2732,3313,2901,3748,3731,5167),
+                       byrow=T,nrow=6)
+illiteracy<-c(illiteracy_gdp[1,],illiteracy_gdp[3,],illiteracy_gdp[5,])
+gdp<-c(illiteracy_gdp[2,],illiteracy_gdp[4,],illiteracy_gdp[6,])
+n<-length(gdp)
+
+#首先进行Pearson相关系数检验
+#t检验统计量
+cor_pear=cor(illiteracy,gdp,method = 'pearson')
+t_pear=cor_pear*sqrt((n-2)/(1-cor_pear^2))
+
+#检验p值
+2*(pt(t_pear,n-2))
+```
+
+另一种方法是直接使用封装好的`cor.test`，同时设定参数`method='pearson'`，最终获得相同的检验结果。
+
+```{r}
+cor.test(illiteracy,gdp,method='pearson')
+```
+
+#### （2）Spearman
+
+Spearman相关系数的表达式：$$r_s=1-\frac{6\sum{(Q_i-R_i)^2}}{n(n^2-1)}$$其中$Q_i$、$R_i$分别是样本$X_1,...,X_n$，$Y_1,...,Y_n$的秩。相似地，Spearman检验统计量$$t_{s}=r_{s}\sqrt{\frac{n-2}{1-r_{s}^2}}\sim t(n-2)$$
+计算得到Spearman相关系数$r_s=-0.631$，$t$值$t_s=-4.304$，对应双侧$p$值$p=0.0002<\alpha=0.05$，故拒绝$H_0$，在Spearman相关性检验下，文盲率和人均GDP之间具有相关性，且是负相关。
+
+
+```{r}
+cor_s=cor(illiteracy,gdp,method="spearman")
+t_s=cor_s*sqrt((n-2)/(1-cor_s^2))
+
+#检验p值
+2*(pt(t_s,n-2))
+```
+
+另一种方法是直接使用封装好的`cor.test`，同时设定参数`method='spearman'`，最终获得相同的检验结果。
+
+```{r}
+cor.test(illiteracy,gdp,method="spearman")
+```
+
+#### （3）Kendall
+
+Kendall相关系数的定义为$$\tau=\dfrac{N_c-N_d}{n(n-1)/2}$$其中$N_c$为满足协同性的数对个数，$N_d$为不协同的数对个数。计算得文盲率和人均GDP的Kendall相关系数$\tau=-0.4695$。大样本下，检验统计量
+$$\tau\sqrt{\frac{9n(n-1)}{2(2n+5)}}\stackrel{\mathcal L}{\rightarrow}N(0,1)$$
+渐进服从标准正态分布，可以计算得p值$p=0.0002<\alpha$，同样拒绝原假设，在kendall相关性检验下，文盲率和人均GDP之间具有相关性，且是负相关。
+
+```{r}
+tau=cor(illiteracy,gdp,method="kendall")
+
+#检验统计量
+z=tau*sqrt(9*n*(n-1)/2/(2*n+5))
+2*pnorm(z)
+
+```
+
+使用封装好的`cor.test`，同时设定参数`method='kendall'`，同样拒绝了原假设，但是`cor.test`在打结的情况下对检验统计量进行了修正，可以看到检验p值与上述计算结果略微有差异，但不影响结论。
+
+```{r}
+cor.test(illiteracy,gdp,method="kendall")
+```
+
+
+
+### 新教材6.2 某公司销售一种特殊的化妆用品，该公司观测了15个城市在某季度对该化妆品的销售量Y（单位：万件）和该地区的人均收入X（单位：百元），如表7．8所示．以往的经验表明，销售量与人均收入之间存在线性关系，试写出由人均收入解释销售量的中位数线性回归直线．
+
+
+| 序号        |  1  |  2  |  3  |   4 | 5   |   6 |   7 |  8  |
+|------------:|-----|-----|-----|-----|-----|-----|-----|-----|
+| **地区$X$** | 9.1 | 8.3 | 7.2 | 7.5 | 6.3 | 5.8 |7.6  |8.1  |
+|**人口$Y$**  | 8.7 | 9.6 | 6.1 | 8.4 | 6.8 |5.5  | 7.1 | 8.0 |
+| **序号  **  |**9**|**10**|**11**|**12**|**13**|**14**|**15**||
+| **地区$X$** | 7.0 | 7.3 | 6.5 | 6.9 | 8.2 | 6.8 | 5.5 |     |
+|**人口$Y$**  | 6.6 | 7.9 | 7.6 | 7.8 | 9.0 | 7.0 |6.3  |     |
+
+
+#### （1）Brown-Mood法
+
+首先使用Brown-Mood法进行中位数回归系数估计，将$X$按照中位数$X_{med}$两侧分为两组，然后记$X'_{med},Y'_{med}$分别为第一组样本的中位数，$X''_{med},Y''_{med}$分别为第二组样本的中位数，那么回归系数的估计为$$\hat\beta_{BM}=\frac{Y''_{med}-Y'_{med}}{X''_{med}-X'_{med}}$$
+截距项的估计$$\hat\alpha_{BM}=median\{Y_i-\beta_{BM}X_i\}$$
+那么求得的回归方程为$$\hat y=-0.6586+1.1724x$$如下图的实线所示，而虚线代表OLS估计线，可见Brown-Mood下得到的估计相比于OLS估计，受异常点的影响更小。
+
+```{r}
+#输入数据
+xx<-c(9.1 , 8.3 , 7.2 , 7.5 , 6.3 , 5.8 ,7.6  ,8.1,7.0 , 7.3 , 6.5 , 6.9 , 8.2 , 6.8 , 5.5)
+yy<-c(8.7 , 9.6 , 6.1 , 8.4 , 6.8 ,5.5  , 7.1 , 8.0,6.6 , 7.9 , 7.6 , 7.8 , 9.0 , 7.0 ,6.3)
+
+cyx=coef(lm(yy~xx))
+md=median(xx)
+xx1=xx[xx<=md]
+xx2=xx[xx>md]
+yy1=yy[xx<=md]
+yy2=yy[xx>md]
+md1=median(xx1)
+md2=median(xx2)
+mw1=median(yy1)
+mw2=median(yy2)
+beta=(mw2-mw1)/(md2-md1)
+alpha=median(yy-beta*xx)
+plot(xx,yy,family='PingFang SC',xlab="地区",ylab='人口')
+abline(alpha,beta)
+abline(c(cyx),lty=3)
+title("Brown-Mood median regression")
+```
+
+#### （2）结果检验
+
+对Brown-Mood的估计结果进行检验，对于假设问题：$$H_0:\alpha=\alpha_0,\quad\beta=\beta_0\quad vs\ H_1:等号不成立$$
+适用于Brown-Mood检验，其原理如下：
+
+1. 记$X_{med}$为样本$X$的中位数；
+2. 定义$$n_1=\#\{(X_i,Y_i),X_i<X_{med},Y_i>\alpha+0+\beta_0X_i\}$$$$n_2=\#\{(X_i,Y_i),X_i>X_{med},Y_i<\alpha+0+\beta_0X_i\}$$
+3. 在零假设下会有$n_1\approx n_2\approx n/4$，故定义检验统计量$$BM=\frac 8n((n_1-\frac n4)^2+(n_2-\frac n4)^2)^2$$它近似服从自由度为2 的卡方分布，$BM$取大则拒绝原假设。
+
+根据计算，$BM=0.33$，$p=0.84648$，$BM$值很小，p值很大，因此没有理由拒绝原假设，没有违背均衡性。
+
+```{r}
+md=median(xx)
+xx1=xx[xx<md & yy>(alpha+beta*xx)]
+xx2=xx[xx>md & yy<(alpha+beta*xx)]
+n=length(xx)
+n1=length(xx1);n2=length(xx2)
+
+#检验统计量
+BM=8/n*((n1-n/4)^2+(n2-n/4)^2)
+1-pchisq(BM,2)
+```
+
+此外，可以使用Theil检验对于以下假设进行检验：$$H_0':\beta=\beta_0\quad vs\ H‘_1:等号不成立$$
+
+即将回归自变量$(X_1,...X_n)$与$(Y_1-\beta_0X_1,...,Y_n-\beta_0X_n)$进行Kendall相关系数检验，可以看到检验不显著，故不能拒绝原假设中的回归系数$\hat\beta_{BM}=1.1724$，模型通过检验。
+```{r}
+cor.test(xx,yy-beta*xx,method="kendall")
+```
+
+
+#### （3）Theil方法
+
+除Brown-Mood方法外，这里使用教材提供的另一种方法，Theil法。由于自变量无结，故对于$i<j$，取$s_{ij}=\frac{X_i-X_j}{Y_i-Y_j}$，则回归系数$$\tilde\beta_T=meidan\{s_{ij}\}$$$$\hat\alpha_T=meidan\{Y_j-\tilde\beta_T X_j\}$$
+计算得：$$\hat y=0.6909+0.969$$
+
+```{r}
+s<-c()
+for(i in 1:(n-1))
+  for(j in (i+1):n)
+    s=c(s,(yy[i]-yy[j])/(xx[i]-xx[j]))
+
+beta2=median(s)
+alpha2=median(yy-beta2*xx)
+
+#绘制图形
+plot(xx,yy,family='PingFang SC',xlab="地区",ylab='人口')
+abline(alpha2,beta2,col='red')
+abline(alpha,beta,lty=2,col='blue')
+abline(c(cyx),lty=3)
+legend("topleft",legend = c("Brown Mood","Theil","OLS"),
+       col=c("blue","red","black"),lty=c(3,1,2))
+title("Brown Mood & Theil median regression")
+```
+
+
+
+#### （4）结果检验
+
+同样地，对于Theil方法的估计结果进行检验。首先基于Brown-Mood检，对假设问题：$$H_0:\alpha=\alpha_0,\quad\beta=\beta_0\quad vs\ H_1:等号不成立$$
+进行检验。
+
+1. 记$X_{med}$为样本$X$的中位数；
+2. 定义$$n_1=\#\{(X_i,Y_i),X_i<X_{med},Y_i>\alpha+0+\beta_0X_i\}$$$$n_2=\#\{(X_i,Y_i),X_i>X_{med},Y_i<\alpha+0+\beta_0X_i\}$$
+3. 在零假设下会有$n_1\approx n_2\approx n/4$，故定义检验统计量$$BM=\frac 8n((n_1-\frac n4)^2+(n_2-\frac n4)^2)^2$$它近似服从自由度为2 的卡方分布，$BM$取大则拒绝原假设。
+
+根据计算，$BM=0.6$，$p=0.7408$，$BM$值很小，p值很大，因此没有理由拒绝原假设，没有违背均衡性。
+
+```{r}
+md=median(xx)
+xx1=xx[xx<md & yy>(alpha2+beta2*xx)]
+xx2=xx[xx>md & yy<(alpha2+beta2*xx)]
+n=length(xx)
+n1=length(xx1);n2=length(xx2)
+
+#检验统计量
+BM=8/n*((n1-n/4)^2+(n2-n/4)^2)
+1-pchisq(BM,2)
+```
+
+此外，可以使用Theil检验对于以下假设进行检验：$$H_0':\beta=\beta_0\quad vs\ H‘_1:等号不成立$$
+
+即将回归自变量$(X_1,...X_n)$与$(Y_1-\beta_0X_1,...,Y_n-\beta_0X_n)$进行Kendall相关系数检验，可以看到检验不显著，故不能拒绝原假设中的回归系数$\hat\beta_{BM}=0.9697$，模型通过检验。
+```{r}
+cor.test(xx,yy-beta*xx,method="kendall")
+```
+
+
+### 新教材6.3 在歌手大奖赛中，裁判是根据歌手的演唱进行打分的，但有时也可能带有某种主观色彩．此时作为大赛公证人员有必要对裁判的打分是否一致进行检验，如果一致，则说明裁判组的综合专家评判的结果是可靠的．下面是1986年全国第二届青年歌手电视大奖赛业余组民族唱法决赛成绩的统计表，试进行一致性检验．
+
+|裁判\\歌手成绩 |  1  |  2  | 3   |  4  |  5  |  6  | 7   |  8  |  9  |  10 |
+|--------------:|----:|----:|----:|----:|----:|----:|----:|----:|----:|----:|
+| 1             | 9.15| 9.00| 9.17| 9.03| 9.16| 9.04| 9.35| 9.02| 9.10| 9.20|
+| 2             | 9.28| 9.30| 9.31| 8.80| 9.15| 9.00| 9.28| 9.29| 9.10| 9.30|
+| 3             | 9.18| 8.95| 9.24| 8.93| 9.17| 8.85| 9.28| 9.05| 9.10| 9.20|
+| 4             | 9.12| 9.32| 8.83| 8.86| 9.31| 8.81| 9.38| 9.16| 9.17| 9.10|
+| 5             | 9.15| 9.20| 8.80| 9.17| 9.18| 9.00| 9.45| 9.15| 9.40| 9.35|
+| 6             | 9.35| 8.92| 8.91| 8.93| 9.12| 9.25| 9.45| 9.21| 8.98| 9.18|
+| 7             | 9.30| 9.15| 9.10| 9.05| 9.15| 9.15| 9.40| 9.30| 9.10| 9.20|
+| 8             | 9.15| 9.01| 9.28| 9.21| 9.18| 9.19| 9.29| 8.91| 9.14| 9.12|
+| 9             | 9.21| 8.90| 9.05| 9.15| 9.00| 9.18| 9.35| 9.21| 9.17| 9.24|
+| 10            | 9.24| 9.02| 9.20| 8.90| 9.05| 9.15| 9.32| 9.28| 9.06| 9.05|
+| 11            | 9.21| 9.23| 9.20| 9.21| 9.24| 9.24| 9.30| 9.20| 9.22| 9.30|
+| 12            | 9.07| 9.20| 9.29| 9.05| 9.15| 9.32| 9.24| 9.21| 9.29| 9.29|
+
+问题考察的是多变量之间的相关性，适合多变量kendall协和系数检验。假设为：$$H_0:k个变量不相关\quad v.s.\ \ H_1:k个变量相关$$
+
+为考察评委给分意见的一致性，每个歌手的得分为我们所关心的变量，为与教材中的计算方法一致，这里使用`t()`将矩阵转置后计算，同时应有$k=12$，$n=10$。Kendall协和系数$W$的表达式：$$W=\frac{\sum\limits_iR^2_i.-kn(n+1)^2/4}{k^2(n^3-n)/12}$$
+但是由于本题数据有结，因此需要对其进行修正，其中$\tau_i$为结长，$g$为结的个数：
+$$W_c=\frac{\sum\limits_iR^2_i.-kn(n+1)^2/4}{[k^2(n^3-n)-k\sum\limits^g(\tau_i^3-\tau_i)]/12}$$
+卡方检验统计量：$$\chi^2=k(n-1)W_c\sim\chi^2(n-1)$$卡方值较大便可拒绝原假设。本题中，使用有结的修正公式计算得到$W_c=0.1143262$，对应的$chi^2=33.205$，检验p值$p=0.0001<\alpha=0.05$，故可以拒绝原假设，数据通过一致性检验，每个评委的打分存在一致性。
+
+
+```{r}
+n=10;k=12
+compe<-matrix(c(9.15,9,9.17,9.03,9.16,9.04,9.35,9.02,9.1,9.2,
+                9.28,9.3,9.31,8.8,9.15,9,9.28,9.29,9.1,9.3,
+                9.18,8.95,9.24,8.93,9.17,8.85,9.28,9.05,9.1,9.2,
+                9.12,9.32,8.83,8.86,9.31,8.81,9.38,9.16,9.17,9.1,
+                9.15,9.2,8.8,9.17,9.18,9,9.45,9.15,9.4,9.35,
+                9.35,8.92,8.91,8.93,9.12,9.25,9.45,9.21,8.98,9.18,
+                9.3,9.15,9.1,9.05,9.15,9.15,9.4,9.3,9.1,9.2,
+                9.15,9.01,9.28,9.21,9.18,9.19,9.29,8.91,9.14,9.12,
+                9.21,8.9,9.05,9.15,9,9.18,9.35,9.21,9.17,9.24,
+                9.24,9.02,9.2,8.9,9.05,9.15,9.32,9.28,9.06,9.05,
+                9.21,9.23,9.2,9.21,9.24,9.24,9.3,9.2,9.22,9.3,
+                9.07,9.2,9.29,9.05,9.15,9.32,9.24,9.21,9.29,9.29),byrow=T,nrow=k)
+
+#将矩阵转置
+compe=t(compe)
+
+#按列求秩
+R=apply(compe,2,function(x) rank(x,ties.method = 'average'))
+
+#按行取秩和
+rowsum=rowSums(R)
+
+#由于存在结，对W进行修正
+#先求结的长度
+T<-c(1)
+for(i in 1:k)
+{
+  r_sorted=sort(rank(compe[,i],ties.method="average"))
+  ties<-c(1)
+  num_of_ties=1
+  for( j in 2:n)
+  {
+    #算法:如果当前秩和上一个秩相同，则结的长度数加一
+    if(r_sorted[j]==r_sorted[j-1])
+    {
+      ties[num_of_ties]=ties[num_of_ties]+1
+    }
+    else
+    {
+      #否则结的个数加一
+      num_of_ties=num_of_ties+1
+      ties[num_of_ties]=1
+    }
+  }
+  T=c(T,ties)
+}
+
+#协和系数W_c
+W_c=(sum(rowsum^2)-k^2*n*(n+1)^2/4)/((k^2*(n^3-n)-k*sum(T^3-T))/12)
+
+#卡方检验统计量
+chisq=k*(n-1)*W_c
+1-pchisq(chisq,n-1)
+```
+
+载入`irr`包，使用`kendall`函数，也可进行kendall协和系数检验。因为数据存在结，所以设定参数`correct=T`，使其自动进行有结情况下的修正，得到了相同的检验结果。
+
+
+```{r,warning=F,message=F}
+library(irr)
+kendall(compe,correct = T)
+```
+
+
+
+
+
+
+
+
+
+
