@@ -1,0 +1,189 @@
+---
+title: "非参数统计期中报告"
+author: "2017201643 石津宇"
+output: html_document
+   
+---
+
+<style type="text/css">
+
+  *{font-family:楷体;}
+	
+	#header {
+	font = 楷体;
+    border-bottom: 50px solid #4682B4;
+        text-align: center;
+
+       
+	}
+	h1{font-weight: bold;
+	   font-size: 26px;
+	}
+	h2{
+	margin-top: -10px; 
+  margin-bottom: 20px;
+  white-space: lage; 
+  outline: black;
+	font-color: #0000EE;
+	  font-size: 16px;
+	  line-height: 40px;
+	  border-left-width: 20px;
+  border-left-style: solid;
+  border-left-color: #F0FFFF;
+  background: #F0FFFF;
+  margin: 10px auto;
+  border-bottom: 10px #FF3030;
+	}
+	code.r{
+    font-size: 14px;
+  }
+	pre{
+    font-size: 14px;
+  }
+
+</style>
+<br/>
+
+<center>
+
+# **2.8.25**
+$$令0<\alpha<1,假定两个参数\theta_1和\theta_2有置信水平1-\alpha/2，I_1和I_2是各自置信区间，证明两个区间的同时置信度至少是1-\alpha$$
+$$P\{\theta_{1} \in I_1 ,...,\theta_{m} \in I_m\}\\=1-P\{(\theta_1 \notin I_1) \cup...\cup(\theta_m \notin I_m)\}\\\ge1-[P\{\theta_1 \notin I_1\}+...+P\{\theta_m \notin I_m\}]\\\ge1-m\cdot\alpha/2$$
+$$当m=2时，该概率\ge1-\alpha$$
+</center>
+
+
+# **3.7.5**
+$3.7.4数据生成方式:从一个logF（1，0.25）分布中抽取两组样本量为20的样本。对其中一组样本添加\Delta=7的偏移，下面是模拟的代码$
+
+$x<-log(rf(20,1,.25))\\$
+
+$y<-log(rf(20,1,.25))+7.0$
+
+$写一个像3.7.4方式生成数据的r程序，然后进行模拟去估计3个估计量的ARE：LS，Wilcoxon，和基于bentscores1的秩估计。\\$
+
+$两个估计量之间的ARE是他们均方误差之比。模拟的样本量为10000.哪个估计量效果最优？哪个效果最差？$
+```{r chunkname, echo = TRUE, warning=FALSE, message=FALSE, prompt=FALSE, comment=NA}
+library(Rfit)
+
+ls_total<-NULL
+wil_total<-NULL
+bs_total<-NULL
+
+for(i in 1:10000){
+  x <- log(rf(20,1,.25))
+  y <- log(rf(20,1,.25)) + 7.0
+
+  sort(x)
+  sort(y)
+
+  #LS
+  ls<-mean(x)-mean(y)
+  ls_total<-c(ls_total,ls)
+  #ls_se<-(var(x)+var(y))/20
+  #ls
+  #ls_se
+
+  #Wilcoxon
+  dl<-(wilcox.test(x,y,conf.int = T))
+  wil_total<-c(wil_total,dl$estimate[[1]])
+  
+  #bentscores1
+  mybentscores = bentscores1
+  mybentscores@param<-c(0.75,-2,1)
+  fit = rfit(y~x,scores=mybentscores)
+  bs_total<-c(bs_total,fit$tauhat)
+}
+
+var(ls_total)/var(wil_total)
+var(wil_total)/var(bs_total)
+#var(bs_total)/var(ls_total)
+var(ls_total)/var(bs_total)
+#var(ls_total)/var(wil_total)
+```
+bs优于wil优于ls
+
+
+
+# **5.8.1**
+
+$Hollander和Wolfe（1999）报告了1984年夏季Kokosing湖四个不同地点的YOY gizzard shad鱼的长度研究。$
+
+$令μi等于YOY gizzard shad鱼的长度在第i个湖的均值。$
+
+$(a) 使用基于秩的Wilcoxon程序检验均值是否相等$
+
+$(b) 基于部分a，运用Fisher最小显著性差异展示两两均值之间的差异。$
+
+$正如Hollander和Wolfe所讨论的那样，幼鱼的胃囊被猎用鱼吃掉，因此小鱼更好。在这个层面上，基于MCP分析，哪个湖更适合捕鱼？$
+```{r}
+library(Rfit)
+data<-c(46,28,46,37,32,41,42,45,38,44,42,60,32,42,45,58,27,51,42,52,38,33,26,25,28,28,26,27,27,27,31,30,27,29,30,25,25,24,27,30)
+t<-c(rep(1,10),rep(2,10),rep(3,10),rep(4,10))
+```
+
+wilcoxon方法
+```{r}
+fit<-oneway.rfit(data,t)
+fit
+```
+Fw值为13.79，p值极小，拒绝原假设，即四组的均值不全相等
+
+```{r}
+summary(fit, method = "none")
+```
+结果表明3和4两种的长度均值均较小
+
+
+# **5.8.2**
+$对于5.2.3，利用FW得到基于Wilcoxon检验的分析结果和Tukey方法得到的MCP分析结果，比较这个分析和Kruskal-Wallis分析。$
+```{r}
+library(Rfit)
+n <- c(2.9,3.0,2.5,2.6,3.2)
+o <- c(3.8,2.7,4.0,2.4)
+a <- c(2.8,3.4,3.7,2.2,2.0)
+```
+
+Kruskal-Wallis
+```{r}
+x <- c(n,o,a)
+g <- c(rep(1,5),rep(2,4),rep(3,5))
+kruskal.test(x,g)
+```
+
+Wilcoxon test
+```{r}
+y<-oneway.rfit(x,g)
+y
+```
+Wilcoxon检验显示不同组别之间无明显差异
+
+MCP using Tukey's method
+```{r}
+summary(y, method = "tukey")
+
+```
+
+
+# **5.8.10**
+$对以下情形使用模拟研究来研究Jonckheere–Terpstra检验和Kruskal–Wallis检验：从4个方差为1，均值分别为0，0.45，0.9，1.0的正态总体中抽取样本量为10的样本。$
+
+$假定置信水平\alpha=0.05，模拟样本量为10000.$
+```{r}
+library(clinfun)
+size<-10000
+jt<-NULL
+kw<-NULL
+for(i in 1:size){
+  x<-c(rep(1,10),rep(2,10),rep(3,10),rep(4,10))
+  y<-c(rnorm(10,0,1),rnorm(10,0.45,1),rnorm(10,0.9,1),rnorm(10,1,1))
+  kw<-c(kw,kruskal.test(y,x)$p.value)
+  jt<-c(jt,jonckheere.test(y,x)$p.value)
+}
+
+alpha<-0.05
+c(sum(kw<alpha),sum(jt<alpha))
+```
+
+kruskal-wallis检验的势约为45%,jonckheere-terpstra检验的势为62.7%，大于前者
+
